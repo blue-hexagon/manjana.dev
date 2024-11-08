@@ -7,3 +7,4 @@ function NotFound() {
     </Layout>)
 }
 
+export default NotFound

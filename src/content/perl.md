@@ -1,5 +1,5 @@
 ---
-slug: "perl"
+slug: "perl-101"
 date: "2024-11-06"
 title: "Perl ..."
 description: "A Deep Dive into payload encoding and decoding exploring creative ways of hiding information in plain sight"
