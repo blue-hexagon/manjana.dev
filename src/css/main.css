@@ -1,0 +1,34 @@
+/* Base scrollbars style */
+::-webkit-scrollbar {
+  width: 12px; /* Width of the vertical scrollbar */
+  height: 12px; /* Height of the horizontal scrollbar */
+}
+
+/* Track (background of the scrollbar) */
+::-webkit-scrollbar-track {
+  background: #222222; /* Dark background for the track */
+  border-radius: 10px; /* Rounded corners */
+}
+
+/* Handle (the draggable part of the scrollbar) */
+::-webkit-scrollbar-thumb {
+  background: #555; /* Subtle dark gray for the scrollbar thumb */
+  border-radius: 10px; /* Rounded corners for thumb */
+  border: 2px solid #222; /* Border around thumb to make it stand out a little */
+}
+
+/* Handle on hover (slightly brighter when hovered) */
+::-webkit-scrollbar-thumb:hover {
+  background: #888; /* Slightly lighter gray on hover */
+}
+
+/* Optional: Style for horizontal scrollbars */
+::-webkit-scrollbar-horizontal {
+  height: 12px; /* Consistent height with the vertical scrollbar */
+}
+
+/* Optional: Style for scrollbars in other browsers */
+* {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #555 #222; /* Thumb and track color for Firefox */
+}
