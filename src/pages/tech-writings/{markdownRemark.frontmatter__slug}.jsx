@@ -3,24 +3,20 @@ import {graphql} from "gatsby"
 import {Container} from "@mui/material";
 
 export default function BlogPostTemplate({data}) {
+    const { frontmatter, html, timeToRead, tableOfContents } = data.markdownRemark
 
-    console.log(data)
-    // const {html, timeToRead, tableOfContents, frontmatter} = data
-    if (!data) {
-        return null
-    }
     return (<Container>
-        <h1>{data.frontmatter.title}</h1>
-        <h2>{data.frontmatter.date}</h2>
-        <h2>{data.timeToRead} min.</h2>
-        <div dangerouslySetInnerHTML={{__html: data.tableOfContents}}/>
+        <h1>{frontmatter.title}</h1>
+        <h2>{frontmatter.date}</h2>
+        <h2>{timeToRead} min.</h2>
+        <div dangerouslySetInnerHTML={{__html: tableOfContents}}/>
         <div
-            dangerouslySetInnerHTML={{__html: data.html}}
+            dangerouslySetInnerHTML={{__html: html}}
         />
     </Container>)
 }
 
-const data = graphql`
+export const query = graphql`
       query($id: String!) {
         markdownRemark(id: { eq: $id }) {
           html
