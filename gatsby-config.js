@@ -12,6 +12,7 @@ module.exports = {
         title: "Manjana.dev",
         description: "This is where I write my thoughts.",
     },
+    pathPrefix: "/manjana.dev",
     plugins: [
         {
             resolve: 'gatsby-source-filesystem',
