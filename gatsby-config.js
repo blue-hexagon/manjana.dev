@@ -8,6 +8,10 @@
  * @type {import('gatsby').GatsbyConfig}
  */
 module.exports = {
+    siteMetadata: {
+        title: "Manjana.dev",
+        description: "This is where I write my thoughts.",
+    },
     plugins: [
         {
             resolve: 'gatsby-source-filesystem',

@@ -3,7 +3,6 @@ import {useLocation} from '@reach/router';
 import {
     Typography, Container, Grid2, TextField, Box
 } from '@mui/material';
-import Layout from "../../components/Layout";
 import {graphql, useStaticQuery} from 'gatsby'
 import CategoriesComponent from "./components/Categories";
 import BlogCard from "./components/BlogCard";
@@ -116,7 +115,7 @@ const NewsletterForm = () => {
 };
 
 
-const PostsComponent = ({heading, featuredOnly}) => {
+export const PostsComponent = ({heading, featuredOnly}) => {
 
     const data = useStaticQuery(graphql`
     query {
@@ -131,13 +130,13 @@ const PostsComponent = ({heading, featuredOnly}) => {
               categories
               featured
             }
-            excerpt
           }
         }
       }
     }
   `);
-
+    console.log(data)
+    const returnFeaturedOnly = featuredOnly || false
     return (
         <>
             <Typography variant="h4" gutterBottom sx={{marginTop: 4}}>
@@ -145,7 +144,7 @@ const PostsComponent = ({heading, featuredOnly}) => {
             </Typography>
 
             <Grid2 container rowSpacing={1.5} columnSpacing={{xs: 1, sm: 2, md: 1.5}}>
-                {featuredOnly &&
+                {returnFeaturedOnly &&
                     data.allMarkdownRemark.edges
                         .filter(({node}) => node.frontmatter.featured === true)
                         .map(({node}) => (
@@ -153,7 +152,7 @@ const PostsComponent = ({heading, featuredOnly}) => {
                                 <BlogCard data={node.frontmatter}></BlogCard>
                             </Grid2>
                         ))}
-                {!featuredOnly &&
+                {!returnFeaturedOnly &&
                     data.allMarkdownRemark.edges
                         .map(({node}) => (
                             <Grid2 size={4} item xs={12} sm={6} lg={2} key={node.id}>
@@ -168,7 +167,7 @@ const PostsComponent = ({heading, featuredOnly}) => {
 
 
 const IndexPage = () => {
-    return (<Layout>
+    return (
         <Container>
 
             <CategoriesComponent></CategoriesComponent>
@@ -181,9 +180,8 @@ const IndexPage = () => {
 
             </Box>
         </Container>
-    </Layout>);
+    );
 };
-
 
 export default IndexPage
 

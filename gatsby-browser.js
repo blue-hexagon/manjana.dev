@@ -5,6 +5,7 @@ import theme from "./src/theme";
 import "./src/css/prism-material-dark.css";
 import "prismjs/plugins/line-numbers/prism-line-numbers.css";
 import './src/css/main.css';
+import Layout from "./src/components/Layout";
 
 export const wrapRootElement = ({element}) => (
     <ThemeProvider theme={theme}>
@@ -12,3 +13,6 @@ export const wrapRootElement = ({element}) => (
         {element}
     </ThemeProvider>
 );
+export const wrapPageElement = ({ element, props }) => {
+  return <Layout {...props}>{element}</Layout>;
+};

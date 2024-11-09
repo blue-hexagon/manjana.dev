@@ -7,18 +7,55 @@ import {
     Grid2,
     Card,
     CardContent,
-    TextField, Divider, Rating, CardActionArea
+    TextField, Divider, Rating, CardActionArea, Stack
 } from '@mui/material';
 import {
-    SiCsharp, SiDart, SiPython, SiLatex, SiJavascript, SiTypescript,
-    SiHtml5, SiCss3, SiSass, SiBootstrap, SiTailwindcss, SiDjango, SiFlask,
-    SiFlutter, SiPostgresql, SiNginx, SiPostman, SiHeroku, SiDocker,
-    SiGithubactions, SiLinux, SiDigitalocean, SiJetbrains, SiGnubash,
-    SiAnsible, SiCisco, SiVmware, SiPaloaltosoftware, SiMarkdown, SiReact, SiPycharm, SiPytest, SiPlaywright
+    SiCsharp,
+    SiDart,
+    SiPython,
+    SiLatex,
+    SiJavascript,
+    SiTypescript,
+    SiHtml5,
+    SiCss3,
+    SiSass,
+    SiBootstrap,
+    SiTailwindcss,
+    SiDjango,
+    SiFlask,
+    SiFlutter,
+    SiPostgresql,
+    SiNginx,
+    SiPostman,
+    SiHeroku,
+    SiDocker,
+    SiGithubactions,
+    SiLinux,
+    SiDigitalocean,
+    SiJetbrains,
+    SiGnubash,
+    SiAnsible,
+    SiCisco,
+    SiVmware,
+    SiPaloaltosoftware,
+    SiMarkdown,
+    SiReact,
+    SiPycharm,
+    SiPytest,
+    SiPlaywright,
+    SiSqlite,
+    SiPowershell,
+    SiGatsby,
+    SiTerraform,
+    SiGit,
+    SiGithub,
+    SiVim,
+    SiJest
 } from "react-icons/si";
 import {DiJava} from "react-icons/di";
-import Layout from "../components/Layout";
 import {Link} from "gatsby";
+import ProjectShowcase from "./projects";
+import {PostsComponent} from "./tech-writings";
 
 //PyTest, PlayWright, PyCharm
 const CategoryEnum = {
@@ -36,8 +73,10 @@ const iconsData = [
     {Icon: SiPytest, label: 'Pytest', level: 3, categories: []},
     {Icon: SiLatex, label: 'LaTeX', level: 2, categories: []},
     {Icon: SiJavascript, label: 'JavaScript', level: 2, categories: []},
+    {Icon: SiJest, label: 'Jest', level: 2, categories: []},
     {Icon: SiTypescript, label: 'TypeScript', level: 1, categories: []},
-    {Icon: SiReact, label: 'TypeScript', level: 2, categories: []},
+    {Icon: SiReact, label: 'React', level: 2, categories: []},
+    {Icon: SiGatsby, label: 'Gatsby', level: 2, categories: []},
     {Icon: SiHtml5, label: 'HTML', level: 4, categories: []},
     {Icon: SiMarkdown, label: 'Markdown', level: 5, categories: []},
     {Icon: SiCss3, label: 'CSS', level: 2, categories: []},
@@ -48,13 +87,19 @@ const iconsData = [
     {Icon: SiDjango, label: 'Django', level: 4, categories: []},
     {Icon: SiFlask, label: 'Flask', level: 2, categories: []},
     {Icon: SiFlutter, label: 'Flutter', level: 2, categories: []},
+    {Icon: SiSqlite, label: 'SQLite', level: 4, categories: []},
     {Icon: SiPostgresql, label: 'PostgreSQL', level: 4, categories: []},
     {Icon: SiNginx, label: 'Nginx', level: 2, categories: []},
     {Icon: SiPostman, label: 'Postman', level: 4, categories: []},
+    {Icon: SiTerraform, label: 'Terraform', level: 4, categories: []},
+    {Icon: SiVim, label: 'Vim', level: 3, categories: []},
+    {Icon: SiGit, label: 'Git', level: 3, categories: []},
+    {Icon: SiGithub, label: 'Github', level: 3, categories: []},
     {Icon: SiHeroku, label: 'Heroku', level: 3, categories: []},
     {Icon: SiDocker, label: 'Docker', level: 3, categories: []},
     {Icon: SiGithubactions, label: 'GitHub Actions', level: 2, categories: []},
     {Icon: SiLinux, label: 'Linux', level: 5, categories: []},
+    {Icon: SiPowershell, label: 'Powershell', level: 2, categories: []},
     {Icon: SiDigitalocean, label: 'DigitalOcean', level: 3, categories: []},
     {Icon: SiJetbrains, label: 'JetBrains', level: 4, categories: []},
     {Icon: SiPycharm, label: 'PyCharm', level: 5, categories: []},
@@ -120,53 +165,9 @@ const AboutMe = () => (
 );
 
 const Projects = () => (
-    <Container id="projects" sx={{pt: 1}}>
-        <Typography variant="h4" gutterBottom>Projects</Typography>
-        <Grid2 container spacing={3}>
-            <Grid2 item xs={12} md={6}>
-                <Card>
-                    <CardContent>
-                        <Typography variant="h5" gutterBottom>Armada</Typography>
-                        <Typography variant="body1">
-                            Armada is a sophisticated pentesting tool designed with a fully decentralized C2
-                            infrastructure. It enables enterprise security teams to test distributed systems and
-                            simulate real-world threat scenarios with peer-to-peer communication. With playbooks
-                            inspired by Ansible, Armada automates complex security tasks through configurable YAML
-                            workflows.
-                        </Typography>
-                    </CardContent>
-                </Card>
-            </Grid2>
-            <Grid2 item xs={12} md={6}>
-                <Card>
-                    <CardContent>
-                        <Typography variant="h5" gutterBottom>HyperSnitch</Typography>
-                        <Typography variant="body1">
-                            A monitoring tool that tracks specific strings on websites and notifies users of their
-                            availability, designed for scenarios like tracking apartment registration lists.
-                        </Typography>
-                    </CardContent>
-                </Card>
-            </Grid2>
-            <Grid2 item xs={12} md={6}>
-                <Card><a target="_blank" rel="noreferrer" href="https://www.cheatsheet.wtf"
-                         style={{textDecoration: 'none', color: "inherit"}}>
-                    <CardActionArea>
-                        <CardContent>
-                            <Typography variant="h5" gutterBottom>Cheatsheet.wtf</Typography>
-                            <Typography variant="body1">
-                                Cheatsheet.wtf is a community-driven platform offering concise, practical coding
-                                cheatsheets
-                                for developers. With easily accessible, categorized information, it aims to help new
-                                developers
-                                quickly find answers to common coding problems, streamlining learning.
-                            </Typography>
-                        </CardContent>
-                    </CardActionArea></a>
-                </Card>
-            </Grid2>
-        </Grid2>
-    </Container>
+    <>
+        <ProjectShowcase></ProjectShowcase>
+    </>
 );
 
 const Blog = () => (
@@ -181,6 +182,19 @@ const Blog = () => (
             <li>Using pytest for Distributed Testing in Cybersecurity</li>
             <li>Fast Flux DNS and its Applications in Threat Simulation</li>
         </ul>
+        <PostsComponent heading={"Featured Posts"} featuredOnly={true}></PostsComponent>
+        <Stack direction="row">
+        <Button
+            component={Link}
+            to="/projects"  // or "/articles", depending on your route
+            variant="outlined"
+            color="primary"
+            sx={{mt: 2, width: "100%"}}
+        >
+            See More
+        </Button>
+            </Stack>
+
     </Container>
 );
 
@@ -198,13 +212,13 @@ const Resume = () => (
 
 
 const MainContainer = () => (
-    <Layout>
+    <>
         <Homepage/>
         <AboutMe/>
         <Projects/>
         <Blog/>
         <Resume/>
-    </Layout>
+    </>
 );
 
 export default MainContainer;

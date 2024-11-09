@@ -9,7 +9,7 @@ const projects = [
     {
         title: "Armada",
         description: "Distributed systems pentesting tool with decentralized C2 infrastructure.",
-        image: "https://placehold.co/600x400",
+        image: "https://picsum.photos/id/232/600/400",
         link: "/projects/armada",
         tags: ["Cybersecurity", "P2P", "C2"],
         packageAvailable: "pip",
@@ -17,7 +17,7 @@ const projects = [
     {
         title: "HyperSnitch",
         description: "Website monitoring tool that alerts when specific content is added or removed.",
-        image: "https://placehold.co/600x400",
+        image: "https://picsum.photos/id/231/600/400",
         link: "/projects/hypersnitch",
         tags: ["Monitoring", "Automation", "Web Scraping"],
         packageAvailable: "npm",
@@ -25,7 +25,7 @@ const projects = [
     {
         title: "Password Cracker",
         description: "Distributed password hash cracker built with scalability in mind.",
-        image: "https://placehold.co/600x400",
+        image: "https://picsum.photos/id/2/600/400",
         link: "/projects/password-cracker",
         tags: ["Security", "Distributed Computing"],
         packageAvailable: null,
@@ -54,16 +54,28 @@ const Tag = styled("span")(({theme}) => ({
 // IconBadge component for showing pip/npm badges
 const IconBadge = ({type}) => {
     return (
-        <Icon size={"large"} sx={{color: "#000207", fontSize: "3.2rem"}}>
-            {type === "pip" && <FaPython/>} {/* pip icon */}
-            {type === "npm" && <FaNpm/>} {/* npm icon */}
-        </Icon>
+        <Box
+            sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 48,             // Circle width
+                height: 48,            // Circle height
+                backgroundColor: 'rgba(0, 0, 0, 0.4)',  // Opaque black background
+                borderRadius: '50%',   // Makes the Box circular
+                color: 'white',        // Icon color
+            }}
+        >
+            <Icon size={"large"} sx={{color: "white", fontSize: "2rem",mb: "4px"}}>
+                {type === "pip" && <FaPython/>} {/* pip icon */}
+                {type === "npm" && <FaNpm/>} {/* npm icon */}
+            </Icon>
+        </Box>
     );
 };
 
 const ProjectShowcase = () => {
     return (
-        <Layout>
             <Container sx={{py: 5}}>
                 <Typography variant="h3" color="#ffffff" gutterBottom>
                     My Projects
@@ -112,7 +124,6 @@ const ProjectShowcase = () => {
                     ))}
                 </Grid>
             </Container>
-        </Layout>
     );
 };
 
