@@ -66,7 +66,7 @@ const CategoryEnum = {
     INFRASTRUCTURE: 3,
 }
 // Define an array of icon configurations
-const iconsData = [
+export const iconsData = [
     {Icon: SiCsharp, label: 'C#', level: 3, categories: []},
     {Icon: SiDart, label: 'Dart', level: 2, categories: []},
     {Icon: DiJava, label: 'Java', level: 3, categories: []},
@@ -124,8 +124,6 @@ export function HeroImage({imageUrl}) {
                         height: '100%',
                         objectFit: 'contain',
                         borderRadius: "17%",
-                        filter: "sepia(50%) contrast(120%) hue-rotate(90deg);"
-
                     }}
                 />
             </Box>
@@ -135,7 +133,7 @@ export function HeroImage({imageUrl}) {
 
 export function GradientDivider() {
     return (
-        <Box sx={{width: '85%', textAlign: 'center', mb: 3, ml: "auto", mr: "auto"}}>
+        <Box sx={{width: '85%', textAlign: 'center', mb: 2, ml: "auto", mr: "auto"}}>
             <Divider
                 sx={{
                     height: '2px',
@@ -171,15 +169,19 @@ const Homepage = () => (
     <Container id="home" sx={{py: 5, textAlign: 'center'}}>
         <TypingEffect></TypingEffect>
         <Typography variant="subtitle1" gutterBottom>
-            I’m a self-taught developer and network professional by trade, with a drive for building decentralized tools
-            and automation frameworks that empower security teams. My focus is on distributed systems, peer-to-peer
-            infrastructure, and creating solutions that push the boundaries of automated security.
+            I’m a developer with a
+            strong interest in turning complex systems into streamlined, automated workflows. My current focus is on
+            cybersecurity and automation.
+
+            As a self-starter and someone who’s always learning, I’m working on building decentralized tools and
+            automation frameworks to solve challenges in distributed systems and security testing. My latest project,
+            Armada, is an example of this approach, aiming to create practical, scalable solutions for security teams.
         </Typography>
+        <GradientDivider></GradientDivider>
         <Button variant="outlined" color="primary" component={Link} to="/projects" sx={{m: 1}}>See My Projects</Button>
         <Button variant="outlined" color="primary" component={Link} to="/tech-writings" sx={{m: 1}}>See My Blog
             Posts</Button>
-        <Button variant="outlined" color="primary" href="#about" sx={{m: 1}}>Learn More About Me</Button>
-        <Typography fontSize={"12px"} color={"peach"} style={{textAlign: "center"}}>(Work in progress - this site is still being worked
+        <Typography fontSize={"12px"} color={"rgb(70,70,70)"} style={{textAlign: "center"}}>(Work in progress - this site is still being worked
             on)</Typography>
     </Container>
 );
@@ -190,9 +192,9 @@ const TypingEffect = () => {
                 options={{
                     strings: [
                         "Hey, I'm Tobias!",
-                        'Self-Taught Python Engineer',
-                        'Driven by Automation and Innovation',
-                        'Building Distributed Systems'
+                        'Self-Taught Developer',
+                        'Network Professional by Trade',
+                        'Based in Zealand, Denmark',
                     ],
                     autoStart: true,
                     loop: true,
@@ -203,18 +205,8 @@ const TypingEffect = () => {
     );
 };
 const AboutMe = () => (
-    <Container id="about" sx={{py: 5}}>
-        <Typography variant="h4" gutterBottom>About Me</Typography>
-        <Typography variant="body1" gutterBottom>
-            I'm a self-taught Python engineer and network professional based in Denmark (Zealand), with a
-            strong interest in turning complex systems into streamlined, automated workflows. My focus is on
-            cybersecurity and automation, always looking for ways to improve processes and make them more efficient.
-
-            As a self-starter and someone who’s always learning, I’m working on building decentralized tools and
-            automation frameworks to solve challenges in distributed systems and security testing. My latest project,
-            Armada, is an example of this approach, aiming to create practical, scalable solutions for security teams.
-        </Typography>
-        <Divider sx={{mt: 5, mb: 5, width: "220px", marginLeft: "auto", marginRight: "auto"}}></Divider>
+    <Container id="about" sx={{pb: 5, pt:3}}>
+        {/*<Divider sx={{mt: 5, mb: 5, width: "220px", marginLeft: "auto", marginRight: "auto"}}></Divider>*/}
         {/*<Typography variant="h6" sx={{mt: 2}}>Languages, Techologies & Skills</Typography>*/}
         {/*<Typography variant="body2" color="textSecondary" gutterBottom>*/}
         {/*    Some of the tools, languages, frameworks, and technologies that I work with.*/}
@@ -267,13 +259,12 @@ const Blog = () => (
 const MainContainer = () => (
     <>
         <Box sx={{marginTop: "4rem"}}></Box>
-        <HeroImage imageUrl="/graphics/logo.svg" sx={{marginTop: "8em"}}></HeroImage>
+        <HeroImage imageUrl="/graphics/logo.svg" sx={{marginTop: "4em"}}></HeroImage>
         <Box sx={{marginTop: "1.5rem"}}></Box>
         <Homepage/>
-        <GradientDivider></GradientDivider>
-        <AboutMe/>
-        <Projects/>
-        <Blog/>
+        {/*<AboutMe/>*/}
+        {/*<Projects/>*/}
+        {/*<Blog/>*/}
     </>
 );
 
