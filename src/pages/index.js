@@ -9,6 +9,7 @@ import {
     CardContent,
     TextField, Divider, Rating, CardActionArea, Stack
 } from '@mui/material';
+import Typewriter from 'typewriter-effect';
 import {
     SiCsharp,
     SiDart,
@@ -114,14 +115,14 @@ const iconsData = [
 export function HeroImage({imageUrl}) {
     return (
         <Box sx={{width: "100%", display: "flex", justifyContent: "center"}}>
-            <Box sx={{width: '20%', height: '20vh'}}>
+            <Box sx={{width: '30%', height: '30vh'}}>
                 <img
                     src={imageUrl}
                     alt="Image of a person"
                     style={{
                         width: '100%',
                         height: '100%',
-                        objectFit: 'cover',
+                        objectFit: 'contain',
                         borderRadius: "17%",
                         filter: "sepia(50%) contrast(120%) hue-rotate(90deg);"
 
@@ -166,10 +167,9 @@ const SkillsIcons = () => {
 
 
 const Homepage = () => (
+
     <Container id="home" sx={{py: 5, textAlign: 'center'}}>
-        <Typography variant="h3" gutterBottom>
-            Hey, I’m Tobias – a Self-Taught Python Engineer Driven by Automation and Innovation
-        </Typography>
+        <TypingEffect></TypingEffect>
         <Typography variant="subtitle1" gutterBottom>
             I’m a self-taught developer and network professional by trade, with a drive for building decentralized tools
             and automation frameworks that empower security teams. My focus is on distributed systems, peer-to-peer
@@ -179,10 +179,29 @@ const Homepage = () => (
         <Button variant="outlined" color="primary" component={Link} to="/tech-writings" sx={{m: 1}}>See My Blog
             Posts</Button>
         <Button variant="outlined" color="primary" href="#about" sx={{m: 1}}>Learn More About Me</Button>
-        <Typography color={"peach"} style={{textAlign:"center"}}>(Work in progress - this site is still being worked on)</Typography>
+        <Typography fontSize={"12px"} color={"peach"} style={{textAlign: "center"}}>(Work in progress - this site is still being worked
+            on)</Typography>
     </Container>
 );
-
+const TypingEffect = () => {
+    return (
+        <div style={{fontSize: '2rem', color: '#fff', textAlign: 'center'}}>
+            <Typewriter
+                options={{
+                    strings: [
+                        "Hey, I'm Tobias!",
+                        'Self-Taught Python Engineer',
+                        'Driven by Automation and Innovation',
+                        'Building Distributed Systems'
+                    ],
+                    autoStart: true,
+                    loop: true,
+                    deleteSpeed: 85,
+                }}
+            />
+        </div>
+    );
+};
 const AboutMe = () => (
     <Container id="about" sx={{py: 5}}>
         <Typography variant="h4" gutterBottom>About Me</Typography>
@@ -248,7 +267,7 @@ const Blog = () => (
 const MainContainer = () => (
     <>
         <Box sx={{marginTop: "4rem"}}></Box>
-        <HeroImage imageUrl="/graphics/avataaars.png" sx={{marginTop: "8em"}}></HeroImage>
+        <HeroImage imageUrl="/graphics/logo.svg" sx={{marginTop: "8em"}}></HeroImage>
         <Box sx={{marginTop: "1.5rem"}}></Box>
         <Homepage/>
         <GradientDivider></GradientDivider>

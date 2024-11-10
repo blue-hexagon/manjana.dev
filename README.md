@@ -131,6 +131,7 @@ also the best place to build, deploy, and host your Gatsby sites.
 
 - https://www.youtube.com/watch?v=o1chMISeTC0
 - https://www.youtube.com/watch?v=PiY5QX-htB4&list=PL4cUxeGkcC9hw1g77I35ZivVLe8k2nvjB&index=11
+- https://www.fffuel.co/gggyrate/ - really cool svgs
 
 # Inspiration
 

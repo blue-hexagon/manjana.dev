@@ -19,8 +19,7 @@ better understand how it works and how you can leverage it in your own projects.
 # Key Concepts and Workflow
 
 ## Imports
-
-```python
+```python{1,4,20-22}
 import glob
 import os
 import platform

@@ -17,9 +17,7 @@ encoder, file decoder, and an execution handler. We'll break down the functional
 better understand how it works and how you can leverage it in your own projects.
 
 # Key Concepts and Workflow
-
 ## Imports
-
 ```python
 import glob
 import os
@@ -32,7 +30,6 @@ from typing import List, Tuple
 ```
 
 ## Payload Class
-
 The Payload class takes a string and applies a random "rotation" to each character, encoding the original content into a
 seemingly random sequence. This rotation is then reversed during decoding to retrieve the original payload. The process
 involves encoding and decoding each character based on a random rotation sequence.
@@ -73,7 +70,6 @@ class Payload:
 ```
 
 ## File Encoder
-
 The FileEncoder class converts the encoded payload into individual files, where each file represents a portion of the
 payload, encrypted with a specific rotation value. These files are named based on a combination of ASCII values and the
 rotation applied to them. This approach allows us to split the payload into pieces, which can then be distributed or
@@ -92,7 +88,6 @@ class FileEncoder:
             with open(f"dist/{int(file.ascii_char) + int(file.rotation)}.{file.string_index}", mode="wb+") as f:
                 rot = str("SHIFT" + str(file.rotation))
                 f.write(bytes(str(rot).encode("utf-8")))
-
 ```
 
 ## File Decoder
@@ -118,7 +113,6 @@ class FileDecoder:
         for (dirpath, dirnames, filenames) in walk("./dist"):
             for filename in filenames:
                 self.read_files.append(tuple(filename.split(".")))
-
 ```
 
 ## Executor Class

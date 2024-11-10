@@ -1,15 +1,20 @@
 import * as React from "react"
 import {graphql} from "gatsby"
-import {Container} from "@mui/material";
+import {Container, Typography} from "@mui/material";
 
 export default function BlogPostTemplate({data}) {
     const { frontmatter, html, timeToRead, tableOfContents } = data.markdownRemark
 
     return (<Container>
-        <h1>{frontmatter.title}</h1>
-        <h2>{frontmatter.date}</h2>
-        <h2>{timeToRead} min.</h2>
-        <div dangerouslySetInnerHTML={{__html: tableOfContents}}/>
+            <Typography variant="h1" gutterBottom>
+                {frontmatter.title}
+            </Typography>
+            <Typography variant="h5" color="textSecondary" gutterBottom>
+                {frontmatter.date}
+            </Typography>
+            <Typography variant="h6" color="textSecondary" gutterBottom>
+                {timeToRead} min read
+            </Typography>
         <div
             dangerouslySetInnerHTML={{__html: html}}
         />
