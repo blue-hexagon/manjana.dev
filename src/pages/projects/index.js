@@ -1,8 +1,7 @@
 import React from "react";
-import {Container, Grid, Card, CardContent, CardMedia, Typography, Box, Icon, Chip} from "@mui/material";
+import {Container, Card, CardContent, CardMedia, Typography, Box, Icon, Chip, Grid2} from "@mui/material";
 import {styled} from "@mui/system";
 import {FaPython, FaNpm} from "react-icons/fa";
-import Layout from "../../components/Layout"; // FontAwesome icons for pip/npm
 
 // Sample project data
 const projects = [
@@ -13,6 +12,7 @@ const projects = [
         link: "/projects/armada",
         tags: ["Cybersecurity", "P2P", "C2"],
         packageAvailable: "pip",
+        id: 1
     },
     {
         title: "HyperSnitch",
@@ -21,6 +21,7 @@ const projects = [
         link: "/projects/hypersnitch",
         tags: ["Monitoring", "Automation", "Web Scraping"],
         packageAvailable: "npm",
+        id: 2
     },
     {
         title: "Password Cracker",
@@ -29,6 +30,7 @@ const projects = [
         link: "/projects/password-cracker",
         tags: ["Security", "Distributed Computing"],
         packageAvailable: null,
+        id: 3
     },
 ];
 
@@ -51,7 +53,6 @@ const Tag = styled("span")(({theme}) => ({
     fontSize: "0.75rem",
 }));
 
-// IconBadge component for showing pip/npm badges
 const IconBadge = ({type}) => {
     return (
         <Box
@@ -59,72 +60,77 @@ const IconBadge = ({type}) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: 48,             // Circle width
-                height: 48,            // Circle height
-                backgroundColor: 'rgba(0, 0, 0, 0.4)',  // Opaque black background
-                borderRadius: '50%',   // Makes the Box circular
-                color: 'white',        // Icon color
+                width: 48,
+                height: 48,
+                backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                borderRadius: '50%',
+                color: 'white'
             }}
         >
-            <Icon size={"large"} sx={{color: "white", fontSize: "2rem",mb: "4px"}}>
-                {type === "pip" && <FaPython/>} {/* pip icon */}
-                {type === "npm" && <FaNpm/>} {/* npm icon */}
+            <Icon size={"large"} sx={{color: "white", fontSize: "2rem", mb: "4px"}}>
+                {type === "pip" && <FaPython/>}
+                {type === "npm" && <FaNpm/>}
             </Icon>
         </Box>
     );
 };
 
-const ProjectShowcase = () => {
+export const ProjectShowcase = ({indices}) => {
     return (
+
+        <Grid2 container spacing={4}>
+            {projects.map((project, index) => (
+                <Grid2 item key={index} size={{xs: 12, sm: 6, lg: 4}}>
+                    <StyledCard>
+                        <Box position="relative">
+                            <CardMedia
+                                component="img"
+                                height="180"
+                                image={project.image}
+                                alt={project.title}
+                                sx={{
+                                    filter: "brightness(0.75)",
+                                    "&:hover": {filter: "brightness(1)"}
+                                }}
+                            />
+                            {/* IconBadge for installable packages */}
+                            {project.packageAvailable && (
+                                <Box position="absolute" top={8} right={8}>
+                                    <IconBadge type={project.packageAvailable}/>
+                                </Box>
+                            )}
+                        </Box>
+                        <CardContent>
+                            <Typography gutterBottom variant="h5" color="#ffffff">
+                                {project.title}
+                            </Typography>
+                            <Typography variant="body2" color="#bdbdbd">
+                                {project.description}
+                            </Typography>
+                            <Box mt={2}>
+                                {project.tags.map((tag, idx) => (
+                                    <Chip key={idx} label={tag} variant="outlined"></Chip>
+                                ))}
+                            </Box>
+                        </CardContent>
+                    </StyledCard>
+                </Grid2>
+            ))}
+        </Grid2>
+    );
+};
+const Main = () => {
+    return (
+        <>
             <Container sx={{py: 5}}>
                 <Typography variant="h3" color="#ffffff" gutterBottom>
                     My Projects
                 </Typography>
-                <Typography variant="subtitle1" color="#bdbdbd" paragraph>
+                <Typography variant="subtitle1" color="#bdbdbd">
                     A selection of my work across distributed systems, cybersecurity, and automation.
                 </Typography>
-
-                <Grid container spacing={4}>
-                    {projects.map((project, index) => (
-                        <Grid item key={index} xs={12} sm={6} md={4}>
-                            <StyledCard>
-                                <Box position="relative">
-                                    <CardMedia
-                                        component="img"
-                                        height="180"
-                                        image={project.image}
-                                        alt={project.title}
-                                        sx={{
-                                            filter: "brightness(0.75)",
-                                            "&:hover": {filter: "brightness(1)"}
-                                        }}
-                                    />
-                                    {/* IconBadge for installable packages */}
-                                    {project.packageAvailable && (
-                                        <Box position="absolute" top={8} right={8}>
-                                            <IconBadge type={project.packageAvailable}/>
-                                        </Box>
-                                    )}
-                                </Box>
-                                <CardContent>
-                                    <Typography gutterBottom variant="h5" color="#ffffff">
-                                        {project.title}
-                                    </Typography>
-                                    <Typography variant="body2" color="#bdbdbd">
-                                        {project.description}
-                                    </Typography>
-                                    <Box mt={2}>
-                                        {project.tags.map((tag, idx) => (
-                                            <Chip key={idx} label={tag} variant="outlined"></Chip>
-                                        ))}
-                                    </Box>
-                                </CardContent>
-                            </StyledCard>
-                        </Grid>
-                    ))}
-                </Grid>
+                <ProjectShowcase></ProjectShowcase>
             </Container>
-    );
-};
-
-export default ProjectShowcase;
+        </>)
+}
+export default Main;

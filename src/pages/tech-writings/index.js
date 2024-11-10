@@ -139,23 +139,24 @@ export const PostsComponent = ({heading, featuredOnly}) => {
     const returnFeaturedOnly = featuredOnly || false
     return (
         <>
-            <Typography variant="h4" gutterBottom sx={{marginTop: 4}}>
-                {heading}
-            </Typography>
-
+            {(heading !== null) &&
+                <Typography variant="h4" gutterBottom sx={{marginTop: 4}}>
+                    {heading}
+                </Typography>
+            }
             <Grid2 container rowSpacing={1.5} columnSpacing={{xs: 1, sm: 2, md: 1.5}}>
                 {returnFeaturedOnly &&
                     data.allMarkdownRemark.edges
                         .filter(({node}) => node.frontmatter.featured === true)
                         .map(({node}) => (
-                            <Grid2 item size={4} xs={12} sm={6} lg={2} key={node.id}>
+                            <Grid2 item size={{xs: 12, sm: 6, lg: 4}} key={node.id}>
                                 <BlogCard data={node.frontmatter}></BlogCard>
                             </Grid2>
                         ))}
                 {!returnFeaturedOnly &&
                     data.allMarkdownRemark.edges
                         .map(({node}) => (
-                            <Grid2 size={4} item xs={12} sm={6} lg={2} key={node.id}>
+                            <Grid2 item size={{xs: 12, sm: 6, lg: 4}} key={node.id}>
                                 <BlogCard data={node.frontmatter}></BlogCard>
                             </Grid2>
                         ))}
@@ -176,7 +177,7 @@ const IndexPage = () => {
                 <PostsComponent heading={"Featured Posts"} featuredOnly={true}></PostsComponent>
             </Box>
             <Box>
-            <NewsletterForm></NewsletterForm>
+                <NewsletterForm></NewsletterForm>
 
             </Box>
         </Container>

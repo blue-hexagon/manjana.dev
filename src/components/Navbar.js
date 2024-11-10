@@ -38,10 +38,10 @@ const Navbar = () => {
 
                 {/* Mobile Menu Icon */}
                 <IconButton
-                    edge="start"
+                    edge="end"
                     color="inherit"
                     aria-label="menu"
-                    sx={{display: {md: "none"}}}
+                    sx={{display: {md: "none"},ml:"auto"}}
                     onClick={handleDrawerToggle}
                 >
                     <MenuIcon/>

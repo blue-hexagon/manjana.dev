@@ -54,7 +54,7 @@ import {
 } from "react-icons/si";
 import {DiJava} from "react-icons/di";
 import {Link} from "gatsby";
-import ProjectShowcase from "./projects";
+import {ProjectShowcase} from "./projects";
 import {PostsComponent} from "./tech-writings";
 
 //PyTest, PlayWright, PyCharm
@@ -111,6 +111,43 @@ const iconsData = [
 
 ];
 
+export function HeroImage({imageUrl}) {
+    return (
+        <Box sx={{width: "100%", display: "flex", justifyContent: "center"}}>
+            <Box sx={{width: '20%', height: '20vh'}}>
+                <img
+                    src={imageUrl}
+                    alt="Image of a person"
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        borderRadius: "17%",
+                        filter: "sepia(50%) contrast(120%) hue-rotate(90deg);"
+
+                    }}
+                />
+            </Box>
+        </Box>
+    );
+}
+
+export function GradientDivider() {
+    return (
+        <Box sx={{width: '85%', textAlign: 'center', mb: 3, ml: "auto", mr: "auto"}}>
+            <Divider
+                sx={{
+                    height: '2px',
+                    background: 'linear-gradient(to right, #ffcc00  , #ff4081)',
+                    border: 'none',
+
+                    borderRadius: "5px"
+                }}
+            />
+        </Box>
+    );
+}
+
 // Define a component that renders all icons dynamically
 const SkillsIcons = () => {
     return (
@@ -138,8 +175,11 @@ const Homepage = () => (
             and automation frameworks that empower security teams. My focus is on distributed systems, peer-to-peer
             infrastructure, and creating solutions that push the boundaries of automated security.
         </Typography>
-        <Button variant="contained" color="primary" href="#projects" sx={{m: 1}}>See My Projects</Button>
+        <Button variant="outlined" color="primary" component={Link} to="/projects" sx={{m: 1}}>See My Projects</Button>
+        <Button variant="outlined" color="primary" component={Link} to="/tech-writings" sx={{m: 1}}>See My Blog
+            Posts</Button>
         <Button variant="outlined" color="primary" href="#about" sx={{m: 1}}>Learn More About Me</Button>
+        <Typography color={"peach"} style={{textAlign:"center"}}>(Work in progress - this site is still being worked on)</Typography>
     </Container>
 );
 
@@ -166,58 +206,55 @@ const AboutMe = () => (
 
 const Projects = () => (
     <>
-        <ProjectShowcase></ProjectShowcase>
+        <Container id="projects" sx={{pt: 0}}>
+            <Typography variant="h4" sx={{mb: 1}} gutterBottom>Projects</Typography>
+            <ProjectShowcase></ProjectShowcase>
+            <Stack direction="row">
+                <Button
+                    component={Link}
+                    to="/projects"
+                    variant="outlined"
+                    color="primary"
+                    sx={{mt: 2, width: "12.5%", ml: "auto"}}
+                >
+                    See More
+                </Button>
+            </Stack>
+
+        </Container>
+
     </>
 );
 
 const Blog = () => (
     <Container id="blog" sx={{py: 5}}>
         <Typography variant="h4" gutterBottom>Technical Blog</Typography>
-        <Typography variant="body1">
-            In my blog, I share insights from my work in cy bersecurity, deep dives into distributed systems, and
-            technical guides on everything from P2P architecture to pentesting automation.
-        </Typography>
-        <ul>
-            <li>Building Decentralized Command-and-Control Architectures for Cybersecurity</li>
-            <li>Using pytest for Distributed Testing in Cybersecurity</li>
-            <li>Fast Flux DNS and its Applications in Threat Simulation</li>
-        </ul>
-        <PostsComponent heading={"Featured Posts"} featuredOnly={true}></PostsComponent>
+        <PostsComponent heading={null} featuredOnly={false}></PostsComponent>
         <Stack direction="row">
-        <Button
-            component={Link}
-            to="/projects"  // or "/articles", depending on your route
-            variant="outlined"
-            color="primary"
-            sx={{mt: 2, width: "100%"}}
-        >
-            See More
-        </Button>
-            </Stack>
+            <Button
+                component={Link}
+                to="/tech-writings"
+                variant="outlined"
+                color="primary"
+                sx={{mt: 2, width: "12.5%", ml: "auto"}}
+            >
+                See More
+            </Button>
+        </Stack>
 
     </Container>
 );
-
-const Resume = () => (
-    <Container id="resume" sx={{py: 5}}>
-        <Typography variant="h4" gutterBottom>Resume</Typography>
-        <Typography variant="body1" gutterBottom>
-            Download my interactive resume to get a full overview of my experience, skills, and projects in
-            cybersecurity and distributed systems development. I’m always open to interesting collaborations and new
-            opportunities.
-        </Typography>
-        <Button variant="contained" color="primary" href="your-resume-link.pdf">Download Resume</Button>
-    </Container>
-);
-
 
 const MainContainer = () => (
     <>
+        <Box sx={{marginTop: "4rem"}}></Box>
+        <HeroImage imageUrl="/graphics/avataaars.png" sx={{marginTop: "8em"}}></HeroImage>
+        <Box sx={{marginTop: "1.5rem"}}></Box>
         <Homepage/>
+        <GradientDivider></GradientDivider>
         <AboutMe/>
         <Projects/>
         <Blog/>
-        <Resume/>
     </>
 );
 
