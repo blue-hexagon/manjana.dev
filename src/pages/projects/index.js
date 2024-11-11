@@ -1,7 +1,19 @@
 import React from "react";
-import {Container, Card, CardContent, CardMedia, Typography, Box, Icon, Chip, Grid2} from "@mui/material";
+import {
+    Container,
+    Card,
+    CardContent,
+    CardMedia,
+    Typography,
+    Box,
+    Icon,
+    Chip,
+    Grid2,
+    CardActionArea
+} from "@mui/material";
 import {styled} from "@mui/system";
 import {FaPython, FaNpm} from "react-icons/fa";
+import {Link} from "gatsby";
 
 // Sample project data
 const projects = [
@@ -32,13 +44,22 @@ const projects = [
         packageAvailable: null,
         id: 3
     },
+    {
+        title: "Cheatsheet.wtf",
+        description: "An evolution of shellmagic.xyz where I added many more cheatsheets.",
+        image: "/graphics/projects/cheatsheet_wtf.png",
+        link: "https://www.cheatsheet.wtf",
+        tags: ["Bash", "Vim", "Linux", "Git"],
+        packageAvailable: null,
+        id: 4
+    },
 ];
 
 const StyledCard = styled(Card)(({theme}) => ({
     position: "relative",
     transition: "transform 0.3s, box-shadow 0.3s",
     "&:hover": {
-        transform: "scale(1.05)",
+        transform: "scale(1.00)",
         boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.3)",
     },
     backgroundColor: "#1c1c1c",
@@ -49,7 +70,7 @@ const Tag = styled("span")(({theme}) => ({
     color: "#ffffff",
     padding: "0.2rem 0.5rem",
     borderRadius: "4px",
-    marginRight: "0.3rem",
+    marginRight: "0.5rem",
     fontSize: "0.75rem",
 }));
 
@@ -100,19 +121,25 @@ export const ProjectShowcase = ({indices}) => {
                                 </Box>
                             )}
                         </Box>
-                        <CardContent>
-                            <Typography gutterBottom variant="h5" color="#ffffff">
-                                {project.title}
-                            </Typography>
-                            <Typography variant="body2" color="#bdbdbd">
-                                {project.description}
-                            </Typography>
-                            <Box mt={2}>
-                                {project.tags.map((tag, idx) => (
-                                    <Chip key={idx} label={tag} variant="outlined"></Chip>
-                                ))}
-                            </Box>
-                        </CardContent>
+                        <Link to={project.link}
+                              style={{textDecoration: 'none', color: "inherit"}}>
+                            <CardActionArea sx={{height: "100%"}}>
+                                <CardContent>
+                                    <Typography gutterBottom variant="h5" color="#ffffff">
+                                        {project.title}
+                                    </Typography>
+                                    <Typography variant="body2" color="#bdbdbd">
+                                        {project.description}
+                                    </Typography>
+                                    <Box mt={2}>
+                                        {project.tags.map((tag, idx) => (
+                                            <Chip sx={{marginRight: "4px"}} key={idx} label={tag}
+                                                  variant="outlined"></Chip>
+                                        ))}
+                                    </Box>
+                                </CardContent>
+                            </CardActionArea>
+                        </Link>
                     </StyledCard>
                 </Grid2>
             ))}

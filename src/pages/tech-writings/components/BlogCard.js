@@ -36,9 +36,9 @@ const BlogCard = ({data}) => {
                             <Stack direction="row"
                                    spacing={1}
                                    sx={{display: 'flex', flexWrap: 'wrap', alignSelf: 'center'}}>
-                                {data.categories.map((category, index) => (<Chip
+                                {data.tags.map((tag, index) => (<Chip
                                     key={index}
-                                    label={category}
+                                    label={tag}
                                     variant="outlined"
                                     color="primary"
                                     sx={{fontSize: '0.75rem'}}

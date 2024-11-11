@@ -1,3 +1,4 @@
+
 /* Base scrollbars style */
 ::-webkit-scrollbar {
   width: 12px; /* Width of the vertical scrollbar */
@@ -31,4 +32,15 @@
 * {
   scrollbar-width: thin; /* Firefox */
   scrollbar-color: #555 #222; /* Thumb and track color for Firefox */
+}
+
+::selection {
+  background-color: #4a4a4a; /* White text color */
+  color: white; /* Light blue background */
+}
+
+/* For Firefox, you may need to specify the color of the selected text separately */
+::-moz-selection {
+  background-color: #4a4a4a;
+  color: white;
 }

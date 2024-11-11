@@ -1,12 +1,10 @@
 import React, {useState} from 'react';
-import {useLocation} from '@reach/router';
 import {
     Typography, Container, Grid2, TextField, Box
 } from '@mui/material';
 import {graphql, useStaticQuery} from 'gatsby'
 import CategoriesComponent from "./components/Categories";
 import BlogCard from "./components/BlogCard";
-import HiddenSearchFormsHelper from "./components/HiddenSearchFormsHelper";
 import {Button, Alert} from "@mui/material";
 import {styled} from "@mui/system";
 
@@ -26,7 +24,7 @@ const FormContainer = styled(Container)(({theme}) => ({
 const StyledButton = styled(Button)(({theme}) => ({
     marginTop: "1rem",
     backgroundColor: "#8ab4f8",
-    color: "#ffffff",
+    color: "#000000",
     "&:hover": {
         backgroundColor: "#6a93d7",
     },
@@ -115,7 +113,7 @@ const NewsletterForm = () => {
 };
 
 
-export const PostsComponent = ({heading, featuredOnly}) => {
+const PostsComponent = ({heading, featuredOnly}) => {
 
     const data = useStaticQuery(graphql`
     query {
@@ -123,12 +121,14 @@ export const PostsComponent = ({heading, featuredOnly}) => {
         edges {
           node {
             frontmatter {
-              slug
-              title
-              date(formatString: "MMMM DD, YYYY")
-              description
-              categories
-              featured
+                  slug
+                  date(formatString: "MMMM DD, YYYY")
+                  title
+                  description
+                  categories
+                  tags
+                  featured
+                  series
             }
           }
         }

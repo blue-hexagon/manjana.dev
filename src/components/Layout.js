@@ -1,9 +1,17 @@
 import React from 'react'
 import Navbar from "./Navbar";
 import {Container, Link, Typography} from '@mui/material';
-import {Box} from "@mui/system";
+import {Box} from "@mui/material";
 import {iconsData} from "../pages";
 import {useLocation} from "@reach/router";
+import {DesignSystemComponents} from "../theme_mdx";
+import {MDXProvider} from "@mdx-js/react";
+
+const MDXDesignSystemProvider = ({children}) => (
+    <MDXProvider components={{DesignSystemComponents}}>
+        {children}
+    </MDXProvider>
+);
 
 export default function Layout({children}) {
     const location = useLocation()
@@ -12,29 +20,31 @@ export default function Layout({children}) {
         specialPage = true
     }
     return (
-        <Box sx={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
-            <Navbar></Navbar>
-            {/* Main Content */}
-            <Box sx={{flexGrow: 1, padding: 2}}>
-                <Container>
-                    {children}
-                </Container>
-            </Box>
-            {specialPage === true && <Footer2></Footer2> || (
-                <Box component="footer" style={{padding: '0.7rem 0'}}
-                     sx={{p: 2, mt: 4, backgroundColor: 'background.paper', textAlign: 'center'}}>
-                    <Typography variant="body2" color="textSecondary">
-                        © {new Date().getFullYear()} manjana/blue-hexagon &mdash; all rights reserved.
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                        Connect with me on <Link target="_blank" rel="noreferrer" underline="none"
-                                                 href="https://github.com/blue-hexagon">GitHub</Link> or&nbsp;
-                        <Link target="_blank" rel="noreferrer" underline="none"
-                              href="https://www.linkedin.com/in/your-profile">LinkedIn</Link>.
-                    </Typography>
+        <MDXDesignSystemProvider>
+            <Box sx={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
+                <Navbar></Navbar>
+                {/* Main Content */}
+                <Box sx={{flexGrow: 1, padding: 2}}>
+                    <Container>
+                        {children}
+                    </Container>
                 </Box>
-            )}
-        </Box>
+                {specialPage === true && <Footer2></Footer2> || (
+                    <Box component="footer" style={{padding: '0.7rem 0'}}
+                         sx={{p: 2, mt: 4, backgroundColor: 'background.paper', textAlign: 'center'}}>
+                        <Typography variant="body2" color="textSecondary">
+                            © {new Date().getFullYear()} manjana/blue-hexagon &mdash; all rights reserved.
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                            Connect with me on <Link target="_blank" rel="noreferrer" underline="none"
+                                                     href="https://github.com/blue-hexagon">GitHub</Link> or&nbsp;
+                            <Link target="_blank" rel="noreferrer" underline="none"
+                                  href="https://www.linkedin.com/in/your-profile">LinkedIn</Link>.
+                        </Typography>
+                    </Box>
+                )}
+            </Box>
+        </MDXDesignSystemProvider>
     )
 }
 

@@ -109,7 +109,7 @@ const theme = createTheme({
     MuiDivider: {
       styleOverrides: {
         root: {
-          background: 'linear-gradient(90deg, #00ffcc, #ff4081)', // Gradient divider for color emphasis
+          background: 'linear-gradient(to right, #ffcc00  , #ff4081)',
           height: '2px', // Slightly thicker divider
           borderRadius: '1px', // Rounded edges for a polished look
           margin: '16px 0', // Extra spacing around dividers for clarity

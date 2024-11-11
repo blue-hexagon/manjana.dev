@@ -1,23 +1,26 @@
 ---
-slug: "markdown-crashcourse"
-date: "2024-11-07"
-title: "A Crash Course into Markdown"
-description: "A basic primer into markdown that will get you rolling."
-categories: ["crashcourse","dsl"]
+slug: "python-payload-encoding"
+date: "2022-01-01"
+title: "Custom Payload Encoding and Decoding in Python"
+description: "A Deep Dive into payload encoding and decoding exploring creative ways of hiding information in plain sight"
+categories: ["stego","python","malware"]
+tags: ["steganography","python","malware"]
 featured: false
+series: ""
 ---
 
-In this article, we explore a fascinating Python script that showcases a unique approach to payload encoding and
+In this article, we explore a Python script that showcases a unique approach to payload encoding and
 decoding. This script is designed to encode Python scripts as a sequence of files, each containing small parts of the
-payload, and later decode them to reconstruct the original script. This process can be valuable in various cybersecurity
-applications, such as obfuscation techniques or distributed systems where payloads need to be delivered securely.
+payload, and later decode them to reconstruct the original script. 
 
 The script features a set of classes that handle the encoding and decoding process, including a payload generator, file
 encoder, file decoder, and an execution handler. We'll break down the functionality and the key concepts in the code to
-better understand how it works and how you can leverage it in your own projects.
+better understand how it works and finish of with a demonstration.
 
 # Key Concepts and Workflow
+
 ## Imports
+
 ```python
 import glob
 import os
@@ -30,9 +33,10 @@ from typing import List, Tuple
 ```
 
 ## Payload Class
+
 The Payload class takes a string and applies a random "rotation" to each character, encoding the original content into a
 seemingly random sequence. This rotation is then reversed during decoding to retrieve the original payload. The process
-involves encoding and decoding each character based on a random rotation sequence.
+involves encoding and decoding each character based on a random rotation sequence -  to ensure idempotency we use a fixed random seed (in this case "1").
 
 ```python
 class File:
@@ -70,10 +74,10 @@ class Payload:
 ```
 
 ## File Encoder
-The FileEncoder class converts the encoded payload into individual files, where each file represents a portion of the
+
+The FileEncoder class converts the encoded payload into individual files, where each file represents an eASCII character of the
 payload, encrypted with a specific rotation value. These files are named based on a combination of ASCII values and the
-rotation applied to them. This approach allows us to split the payload into pieces, which can then be distributed or
-stored separately.
+rotation applied to them. This approach allows us to split the payload into pieces.
 
 ```python
 class FileEncoder:
@@ -88,6 +92,7 @@ class FileEncoder:
             with open(f"dist/{int(file.ascii_char) + int(file.rotation)}.{file.string_index}", mode="wb+") as f:
                 rot = str("SHIFT" + str(file.rotation))
                 f.write(bytes(str(rot).encode("utf-8")))
+
 ```
 
 ## File Decoder
@@ -113,13 +118,14 @@ class FileDecoder:
         for (dirpath, dirnames, filenames) in walk("./dist"):
             for filename in filenames:
                 self.read_files.append(tuple(filename.split(".")))
+
 ```
 
 ## Executor Class
 
 The Executor class ties everything together. It checks whether the script is running on a supported operating system (
 Windows in this case), encodes the payload using the FileEncoder, and then decodes and executes it. The payload itself
-is a Python script that, when decoded, prints a specific flag to the console.
+is a Python script that, when decoded, prints a specific flag to the console (from the [Zen of Python](https://peps.python.org/pep-0020/)).
 
 ```python
 class Executor:
@@ -156,52 +162,28 @@ if __name__ == "__main__":
     executor.decode()
 ```
 
-# How the Code Works
-
-## The Payload Generation
-
-The payload itself is a Python script that prints out a portion of the Zen of Python (import this). The payload is first
-encoded using a random rotation method that alters each character based on a random number. This makes the payload
-harder to read or understand without decoding.
-
-## Encoding the Payload
-
-The FileEncoder class writes each encoded character into separate files, using a combination of the character's ASCII
-value and the random rotation applied to it. These files are saved in a dist directory. Each file represents a fragment
-of the encoded payload.
-
-## Decoding the Payload
-
-The FileDecoder class reads all the fragmented files, sorts them by their indices, and reconstructs the original payload
-by reversing the rotations. The reconstructed payload is then executed using Python’s exec function.
-
-## Execution
-
-The Executor class ensures that the entire process—encoding, file creation, decoding, and execution—runs smoothly. It
-first encodes the payload and writes it to disk, then decodes the files and executes the payload.
-
 # Potential Use Cases
 
 ## Obfuscation
 
-This technique can be used to obfuscate Python scripts, making it harder to analyze or reverse-engineer the payload.
+A more sophisticated version of this script/project, could be used to obfuscate Python scripts, making it harder to analyze or reverse-engineer the payload.
 
 ## Distributed Systems
 
-In scenarios where a payload needs to be split across multiple systems or devices, this method of encoding the payload
+In scenarios where a payload needs to be split across multiple systems or devices, similar concepts of encoding the payload
 into separate pieces can help facilitate secure distribution.
 
-## Secure Execution:
+## Secure Execution
 
 If you need to execute a script in a secure environment where the script's contents should not be exposed in plain text,
-this encoding and decoding mechanism can help maintain confidentiality.
+encoding and decoding mechanisms can help maintain confidentiality.
 
 # Conclusion
 
 This Python script provides a creative and technical approach to encoding and decoding payloads by leveraging file-based
-encoding, random rotation, and the ability to execute the final payload after decoding. It's a great example of how
-encoding can be used for security, obfuscation, and payload delivery. Understanding and implementing such methods can
-provide valuable insights for developing more robust and secure applications.
+encoding, random rotation, and the ability to execute the final payload after decoding. It's a poor example of how
+encoding can be used for security, obfuscation, and payload delivery, but I had some fun when I wrote it a few years ago. Understanding and implementing such methods can
+(however), provide valuable insights for developing more robust and secure applications.
 
 Feel free to explore and modify the code to fit your own use cases or to further experiment with encoding techniques in
 your cybersecurity tools and applications.
