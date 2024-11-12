@@ -2,7 +2,7 @@ import {Button, Grid2, TextField, Typography} from "@mui/material";
 import React from "react";
 
 const categories = ["React", "JavaScript", "CSS", "Web Development", "Performance"];
-const CategoriesComponent = () => {
+const CategoriesComponent = ({articlesCount}) => {
     return (<>
         <Typography variant="h6" gutterBottom sx={{marginTop: 2}}>
             Filter
@@ -12,7 +12,7 @@ const CategoriesComponent = () => {
                 <Button variant="outlined">{category}</Button>
             </Grid2>))}
             <TextField
-                label="Search Articles"
+                label={`Search ${articlesCount} Articles`}
                 variant="standard"
                 fullWidth
                 size={"medium"}

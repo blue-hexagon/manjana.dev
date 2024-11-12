@@ -5,6 +5,8 @@ import "./src/css/reset.css";
 import theme from "./src/theme";
 import "./src/css/prism-material-dark.css";
 import "prismjs/plugins/line-numbers/prism-line-numbers.css";
+import "prismjs/plugins/command-line/prism-command-line.css";
+
 import './src/css/main.css';
 import Layout from "./src/components/Layout";
 

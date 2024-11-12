@@ -18,15 +18,6 @@ import {Link} from "gatsby";
 // Sample project data
 const projects = [
     {
-        title: "Armada",
-        description: "Distributed systems pentesting tool with decentralized C2 infrastructure.",
-        image: "https://picsum.photos/id/232/600/400",
-        link: "/projects/armada",
-        tags: ["Cybersecurity", "P2P", "C2"],
-        packageAvailable: "pip",
-        id: 1
-    },
-    {
         title: "HyperSnitch",
         description: "Website monitoring tool that alerts when specific content is added or removed.",
         image: "https://picsum.photos/id/231/600/400",
@@ -34,15 +25,6 @@ const projects = [
         tags: ["Monitoring", "Automation", "Web Scraping"],
         packageAvailable: "npm",
         id: 2
-    },
-    {
-        title: "Password Cracker",
-        description: "Distributed password hash cracker built with scalability in mind.",
-        image: "https://picsum.photos/id/2/600/400",
-        link: "/projects/password-cracker",
-        tags: ["Security", "Distributed Computing"],
-        packageAvailable: null,
-        id: 3
     },
     {
         title: "Cheatsheet.wtf",
@@ -150,11 +132,11 @@ const Main = () => {
     return (
         <>
             <Container sx={{py: 5}}>
-                <Typography variant="h3" color="#ffffff" gutterBottom>
+                <Typography variant="h2" color="#ffffff" gutterBottom>
                     My Projects
                 </Typography>
-                <Typography variant="subtitle1" color="#bdbdbd">
-                    A selection of my work across distributed systems, cybersecurity, and automation.
+                <Typography sx={{pb: 2}} variant="subtitle1" color="#bdbdbd">
+                    A selection of some of my work.
                 </Typography>
                 <ProjectShowcase></ProjectShowcase>
             </Container>

@@ -140,4 +140,8 @@ also the best place to build, deploy, and host your Gatsby sites.
 # Domains
 
 - https://www.hover.com/control_panel/domain/manjana.dev
-- 
+
+
+```shell{outputLines: 2-10,12}{promptUser: alice}{promptHost: dev.localhost}
+
+```python{1,4-6,}

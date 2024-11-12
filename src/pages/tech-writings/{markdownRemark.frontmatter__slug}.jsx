@@ -7,17 +7,17 @@ export default function BlogPostTemplate({data}) {
     const {frontmatter, html, timeToRead, tableOfContents} = data.markdownRemark
 
     return (<Container>
-        <Typography variant="h1" gutterBottom>
+        <Typography variant="h1" sx={{pt:5}} gutterBottom>
             {frontmatter.title}
         </Typography>
-        <Box>
+        <Box sx={{}}>
             <Typography variant="h5" color="textSecondary" gutterBottom>
                 {frontmatter.date}
             </Typography>
             <Divider></Divider>
-            <Typography variant="h6"  color="textSecondary" gutterBottom>
-                {timeToRead} min read
-            </Typography>
+            {/*<Typography variant="h6"  color="textSecondary" gutterBottom>*/}
+            {/*     min read*/}
+            {/*</Typography>*/}
         </Box>
         <div
             dangerouslySetInnerHTML={{__html: html}}
@@ -29,7 +29,6 @@ export const query = graphql`
       query($id: String!) {
         markdownRemark(id: { eq: $id }) {
           html
-          timeToRead
           tableOfContents
           frontmatter {
                   slug

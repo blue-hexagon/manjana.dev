@@ -113,29 +113,9 @@ const NewsletterForm = () => {
 };
 
 
-const PostsComponent = ({heading, featuredOnly}) => {
+const PostsComponent = ({heading, featuredOnly, data}) => {
 
-    const data = useStaticQuery(graphql`
-    query {
-      allMarkdownRemark(sort: { fields: frontmatter___date, order: DESC }) {
-        edges {
-          node {
-            frontmatter {
-                  slug
-                  date(formatString: "MMMM DD, YYYY")
-                  title
-                  description
-                  categories
-                  tags
-                  featured
-                  series
-            }
-          }
-        }
-      }
-    }
-  `);
-    console.log(data)
+
     const returnFeaturedOnly = featuredOnly || false
     return (
         <>
@@ -168,13 +148,35 @@ const PostsComponent = ({heading, featuredOnly}) => {
 
 
 const IndexPage = () => {
+    const data = useStaticQuery(graphql`
+    query {
+      allMarkdownRemark(sort: { fields: frontmatter___date, order: DESC }) {
+      totalCount
+        edges {
+          node {
+            frontmatter {
+                  slug
+                  date(formatString: "MMMM DD, YYYY")
+                  title
+                  description
+                  categories
+                  tags
+                  featured
+                  series
+            }
+          }
+        }
+      }
+    }
+  `);
+    const count = data?.allMarkdownRemark?.totalCount || 0
     return (
         <Container>
 
-            <CategoriesComponent></CategoriesComponent>
+            <CategoriesComponent articlesCount={count}></CategoriesComponent>
             <Box my={4}>
-                <PostsComponent heading={"Recent Posts"} featuredOnly={false}></PostsComponent>
-                <PostsComponent heading={"Featured Posts"} featuredOnly={true}></PostsComponent>
+                <PostsComponent heading={"Recent Posts"} featuredOnly={false} data={data}></PostsComponent>
+                <PostsComponent heading={"Featured Posts"} featuredOnly={true} data={data}></PostsComponent>
             </Box>
             <Box>
                 <NewsletterForm></NewsletterForm>
