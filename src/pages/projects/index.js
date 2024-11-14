@@ -17,14 +17,58 @@ import {Link} from "gatsby";
 
 // Sample project data
 const projects = [
+    // {
+    //     title: "Armada",
+    //     description: "Website monitoring tool that alerts when specific content is added or removed.",
+    //     image: "https://picsum.photos/id/231/600/400",
+    //     link: "/projects/hypersnitch",
+    //     tags: ["Monitoring", "Automation", "Web Scraping"],
+    //     packageAvailable: null,
+    //     id: 2
+    // },
+    // {
+    //     title: "LendIT",
+    //     description: "Website monitoring tool that alerts when specific content is added or removed.",
+    //     image: "https://picsum.photos/id/231/600/400",
+    //     link: "/projects/hypersnitch",
+    //     tags: ["...",],
+    //     packageAvailable: null,
+    //     id: 6
+    // },
     {
         title: "HyperSnitch",
-        description: "Website monitoring tool that alerts when specific content is added or removed.",
-        image: "https://picsum.photos/id/231/600/400",
+        description: "An auto-deployable website multi-monitoring tool – with an integrated SMTP server – that alerts when specific strings is added or removed from a website.",
+        image: "/graphics/projects/hypersnitch.png",
         link: "/projects/hypersnitch",
         tags: ["Monitoring", "Automation", "Web Scraping"],
-        packageAvailable: "npm",
+        packageAvailable: null,
+        id: 0
+    },
+    {
+        title: "JHHuse",
+        description: "JhHuse.dk is a website for a homeowner association, providing document features and member information updates.",
+        image: "/graphics/projects/jhhuse_dk.png",
+        link: "https://www.jhhuse.dk/",
+        tags: ["Web Application"],
+        packageAvailable: null,
+        id: 1
+    }, {
+        title: "WinScraper",
+        description: "A combined CLI tool and library used for collecting information about Windows devices.",
+        image: "/graphics/projects/winscraper.png",
+        link: "/projects/hypersnitch",
+        tags: ["Monitoring", "Automation", "Web Scraping", "Postfix", "SMTP"],
+        packageAvailable: null,
         id: 2
+    },
+    {
+        title: "BashLAMP",
+        description: "A Bash script that sets up a Rocky Linux LAMP server with Wordpress and a SSL configured FTP server",
+        image: "/graphics/projects/bashlamp.png",
+        link: "https://github.com/blue-hexagon/BashLAMP",
+        tags: ["Bash", "LAMP", "vsftpd", "Linux"],
+        packageAvailable: null,
+        id: 3
     },
     {
         title: "Cheatsheet.wtf",
@@ -34,6 +78,23 @@ const projects = [
         tags: ["Bash", "Vim", "Linux", "Git"],
         packageAvailable: null,
         id: 4
+    },
+        {
+        title: "TS-Calculator",
+        description: "A custom keyboard/GUI controlled calculator written (almost) from scratch in TypeScript.",
+        image: "/graphics/projects/ts_calculator.gif",
+        link: "https://github.com/blue-hexagon/TS-Calculator",
+        tags: ["TypeScript", "Webpack"],
+        packageAvailable: null,
+        id: 4
+    },{
+        title: "ShellMagic.Xyz",
+        description: "A Bash cheatsheet – my first website (kind of).",
+        image: "/graphics/projects/shellmagic_xyz.png",
+        link: "https://web.archive.org/web/20200411230156/https:/shellmagic.xyz/",
+        tags: ["Bash", "Webarchived"],
+        packageAvailable: null,
+        id: 5
     },
 ];
 

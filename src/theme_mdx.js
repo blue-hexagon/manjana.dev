@@ -1,10 +1,12 @@
 import React from 'react';
 import {Typography, Link, Box, Divider} from '@mui/material';
 
-const H1 = (props) => (
+export const H1 = ({children, ...props}) => (
     <>
-        <Typography variant="h6" gutterBottom {...props} />
-        <Divider></Divider>
+        <h6 sx={{color: "green"}} variant="h6" gutterBottom {...props}>
+            {children}
+        </h6>
+        <Divider sx={{marginBottom: 2}}/>
     </>
 );
 
@@ -41,5 +43,4 @@ export const DesignSystemComponents = {
     p: Paragraph,
     a: CustomLink,
     code: Code,
-    // You can add more elements here like blockquote, img, ul, etc.
 };

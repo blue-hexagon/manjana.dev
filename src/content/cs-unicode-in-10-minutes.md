@@ -1,0 +1,134 @@
+---
+slug: "ten-minutes-of-unicode"
+date: "2024-11-13"
+title: "10 Minutes of Unicode"
+description: "Explore how Unicode encodes text for consistent representation of characters across multiple platforms and languages."
+categories: [""]
+tags: ["Unicode", "Character Encoding"]
+featured: false
+series: ""
+---
+import {HeroImage} from "../pages/index";
+<HeroImage imageUrl="/graphics/logo.svg" sx={{marginTop: "4em"}}></HeroImage>
+
+# Unicode & The Unicode Standard
+Unicode (formally, the Unicode Standard) is a framework for encoding, representing, and managing text on digital systems. Maintained by the Unicode Consortium, Unicode currently defines nearly 150,000 characters across a wide variety of scripts and symbols. Unicode assigns each character a code point, a unique number, but it’s essential to remember that Unicode itself is not an encoding; it’s a map of code points that encodings like UTF-8, UTF-16, and UTF-32 then translate into bytes.
+
+As of Unicode v15.0, the standard includes 161 scripts—some used by only one language and others by multiple languages. Unicode supports current and historic scripts, including extinct languages.
+
+# Clarification on Glyphs vs. Characters
+It’s common to refer to characters as "glyphs," but technically a glyph is the visual representation of a character and can vary depending on the font.
+
+# What is a Script?
+In Unicode, a script is a set of characters and symbols used for writing one or more languages. For example:
+- Basic Latin script spans code points U+0000 to U+007F and includes the English alphabet.
+- Cyrillic script spans U+0400 to U+04FF and includes characters for Russian and related languages.
+
+Some scripts, like Armenian, represent only one language, while others, like Latin, are used by multiple languages, including English, French, and Vietnamese.
+
+# The Era Before Unicode
+Before Unicode, text encoding was fragmented into various character encodings specific to languages or regions (e.g., ASCII, ISO 8859, and Windows-1252). These encoding standards often conflicted, resulting in garbled text when transferred across systems that used different encoding schemes.
+
+For example:
+- ASCII uses one 8-bit byte per character, but its code points cover only the basic Latin alphabet and control characters.
+- Extended standards, like ISO 8859 and Windows-1252, add characters but remain limited by encoding space, often overlapping in ways that caused compatibility issues.
+
+Unicode was created to unify these encoding standards into a single, comprehensive system to represent most of the world's languages.
+
+# I/O, Bytes & Encodings
+## Why There’s No Such Thing as "Plain Text"
+When dealing with text as bytes, knowing the encoding used to generate those bytes is crucial. Text without encoding context is meaningless to a computer, as bytes are just binary data until interpreted by an encoding scheme.
+
+This is especially true in I/O operations. When a text file is sent from computer A in Japan to computer B in the USA, we need the correct encoding to interpret the byte stream properly.
+
+## How Encoding is Determined
+Encoding is often specified by context:
+- Over the internet, it’s specified in HTTP headers (e.g., "Content-Type: text/html; charset=UTF-8").
+- In HTML or XML files, it appears in metadata (\<meta charset="UTF-8"\>).
+
+When encoding isn’t specified, heuristics can help, but they are unreliable. Always specify encoding to avoid misinterpretation.
+
+# How UTF-8 Works
+UTF-8 is a variable-length encoding that represents Unicode code points in 1 to 4 bytes. It’s backward-compatible with ASCII, meaning ASCII text is also valid UTF-8 text.
+
+Example:
+- The letter "A" (code point U+0041) in UTF-8 is encoded as a single byte (0x41).
+
+UTF-8 is widely used on the web and is often the default encoding in systems, programming languages, and applications.
+
+# Notes on Encoding Variants
+- UTF-16 uses 2 or 4 bytes per character, which can be beneficial for languages with many non-ASCII characters but has disadvantages in storage efficiency.
+- UTF-32 uses 4 bytes per character uniformly, offering simple processing but with significant storage costs.
+
+In most applications, UTF-8 is the best choice due to its compatibility and efficiency.
+
+# Why the Fuss About Unicode?
+Why not just stick with ASCII? Well, ASCII only covers 128 characters—barely enough for basic English. Unicode, however, aims to cover all text systems in a single, universal standard, eliminating the confusion and compatibility issues of past encoding schemes.
+
+In the early 90s, the internet accelerated Unicode’s adoption as more text needed to be exchanged globally. Unicode incorporates characters from legacy encodings (e.g., Windows-1252) to ensure backward compatibility.
+
+# Common Unicode Myths
+1. **"Unicode is 16-bit and has 65,536 characters."**
+   Incorrect. Unicode is not limited to 16 bits. While early Unicode proposals suggested a 16-bit system, Unicode today spans over 1 million code points (0 to 0x10FFFF).
+
+2. **"Unicode is an encoding."**
+   Also incorrect. Unicode is a standard, not an encoding. UTF-8, UTF-16, and UTF-32 are encoding formats that define how to represent Unicode code points in bytes.
+
+# Practical Advice for Working with Unicode
+Handling Unicode effectively requires knowing:
+- The level of representation you’re dealing with—code points, bytes, or glyphs.
+- Encoding consistency—never assume encoding, especially for data from unknown sources.
+
+**Pro-tip**: Modern systems default to UTF-8, but misinterpretations can still occur, often with ISO-8859-1 (latin1) or cp1252 on legacy systems.
+
+# Exploring Unicode in Python
+Here's a Python example to illustrate basic Unicode encoding and decoding.
+(soao)[/graphics/blog/10-minutes-of-unicode/string_to_x.png]
+
+```python
+ print(chr(0x1F64F)) # (Unicode character represented by code point U+1F64F)
+ 🙏
+ # Also, chr() creates characters from code points.
+ # We could do chr(0xFF) or chr(33)
+ print(hex(ord("🙏"))) # -> 0x1f64f
+ # ord() is the reverse operation - giving us the base10 codepoint for a specific character
+ [ord(i) for i in "hello world"] # -> [104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100]
+
+ # We can represent characters in many analogue ways
+ r"""  Escape Sequence    Meaning                                             How To Express "a"
+     "\ooo"              Character with octal value ooo                      "\141"
+     "\xhh"              Character with hex value hh                         "\x61"
+     "\N{name}"          Character named name in the Unicode database        "\N{LATIN SMALL LETTER A}"
+     "\uxxxx"            Character with 16-bit (2-byte) hex value xxxx       "\u0061"
+     "\Uxxxxxxxx"        Character with 32-bit (4-byte) hex value xxxxxxxx   "\U00000061"
+ """
+ print(
+     "a" ==
+     "\x61" ==
+     "\N{LATIN SMALL LETTER A}" ==
+     "\u0061" ==
+     "\U00000061"
+     ) # Prints `True` as they are all identical
+ # bin, hex and oct are only representations, not a fundamental change in the input.
+     >>> import unicodedata
+ >>> unicodedata.name("€")
+ 'EURO SIGN'
+ >>> unicodedata.lookup("EURO SIGN")
+ '€'
+ str(b"\xc2\xbc cup of flour", "utf-8") # -> '¼ cup of flour'
+ str(0xc0ffee) # -> '12648430'
+
+ text = "Hello, Unicode! 🌍"
+ utf8_encoded = text.encode('utf-8')
+ print(f"UTF-8 Encoded: {utf8_encoded}")
+ utf8_decoded = utf8_encoded.decode('utf-8')
+ print(f"Decoded Text: {utf8_decoded}")
+
+ emoji = "🤨"  # U+1F928
+ print(f"Emoji bytes in UTF-8: {emoji.encode('utf-8')}")
+```
+
+Encoding text with UTF-8 converts characters into byte representations, which is crucial for I/O operations.
+
+# Final Note on Unicode
+Working with Unicode can seem complex, but the main takeaway is this: Unicode standardizes the representation of text across different languages and platforms. Encodings (like UTF-8) implement Unicode by translating its code points into bytes. Each character we see is not just a letter or symbol but a defined code point, encoded into bytes, and then rendered as a glyph.
