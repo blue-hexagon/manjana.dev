@@ -4,8 +4,6 @@ import {Container, Link, Typography} from '@mui/material';
 import {Box} from "@mui/material";
 import {iconsData} from "../pages";
 import {useLocation} from "@reach/router";
-import {DesignSystemComponents} from "../theme_mdx";
-import {MDXProvider} from "@mdx-js/react";
 
 export default function Layout({children}) {
     const location = useLocation()

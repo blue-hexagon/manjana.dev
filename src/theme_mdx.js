@@ -3,10 +3,10 @@ import {Typography, Link, Box, Divider} from '@mui/material';
 
 export const H1 = ({children, ...props}) => (
     <>
-        <h6 sx={{color: "green"}} variant="h6" gutterBottom {...props}>
+        <Typography sx={{color: "white"}} variant="h1" gutterBottom {...props}>
             {children}
-        </h6>
-        <Divider sx={{marginBottom: 2}}/>
+        </Typography>
+        <Divider sx={{background: 'linear-gradient(to right, #ffcc00  , #ff4081)', height: '2px',borderRadius: '1px',margin: '16px 0'}}/>
     </>
 );
 
@@ -28,7 +28,7 @@ const CustomLink = (props) => (
 
 const Code = (props) => (
     <Box component="pre" sx={{
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#851d1d',
         padding: '16px',
         borderRadius: '8px',
         overflow: 'auto',

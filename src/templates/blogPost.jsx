@@ -3,10 +3,11 @@ import {graphql} from "gatsby"
 import {Container, Divider, Typography} from "@mui/material";
 import {Box} from "@mui/material";
 import {MDXProvider} from "@mdx-js/react";
-import {DesignSystemComponents} from "../../theme_mdx";
+import {DesignSystemComponents} from "../theme_mdx";
 
 export default function BlogPostTemplate({data}) {
-    const {frontmatter, html, timeToRead, tableOfContents} = data.markdownRemark
+    console.log(data)
+    const {frontmatter, body} = data.mdx
 
     return (<Container>
         <Typography variant="h1" sx={{pt: 5}} gutterBottom>
@@ -22,28 +23,26 @@ export default function BlogPostTemplate({data}) {
             {/*</Typography>*/}
         </Box>
         <MDXProvider components={DesignSystemComponents}>
-            <div
-                dangerouslySetInnerHTML={{__html: html}}
-            />
+            <div dangerouslySetInnerHTML={{__html: body}}/>
+            {body}
         </MDXProvider>
     </Container>)
 }
-
 export const query = graphql`
-      query($id: String!) {
-        markdownRemark(id: { eq: $id }) {
-          html
+ query($slug: String!) {
+      mdx(frontmatter: { slug: { eq: $slug } }) {
+          body
           tableOfContents
           frontmatter {
-                  slug
-                  date(formatString: "MMMM DD, YYYY")
-                  title
-                  description
-                  categories
-                  tags
-                  featured
-                  series
+            slug
+            date(formatString: "MMMM DD, YYYY")
+            title
+            description
+            categories
+            tags
+            featured
+            series
           }
         }
-      }
-    `
+  }
+`;

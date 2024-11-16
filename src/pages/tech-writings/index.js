@@ -126,18 +126,18 @@ const PostsComponent = ({heading, featuredOnly, data}) => {
             }
             <Grid2 container rowSpacing={1.5} columnSpacing={{xs: 1, sm: 2, md: 1.5}}>
                 {returnFeaturedOnly &&
-                    data.allMarkdownRemark.edges
+                    data.allMdx.edges
                         .filter(({node}) => node.frontmatter.featured === true)
                         .map(({node}) => (
                             <Grid2 item size={{xs: 12, sm: 6, lg: 4}} key={node.id}>
-                                <BlogCard data={node.frontmatter}></BlogCard>
+                                <BlogCard data={node}></BlogCard>
                             </Grid2>
                         ))}
                 {!returnFeaturedOnly &&
-                    data.allMarkdownRemark.edges
+                    data.allMdx.edges
                         .map(({node}) => (
                             <Grid2 item size={{xs: 12, sm: 6, lg: 4}} key={node.id}>
-                                <BlogCard data={node.frontmatter}></BlogCard>
+                                <BlogCard data={node}></BlogCard>
                             </Grid2>
                         ))}
 
@@ -149,27 +149,32 @@ const PostsComponent = ({heading, featuredOnly, data}) => {
 
 const IndexPage = () => {
     const data = useStaticQuery(graphql`
-    query {
-      allMarkdownRemark(sort: { fields: frontmatter___date, order: DESC }) {
+  query {
+    allMdx {
       totalCount
-        edges {
-          node {
-            frontmatter {
-                  slug
-                  date(formatString: "MMMM DD, YYYY")
-                  title
-                  description
-                  categories
-                  tags
-                  featured
-                  series
-            }
+      edges {
+        node {
+          id
+          body
+          fields {
+            slug
+          }
+          frontmatter {
+            slug
+            date(formatString: "MMMM DD, YYYY")
+            title
+            description
+            categories
+            tags
+            featured
+            series
           }
         }
       }
     }
-  `);
-    const count = data?.allMarkdownRemark?.totalCount || 0
+  }
+`);
+    const count = data?.allMdx?.totalCount || 0
     return (
         <Container>
 
