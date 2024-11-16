@@ -92,38 +92,6 @@ Here's a Python example to illustrate basic Unicode encoding and decoding.
  # ord() is the reverse operation - giving us the base10 codepoint for a specific character
  [ord(i) for i in "hello world"] # -> [104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100]
 
- # We can represent characters in many analogue ways
- r"""  Escape Sequence    Meaning                                             How To Express "a"
-     "\ooo"              Character with octal value ooo                      "\141"
-     "\xhh"              Character with hex value hh                         "\x61"
-     "\N{name}"          Character named name in the Unicode database        "\N{LATIN SMALL LETTER A}"
-     "\uxxxx"            Character with 16-bit (2-byte) hex value xxxx       "\u0061"
-     "\Uxxxxxxxx"        Character with 32-bit (4-byte) hex value xxxxxxxx   "\U00000061"
- """
- print(
-     "a" ==
-     "\x61" ==
-     "\N{LATIN SMALL LETTER A}" ==
-     "\u0061" ==
-     "\U00000061"
-     ) # Prints `True` as they are all identical
- # bin, hex and oct are only representations, not a fundamental change in the input.
-     >>> import unicodedata
- >>> unicodedata.name("€")
- 'EURO SIGN'
- >>> unicodedata.lookup("EURO SIGN")
- '€'
- str(b"\xc2\xbc cup of flour", "utf-8") # -> '¼ cup of flour'
- str(0xc0ffee) # -> '12648430'
-
- text = "Hello, Unicode! 🌍"
- utf8_encoded = text.encode('utf-8')
- print(f"UTF-8 Encoded: {utf8_encoded}")
- utf8_decoded = utf8_encoded.decode('utf-8')
- print(f"Decoded Text: {utf8_decoded}")
-
- emoji = "🤨"  # U+1F928
- print(f"Emoji bytes in UTF-8: {emoji.encode('utf-8')}")
 ```
 
 Encoding text with UTF-8 converts characters into byte representations, which is crucial for I/O operations.

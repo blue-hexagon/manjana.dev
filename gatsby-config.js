@@ -44,24 +44,24 @@ module.exports = {
         {
             resolve: `gatsby-source-filesystem`,
             options: {
-                name: 'content',
-                path: `${__dirname}/src/content/`,
-            },
-        },
-        {
-            resolve: `gatsby-plugin-page-creator`,
-            options: {
-                path: `${__dirname}/src/content`,
-
+                name: 'pages',
+                path: `${__dirname}/src/pages/`,
             },
         },
         // {
-        // resolve: `gatsby-plugin-page-creator`,
-        // options: {
-        //     path: `${__dirname}/src/pages`,
+        //     resolve: `gatsby-plugin-page-creator`,
+        //     options: {
+        //         path: `${__dirname}/src/content`,
         //
+        //     },
         // },
-        // },
+        {
+        resolve: `gatsby-plugin-page-creator`,
+        options: {
+            path: `${__dirname}/src/pages`,
+
+        },
+        },
 
     ],
 };
