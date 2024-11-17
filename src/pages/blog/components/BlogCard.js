@@ -7,11 +7,11 @@ const BlogCard = ({data}) => {
     if (!data) {
         return null; // Or render some placeholder/error message
     }
-    const slug = data.fields?.slug || "no-slug";
+    const slug = data.frontmatter?.slug || "no-slug";
     return (<Card sx={{
         maxWidth: 400, borderRadius: 2, boxShadow: 5, display: 'flex', flexDirecton: 'column', height: "100%"
     }}>
-        <Link to={`${slug}`} style={{textDecoration: 'none', color: "inherit"}}>
+        <Link to={`/${slug}`} style={{textDecoration: 'none', color: "inherit"}}>
             <CardActionArea sx={{height: "100%"}}>
                 <CardContent
                     sx={{display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%"}}>

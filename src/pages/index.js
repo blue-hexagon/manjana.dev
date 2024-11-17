@@ -56,7 +56,7 @@ import {
 import {DiJava} from "react-icons/di";
 import {Link} from "gatsby";
 import {ProjectShowcase} from "./projects";
-import {PostsComponent} from "./tech-writings";
+import {PostsComponent} from "./blog";
 
 //PyTest, PlayWright, PyCharm
 const CategoryEnum = {
@@ -179,7 +179,7 @@ const Homepage = () => (
         </Typography>
         <GradientDivider></GradientDivider>
         <Button variant="outlined" color="primary" component={Link} to="/projects" sx={{m: 1}}>See My Projects</Button>
-        <Button variant="outlined" color="primary" component={Link} to="/tech-writings" sx={{m: 1}}>See My Blog
+        <Button variant="outlined" color="primary" component={Link} to="/blog" sx={{m: 1}}>See My Blog
             Posts</Button>
         <Typography fontSize={"12px"} color={"rgb(70,70,70)"} style={{textAlign: "center"}}>(Work in progress - this site is still being worked
             on)</Typography>
@@ -244,7 +244,7 @@ const Blog = () => (
         <Stack direction="row">
             <Button
                 component={Link}
-                to="/tech-writings"
+                to="/blog"
                 variant="outlined"
                 color="primary"
                 sx={{mt: 2, width: "12.5%", ml: "auto"}}

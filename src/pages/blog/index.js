@@ -156,9 +156,6 @@ const IndexPage = () => {
         node {
           id
           body
-          fields {
-            slug
-          }
           frontmatter {
             slug
             date(formatString: "MMMM DD, YYYY")

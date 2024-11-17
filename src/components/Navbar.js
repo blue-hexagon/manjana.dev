@@ -15,7 +15,7 @@ const Navbar = () => {
     // Define your menu items
     const menuItems = [{text: "Home", link: "/"}, {text: "Projects", link: "/projects"}, {
         text: "Writings",
-        link: "/tech-writings"
+        link: "/blog"
     }, {text: "Contact", link: "/contact"}];
 
     return (<AppBar position="static">
