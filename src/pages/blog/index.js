@@ -182,19 +182,22 @@ const IndexPage = () => {
     const categoryArray = Array.from(uniqueCategories);
 
     return (
-        <Container>
+        <>
+            <Container>
 
-            <CategoriesComponent categories={categoryArray} articlesCount={count}></CategoriesComponent>
-            <Box my={4}>
-                <PostsComponent heading={"Recent Posts"} featuredOnly={false} data={data}></PostsComponent>
-                <PostsComponent heading={"Featured Posts"} featuredOnly={true} data={data}></PostsComponent>
-            </Box>
-            <Box>
-                <NewsletterForm></NewsletterForm>
+                <CategoriesComponent categories={categoryArray} articlesCount={count}></CategoriesComponent>
+                <Box my={4}>
+                    <PostsComponent heading={"Recent Posts"} featuredOnly={false} data={data}></PostsComponent>
+                    <PostsComponent heading={"Featured Posts"} featuredOnly={true} data={data}></PostsComponent>
+                </Box>
+                <Box>
+                    <NewsletterForm></NewsletterForm>
 
-            </Box>
-        </Container>
-    );
+                </Box>
+            </Container>
+        </>
+    )
+        ;
 };
 
 export default IndexPage

@@ -17,7 +17,7 @@ module.exports = {
         {
             resolve: `gatsby-plugin-mdx`,
             options: {
-                extensions: [`.mdx`, `.md`],
+                extensions: [".mdx", ".md"],
                 gatsbyRemarkPlugins: [
                     {
                         resolve: `gatsby-remark-images`,
@@ -62,8 +62,8 @@ module.exports = {
         {
             resolve: `gatsby-source-filesystem`,
             options: {
-                name: 'pages',
-                path: `${__dirname}/src/pages/`,
+                name: 'content',
+                path: `${__dirname}/src/content/blog/`,
             },
         },
         {
@@ -75,6 +75,7 @@ module.exports = {
         },
         `gatsby-plugin-sharp`, // Enables image processing
         `gatsby-transformer-sharp`, // Works with gatsby-plugin-sharp
+        `gatsby-plugin-react-helmet`
 
     ],
 };

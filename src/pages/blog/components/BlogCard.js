@@ -26,7 +26,7 @@ const BlogCard = ({data}) => {
 
                         <Typography variant="body2" color="text.primary"
                                     sx={{mb: 2, textOverflow: 'ellipsis', flexGrow: 2}}>
-                            {data.frontmatter.description.length > 120 ? data.description.slice(0, 120) + '...' : data.frontmatter.description}
+                            {data.frontmatter.description.length > 120 ? data.frontmatter.description.slice(0, 120) + '...' : data.frontmatter.description}
                         </Typography>
                     </Box>
                     <Box>
