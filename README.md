@@ -143,5 +143,7 @@ also the best place to build, deploy, and host your Gatsby sites.
 
 
 ```shell{outputLines: 2-10,12}{promptUser: alice}{promptHost: dev.localhost}
-
+```shell{outputLines: 2-10,12}{numberLines: true}{promptUser: python}
 ```python{1,4-6,}
+
+```shell{9-13}{outputLines: 2-10,12}{numberLines: true}{promptUser: python}

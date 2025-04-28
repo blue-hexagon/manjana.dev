@@ -5,7 +5,7 @@ import {Box} from "@mui/system";
 
 const BlogCard = ({data}) => {
     if (!data) {
-        return null; // Or render some placeholder/error message
+        return null;
     }
     const slug = data.frontmatter?.slug || "no-slug";
     return (<Card sx={{

@@ -51,11 +51,10 @@ const NewsletterForm = () => {
             return;
         }
 
-        // Here, you would add the function to actually handle the subscription logic
+        // TODO: add the function to actually handle the subscription logic
         // (e.g., API call to subscribe the user). This is a placeholder for now.
         setSuccess("Thank you for subscribing!");
 
-        // Reset the email field after submission
         setEmail("");
     };
 
@@ -78,10 +77,10 @@ const NewsletterForm = () => {
                     error={!!error}
                     helperText={error}
                     InputProps={{
-                        style: {color: "#ffffff"}, // Text color
+                        style: {color: "#ffffff"},
                     }}
                     InputLabelProps={{
-                        style: {color: "#bdbdbd"}, // Label color
+                        style: {color: "#bdbdbd"},
                     }}
                     sx={{
                         "& .MuiOutlinedInput-root": {
@@ -113,7 +112,7 @@ const NewsletterForm = () => {
 };
 
 
-const PostsComponent = ({heading, featuredOnly, data}) => {
+export const PostsComponent = ({heading, featuredOnly, data}) => {
 
 
     const returnFeaturedOnly = featuredOnly || false
@@ -172,10 +171,20 @@ const IndexPage = () => {
   }
 `);
     const count = data?.allMdx?.totalCount || 0
+    const uniqueCategories = new Set(); // Use a Set to avoid duplicates
+    data?.allMdx?.edges.forEach(({node}) => {
+        const categories = node.frontmatter.categories;
+
+        if (categories && categories.length > 0) {
+            categories.forEach(category => uniqueCategories.add(category)); // Add each category to the Set
+        }
+    });
+    const categoryArray = Array.from(uniqueCategories);
+
     return (
         <Container>
 
-            <CategoriesComponent articlesCount={count}></CategoriesComponent>
+            <CategoriesComponent categories={categoryArray} articlesCount={count}></CategoriesComponent>
             <Box my={4}>
                 <PostsComponent heading={"Recent Posts"} featuredOnly={false} data={data}></PostsComponent>
                 <PostsComponent heading={"Featured Posts"} featuredOnly={true} data={data}></PostsComponent>

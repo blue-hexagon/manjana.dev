@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Button, Typography, Grid } from '@mui/material';
 
 const HiddenSearchFormsHelper = () => {
-  // State to control whether the element is visible or not
+
   const [isVisible, setIsVisible] = useState(false);
 
-  // Toggle the visibility of the element
+
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   return (
@@ -20,8 +20,8 @@ const HiddenSearchFormsHelper = () => {
           <div
             style={{
               overflow: 'hidden',
-              height: isVisible ? 'auto' : '0', // Toggle height
-              transition: 'height 0.3s ease', // Smooth transition for unfolding
+              height: isVisible ? 'auto' : '0',
+              transition: 'height 0.3s ease',
             }}
           >
             <Typography variant="body1">

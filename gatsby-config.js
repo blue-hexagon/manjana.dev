@@ -18,23 +18,41 @@ module.exports = {
             resolve: `gatsby-plugin-mdx`,
             options: {
                 extensions: [`.mdx`, `.md`],
-                defaultLayouts: {
-                    default: require.resolve(`./src/templates/blogPost.jsx`),
-                },
                 gatsbyRemarkPlugins: [
+                    {
+                        resolve: `gatsby-remark-images`,
+                        options: {
+                            maxWidth: 800,
+                            linkImagesToOriginal: true,
+                            quality: 80,
+                            tracedSVG: true, // Use traced SVG for placeholders
+                        },
+                    },
                     {
                         resolve: `gatsby-remark-prismjs`,
                         options: {
                             classPrefix: "language-",
                             inlineCodeMarker: null,
                             aliases: {},
-                            showLineNumbers: true,
+                            showLineNumbers: false,
                             noInlineHighlight: false,
                             prompt: {
-                                user: ">>>",
-                                host: null,
                                 global: false,
                             },
+                            languageExtensions: [
+                                {
+                                    language: "shell",
+                                    extend: "python",
+                                    definition: {
+                                        superscript_types: /(SuperType)/,
+                                    },
+                                    insertBefore: {
+                                        function: {
+                                            superscript_keywords: /(superif|superelse)/,
+                                        },
+                                    },
+                                },
+                            ]
                         },
                     },
                 ],
@@ -48,20 +66,15 @@ module.exports = {
                 path: `${__dirname}/src/pages/`,
             },
         },
-        // {
-        //     resolve: `gatsby-plugin-page-creator`,
-        //     options: {
-        //         path: `${__dirname}/src/content`,
-        //
-        //     },
-        // },
         {
-        resolve: `gatsby-plugin-page-creator`,
-        options: {
-            path: `${__dirname}/src/pages`,
+            resolve: `gatsby-plugin-page-creator`,
+            options: {
+                path: `${__dirname}/src/pages`,
 
+            },
         },
-        },
+        `gatsby-plugin-sharp`, // Enables image processing
+        `gatsby-transformer-sharp`, // Works with gatsby-plugin-sharp
 
     ],
 };

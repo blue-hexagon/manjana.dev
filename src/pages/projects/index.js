@@ -59,8 +59,8 @@ import {
     SiVim,
     SiJest, SiWebpack
 } from "react-icons/si";
-import {IconList} from "./IconList";
-// Sample project data
+import IconList from "./IconList";
+
 const projects = [
     // {
     //     title: "Armada",
@@ -86,7 +86,7 @@ const projects = [
         image: "/graphics/projects/hypersnitch.png",
         link: "/projects/hypersnitch",
         tags: ["Monitoring", "Automation", "Web Scraping"],
-        icons: [SiPython, SiPytest,SiPlaywright,SiGit],
+        icons: [SiPython, SiPytest, SiPlaywright, SiGit],
         packageAvailable: null,
         id: 0
     },
@@ -96,7 +96,7 @@ const projects = [
         image: "/graphics/projects/jhhuse_dk.png",
         link: "https://www.jhhuse.dk/",
         tags: ["Web Application"],
-        icons: [SiPython,SiDjango, SiBootstrap,SiNginx,SiHtml5,SiDigitalocean,SiGit],
+        icons: [SiPython, SiDjango, SiBootstrap, SiNginx, SiHtml5, SiDigitalocean, SiGit],
         packageAvailable: null,
         id: 1
     }, {
@@ -105,7 +105,7 @@ const projects = [
         image: "/graphics/projects/winscraper.png",
         link: "/projects/hypersnitch",
         tags: ["Utility"],
-        icons: [SiPython,SiGit],
+        icons: [SiPython, SiGit],
         packageAvailable: null,
         id: 2
     },
@@ -115,7 +115,7 @@ const projects = [
         image: "/graphics/projects/bashlamp.png",
         link: "https://github.com/blue-hexagon/BashLAMP",
         tags: ["Bash", "LAMP", "vsftpd", "Linux"],
-        icons: [SiLinux, SiGnubash,SiGit],
+        icons: [SiLinux, SiGnubash, SiGit],
         packageAvailable: null,
         id: 3
     },
@@ -125,7 +125,7 @@ const projects = [
         image: "/graphics/projects/cheatsheet_wtf.png",
         link: "https://www.cheatsheet.wtf",
         tags: ["Bash", "Vim", "Linux", "Git"],
-        icons: [SiPython,SiFlask,SiGit,SiHeroku,SiHtml5,SiCss3,SiJavascript],
+        icons: [SiPython, SiFlask, SiGit, SiHeroku, SiHtml5, SiCss3, SiJavascript],
         packageAvailable: null,
         id: 4
     },
@@ -135,7 +135,7 @@ const projects = [
         image: "/graphics/projects/ts_calculator.gif",
         link: "https://github.com/blue-hexagon/TS-Calculator",
         tags: ["TypeScript", "Webpack"],
-        icons: [SiTypescript,SiWebpack],
+        icons: [SiTypescript, SiWebpack],
         packageAvailable: null,
         id: 4
     }, {
@@ -144,7 +144,7 @@ const projects = [
         image: "/graphics/projects/shellmagic_xyz.png",
         link: "https://web.archive.org/web/20200411230156/https:/shellmagic.xyz/",
         tags: ["Bash", "Webarchived"],
-        icons: [SiHtml5,SiCss3],
+        icons: [SiHtml5, SiCss3],
         packageAvailable: null,
         id: 5
     },
@@ -194,9 +194,9 @@ const PackageIconBadge = ({type}) => {
 export const ProjectShowcase = ({indices}) => {
     return (
 
-        <Grid2 container spacing={4} height="100%" sx={{ height: "100%", display: "flex", alignItems: "center" }}>
+        <Grid2 container spacing={4} height="100%" sx={{height: "100%", display: "flex", alignItems: "center"}}>
             {projects.map((project, index) => (
-                <Grid2 item key={index} size={{xs: 12, sm: 6, lg: 4}}  >
+                <Grid2 item key={index} size={{xs: 12, sm: 6, lg: 4}}>
                     <StyledCard>
                         <Box position="relative">
                             <CardMedia
@@ -223,7 +223,7 @@ export const ProjectShowcase = ({indices}) => {
                                         {project.title}
                                     </Typography>
                                     <Typography variant="body2" color="#bdbdbd" className="truncated-text-three">
-                                        {project.description }
+                                        {project.description}
                                     </Typography>
                                     <Divider></Divider>
                                     <Box mt={2}>
