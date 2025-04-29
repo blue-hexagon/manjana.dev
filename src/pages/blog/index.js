@@ -3,8 +3,8 @@ import {
     Typography, Container, Grid2, TextField, Box
 } from '@mui/material';
 import {graphql, useStaticQuery} from 'gatsby'
-import CategoriesComponent from "./components/Categories";
-import BlogCard from "./components/BlogCard";
+import CategoriesComponent from "../../components/blog_page/Categories";
+import BlogCard from "../../components/blog_page/BlogCard";
 import {Button, Alert} from "@mui/material";
 import {styled} from "@mui/system";
 
@@ -171,12 +171,12 @@ const IndexPage = () => {
   }
 `);
     const count = data?.allMdx?.totalCount || 0
-    const uniqueCategories = new Set(); // Use a Set to avoid duplicates
+    const uniqueCategories = new Set();
     data?.allMdx?.edges.forEach(({node}) => {
         const categories = node.frontmatter.categories;
 
         if (categories && categories.length > 0) {
-            categories.forEach(category => uniqueCategories.add(category)); // Add each category to the Set
+            categories.forEach(category => uniqueCategories.add(category));
         }
     });
     const categoryArray = Array.from(uniqueCategories);
