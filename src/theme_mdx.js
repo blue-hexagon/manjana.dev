@@ -1,7 +1,19 @@
 import React from 'react';
 import {Typography, Box} from '@mui/material';
+import {
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableContainer,
+  Paper
+} from "@mui/material";
 import ZoomableImage from "./components/ZoomableImage";
 import BlogLink from "./components/mdxblog/BlogLink";
+import StructuredNote from "./components/mdxblog/StructuredNote";
+import Term from "./components/mdxblog/GlossarySystem/Term";
+import GlossaryTable from "./components/mdxblog/GlossarySystem/GlossaryTable";
 
 const neonTextStyle = {
     color: '#00ffcc',
@@ -81,13 +93,27 @@ const Paragraph = ({children, ...props}) => (
 );
 
 
-const ZoomableImageComponent = {
-    img: (props) => <ZoomableImage sx={{
-        marginTop: 1.25,
-    }} {...props} />,
+const ZoomableImageComponent = (props) => {
+  return <ZoomableImage {...props} sx={{ marginTop: 1.25 }} />;
 };
 
+const MDXTable = ({ children, ...props }) => (
+  <TableContainer component={Paper} sx={{ my: 3 }}>
+    <Table {...props}>{children}</Table>
+  </TableContainer>
+);
 
+const MDXThead = (props) => <TableHead {...props} />;
+const MDXTbody = (props) => <TableBody {...props} />;
+const MDXTr = (props) => <TableRow {...props} />;
+
+const MDXTh = (props) => (
+  <TableCell sx={{ fontWeight: 700 }} {...props} />
+);
+
+const MDXTd = (props) => (
+  <TableCell {...props} />
+);
 
 // Export all components for MDX usage
 export const DesignSystemComponents = {
@@ -97,6 +123,15 @@ export const DesignSystemComponents = {
     h4: H4,
     p: Paragraph,
     a: BlogLink,
-    img: ZoomableImageComponent
+    img: ZoomableImageComponent,
+    table: MDXTable,
+    thead: MDXThead,
+    tbody: MDXTbody,
+    tr: MDXTr,
+    th: MDXTh,
+    td: MDXTd,
+    StructuredNote,
+    Term,
+    GlossaryTable,
 };
 

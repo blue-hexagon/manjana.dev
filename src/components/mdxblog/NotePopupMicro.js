@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Popover, Typography, Box} from '@mui/material';
 
-const NotePopup = ({triggerText, noteContent}) => {
+const NotePopupMicro = ({triggerText, noteContent}) => {
     const [anchorEl, setAnchorEl] = useState(null);
 
     const handleClick = (event) => {
@@ -71,7 +71,7 @@ const NotePopup = ({triggerText, noteContent}) => {
         </>
     );
 };
-export default NotePopup;
+export default NotePopupMicro;
 
 
 /*

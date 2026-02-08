@@ -119,7 +119,7 @@ const theme = createTheme({
             },
         },
     },
-    MuiTable: {
+     MuiTable: {
         styleOverrides: {
             root: {
                 backgroundColor: '#1b1b1b',
@@ -129,6 +129,7 @@ const theme = createTheme({
             },
         },
     },
+
     MuiTableHead: {
         styleOverrides: {
             root: {
@@ -136,6 +137,7 @@ const theme = createTheme({
             },
         },
     },
+
     MuiTableRow: {
         styleOverrides: {
             root: {
@@ -148,6 +150,7 @@ const theme = createTheme({
             },
         },
     },
+
     MuiTableCell: {
         styleOverrides: {
             root: {

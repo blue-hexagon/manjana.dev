@@ -10,12 +10,15 @@ featured: true
 series: "Understanding Systems Deeply"
 featuredImage: "ten-minutes-of-unicode.png"
 ---
+
+import StructuredNote from "../../components/mdxblog/StructuredNote";
 import {Container, Divider, Link, Paper, Typography} from "@mui/material";
 import {Box} from "@mui/system";
 import ZoomableImage from "../../components/ZoomableImage";
 import ImageWithText from "../../components/mdxblog/ImageParagraph";
 import BlogLink from "../../components/mdxblog/BlogLink";
-import NotePopup from "../../components/mdxblog/NotePopup";
+import NotePopupMicro from "../../components/mdxblog/NotePopupMicro";
+
 import ZigzagHelpText from "../../components/mdxblog/ZigzagHelpText";
 import ShadowComment from "../../components/mdxblog/ShadowComment";
 import HelperLinkText from "../../components/mdxblog/HelperLinkText";
@@ -56,6 +59,11 @@ Working with Unicode can seem complex, but the main takeaway is this: Unicode st
 - Each section tackles one key concept or layer of Unicode.
 - **Summary tables** at the end of each section help reinforce learning.
 - **Real Python code examples** are provided throughout — so you can immediately apply the concepts hands-on.
+
+<StructuredNote type="warning">
+Never trust certificate validity based only on local system clock.
+Attackers can manipulate client time.
+</StructuredNote>
 
 By the end, you’ll have a **practical, layered understanding** of Unicode — from its historical roots to its modern applications in encoding, text processing, and even security.
 
@@ -336,6 +344,7 @@ Placeholder: To Be Written
 
 # Further Reading
 https://peps.python.org/pep-0263/ PEP 263 – Defining Python Source Code Encodings
+
 
 | Encoding     | Byte Length  | Supports            | Use Cases                              |
 |--------------|--------------|---------------------|----------------------------------------|

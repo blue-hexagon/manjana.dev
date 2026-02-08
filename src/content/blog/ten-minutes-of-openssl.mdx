@@ -1,0 +1,377 @@
+---
+title: "OpenSSL Demystified"
+date: "2026-02-07"
+slug: "blog/ten-minutes-of-openssl"
+path: "/blog/ten-minutes-of-openssl"
+description: "A practical, systems-level deep dive into OpenSSL, X.509 certificates, TLS handshakes, PKI files, and trust chains — with real commands and mental models."
+categories: ["Security", "Systems Programming"]
+tags: ["OpenSSL", "TLS", "PKI", "X509", "Certificates", "Security"]
+featured: true
+series: "Understanding Systems Deeply"
+featuredImage: "ten-minutes-of-openssl.png"
+---
+
+import { Box } from "@mui/system";
+import {Divider, Typography} from "@mui/material";
+
+<Box sx={{display: 'flex', flexDirection: 'row', justifyContent: "space-between", alignItems: "end", mb: 0}}>
+    <Typography variant="h1" sx={{pt: 5}} gutterBottom>
+        # {props.pageContext.frontmatter.title}
+    </Typography>
+    <Typography variant="h5" color="textSecondary" gutterBottom>
+        {props.pageContext.frontmatter.date}
+    </Typography>
+</Box>
+<Divider sx={{
+    background: 'linear-gradient(to right, #ff4081, #1b1b1b)',
+    height: '2px',
+    width: "100%",
+    borderRadius: '4px',
+    margin: '2px 0',
+    boxShadow: '0 0 10px rgba(255, 64, 129, 0.1)' // Adds a glowing shadow effect
+}}/>
+
+<Box>
+
+</Box>
+&nbsp;
+## Ten Minutes of OpenSSL
+
+OpenSSL is a widely used open-source cryptographic toolkit and SSL/TLS implementation.
+
+It provides:
+
+- A cryptographic library used by applications
+- A CLI tool called `openssl` for working with:
+  - Certificates
+  - Keys
+  - TLS connections
+  - Hashes
+  - <Term name="SAN"></Term>
+  - Encryption and decryption
+  - CSRs and CAs
+
+
+
+If you have ever generated a TLS certificate, built a private CA, debugged a TLS handshake, created a CSR, or inspected an X.509 certificate — you were using OpenSSL directly or indirectly.
+
+This article builds a layered mental model so you can hold the TLS and PKI stack together in memory.
+
+<Divider />
+
+## Core mental model — what TLS actually does
+
+TLS performs two separate cryptographic jobs:
+
+```text
+Identity proof  = certificates and signatures
+Traffic secrecy = symmetric session encryption
+```
+
+Certificates prove identity. Session keys encrypt traffic.
+
+OpenSSL gives you the tools to build, inspect, verify, and debug both layers.
+
+---
+
+## Layer 1 — Keys: root of identity
+
+Everything starts with a key pair:
+
+```text
+private key = secret
+public key  = shareable
+```
+
+Generate a private key:
+
+```bash
+openssl genrsa -out server.key.pem 2048
+```
+
+Private keys are used to:
+
+- prove identity
+- sign handshakes
+- sign CSRs
+- sign certificates (if acting as a CA)
+
+If the private key leaks, identity is compromised.
+
+---
+
+## Layer 2 — X.509 certificates
+
+An X.509 certificate binds identity to a public key and a CA signature:
+
+```text
+identity + public key + CA signature = certificate
+```
+
+Certificates contain:
+
+- Subject identity fields
+- Public key
+- Validity window
+- Extensions (SAN, key usage, EKU)
+- Issuer
+- Signature
+
+Inspect a certificate:
+
+```bash
+openssl x509 -in cert.pem -text -noout
+```
+
+X.509 defines structure, not encoding.
+
+---
+
+## Layer 3 — DN fields vs SAN
+
+Distinguished Name (DN) fields come from directory systems (X.500 / X.509 heritage):
+
+```text
+CN = Common Name
+O  = Organization
+OU = Organizational Unit
+C  = Country
+ST = State
+L  = Locality
+```
+
+These fields are mostly descriptive.
+
+Operational identity lives in SAN (Subject Alternative Name). Example SAN values:
+
+```text
+DNS:api.example.com
+IP:10.0.0.5
+URI:spiffe://prod/payment
+```
+
+Modern TLS hostname validation checks SAN, not CN.
+
+Practical check:
+
+```bash
+openssl x509 -in cert.pem -noout -ext subjectAltName
+```
+
+---
+
+## Layer 4 — CSR: certificate signing requests
+
+A CSR is a certificate application form (standard: PKCS#10). It contains:
+
+- your public key
+- requested identity fields
+- requested SAN entries
+- your signature proving key ownership
+
+Create a CSR:
+
+```bash
+openssl req -new -key server.key.pem -out server.csr.pem
+```
+
+Flow:
+
+```text
+key -> CSR -> CA signs -> certificate
+```
+
+---
+
+## Layer 5 — Certificate Authorities (CA) and trust chains
+
+A Certificate Authority is simply a key that signs certificates.
+
+Create a lab Root CA:
+
+```bash
+openssl genrsa -out ca.key.pem 4096
+
+openssl req -x509 -new -key ca.key.pem   -out ca.crt.pem -days 3650   -subj "/C=DK/O=Lab PKI/CN=Lab Root CA"
+```
+
+Clients trust CA certificates via a trust store. Verification builds a chain:
+
+```text
+leaf (server) -> intermediate(s) -> root (trusted)
+```
+
+Verify a server cert against a CA file:
+
+```bash
+openssl verify -CAfile ca.crt.pem server.crt.pem
+```
+
+---
+
+## Layer 6 — File formats and containers (PEM, DER, PFX)
+
+X.509 is the data structure. PEM and DER are encodings.
+
+PEM is text (Base64 with headers), for example:
+
+```text
+-----BEGIN CERTIFICATE-----
+(base64)
+-----END CERTIFICATE-----
+```
+
+DER is binary ASN.1 encoding.
+
+PFX (PKCS#12) is an encrypted bundle containing:
+
+- private key
+- certificate
+- chain (optional)
+
+Convert PEM to PFX:
+
+```bash
+openssl pkcs12 -export   -inkey server.key.pem   -in server.crt.pem   -certfile ca.crt.pem   -out server.pfx
+```
+
+Inspect a PFX:
+
+```bash
+openssl pkcs12 -in server.pfx -info -noout
+```
+
+---
+
+## Layer 7 — TLS handshake: how encryption actually starts
+
+Simplified TLS handshake:
+
+```text
+client hello
+server sends certificate (and chain)
+client verifies chain
+client verifies SAN hostname match
+key agreement (usually ECDHE)
+session keys derived
+encrypted channel begins
+```
+
+Modern TLS typically uses:
+
+- ECDHE for key agreement (forward secrecy)
+- AES-GCM or ChaCha20-Poly1305 for traffic encryption (symmetric)
+
+The server private key is used to sign handshake data to prove identity (possession of the private key). Traffic is not encrypted with the server private key.
+
+---
+
+## Layer 8 — How certificates are asserted true
+
+Client validation checks commonly include:
+
+- CA signature chain validation
+- Validity window (Not Before / Not After)
+- SAN hostname match
+- Extended Key Usage (serverAuth / clientAuth)
+- Revocation status (CRL / OCSP, where used)
+- Policy constraints (in strict environments)
+
+Three proofs to remember:
+
+```text
+CA signature  -> issuer authenticity
+private key   -> possession proof (live handshake signing)
+SAN match     -> name binding to the endpoint you contacted
+```
+
+---
+
+## Layer 9 — TLS debugging with OpenSSL
+
+Most useful diagnostic command:
+
+```bash
+openssl s_client -connect host:port -servername hostname
+```
+
+It shows:
+
+- certificate chain presented by server
+- negotiated TLS version and cipher
+- verification results and errors
+
+Force hostname verification (useful for catching SAN mistakes):
+
+```bash
+openssl s_client -connect host:port -servername hostname   -verify_hostname hostname -verify_return_error
+```
+
+---
+
+## Layer 10 — Service identity: SPIFFE and SPIRE
+
+In zero-trust and service-mesh environments, identities are often expressed as URIs in SAN:
+
+```text
+URI:spiffe://domain/workload
+```
+
+- SPIFFE defines the identity format (SPIFFE ID).
+- SPIRE automates issuance and rotation of short-lived X.509 certificates containing that URI SAN.
+
+This is still X.509 and TLS; it is just modernized identity and automation on top.
+
+---
+
+# Appendix — terminology, abbreviations, and acronyms
+
+<GlossaryTable />
+
+## Quick glossary
+
+| Term      | Full name                    | What it is                            | Where you see it                  | Why it matters                            |
+|-----------|------------------------------|---------------------------------------|-----------------------------------|-------------------------------------------|
+| OpenSSL   | —                            | Crypto toolkit and TLS implementation | CLI + linked library              | Core engine behind certs, keys, TLS       |
+| `openssl` | —                            | Command-line tool                     | Terminal                          | Generate keys/certs, debug TLS            |
+| X.509     | —                            | Certificate structure standard        | Certificates                      | Defines what a cert contains              |
+| PEM       | Privacy Enhanced Mail        | Text encoding wrapper                 | `.pem`, `.crt`, `.key`            | Most common file encoding                 |
+| DER       | Distinguished Encoding Rules | Binary encoding                       | `.der`, `.cer`                    | Same data as PEM, binary                  |
+| CSR       | Certificate Signing Request  | Cert application                      | `.csr`                            | Requests identity + proves key possession |
+| DN        | Distinguished Name           | Subject identity fields               | `Subject:` line                   | Descriptive identity                      |
+| SAN       | Subject Alternative Name     | Identity extension                    | `X509v3 Subject Alternative Name` | Operational identity for hostname checks  |
+| CA        | Certificate Authority        | Cert signer                           | Root/intermediate certs           | Signs certs; anchors trust                |
+| PFX / P12 | PKCS#12 container            | Encrypted bundle                      | Windows, browsers                 | Key + cert + chain in one file            |
+
+## DN field reference
+
+| Field | Full name           | Meaning             | Example          | Used for              |
+|-------|---------------------|---------------------|------------------|-----------------------|
+| CN    | Common Name         | Human-readable name | `mqtt.lab.local` | Legacy hostname field |
+| O     | Organization        | Company/org         | `AgriTech`       | Metadata              |
+| OU    | Organizational Unit | Department/team     | `IoT`            | Metadata              |
+| C     | Country             | ISO country code    | `DK`             | Metadata              |
+| ST    | State/Province      | Region              | `Zealand`        | Metadata              |
+| L     | Locality            | City                | `Ringsted`       | Metadata              |
+
+## SAN identity types
+
+| SAN entry | Meaning                    | When used                         |
+|-----------|----------------------------|-----------------------------------|
+| DNS       | Hostname identity          | Most TLS clients (HTTPS, MQTT)    |
+| IP        | IP identity                | When connecting by IP address     |
+| URI       | Structured identity string | Service identity systems (SPIFFE) |
+
+
+| Term    | Full name                    | What it is                            | Where you see it  | Why it matters          |
+|---------|------------------------------|---------------------------------------|-------------------|-------------------------|
+| OpenSSL | —                            | Crypto toolkit and TLS implementation | CLI and libraries | Core engine behind TLS  |
+| openssl | —                            | Command line tool                     | Terminal          | Generate keys and certs |
+| X.509   | —                            | Certificate structure standard        | Certificates      | Defines cert fields     |
+| PEM     | Privacy Enhanced Mail        | Text encoding wrapper                 | .pem files        | Most common encoding    |
+| DER     | Distinguished Encoding Rules | Binary encoding                       | .der files        | Binary form of cert     |
+| CSR     | Certificate Signing Request  | Certificate application               | .csr files        | Requests CA signing     |
+| DN      | Distinguished Name           | Identity field block                  | Subject field     | Descriptive identity    |
+| SAN     | Subject Alternative Name     | Identity extension                    | SAN extension     | Hostname validation     |
+| CA      | Certificate Authority        | Certificate signer                    | Root/intermediate | Trust anchor            |
+| PFX     | PKCS#12 container            | Encrypted bundle                      | .pfx files        | Key + cert bundle       |

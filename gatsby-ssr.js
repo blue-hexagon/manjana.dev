@@ -8,14 +8,17 @@ import './src/css/main.css';
 import Layout from "./src/components/Layout";
 import {MDXProvider} from "@mdx-js/react";
 import {DesignSystemComponents} from "./src/theme_mdx";
+import {TermRegistryProvider} from "./src/components/mdxblog/GlossarySystem/TermRegistry";
 
 export const wrapRootElement = ({element}) => (
-    <ThemeProvider theme={theme}>
-        <MDXProvider components={{...DesignSystemComponents}}>
-            <CssBaseline/>
-            {element}
-        </MDXProvider>
-    </ThemeProvider>
+    <TermRegistryProvider>
+        <ThemeProvider theme={theme}>
+            <MDXProvider components={{...DesignSystemComponents}}>
+                <CssBaseline/>
+                {element}
+            </MDXProvider>
+        </ThemeProvider>
+    </TermRegistryProvider>
 );
 export const wrapPageElement = ({element, props}) => {
     return <Layout {...props}>{element}</Layout>;

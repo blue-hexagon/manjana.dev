@@ -81,7 +81,7 @@ A quick look at the top-level files and directories you'll see in a typical Gats
    the [Gatsby browser APIs](https://www.gatsbyjs.com/docs/reference/config-files/gatsby-browser/) (if any). These allow
    customization/extension of default Gatsby settings affecting the browser.
 
-1. **`gatsby-config.js`**: This is the main configuration file for a Gatsby site. This is where you can specify
+1. **`gatsby-config.mjs`**: This is the main configuration file for a Gatsby site. This is where you can specify
    information about your site (metadata) like the site title and description, which Gatsby plugins you’d like to
    include, etc. (Check out the [config docs](https://www.gatsbyjs.com/docs/reference/config-files/gatsby-config/) for
    more detail).
