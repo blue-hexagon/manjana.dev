@@ -1,16 +1,20 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useMemo, useState } from "react";
 
 const TermRegistryContext = createContext(null);
 
 export const TermRegistryProvider = ({ children }) => {
-  const [terms, setTerms] = useState([]);
+  // Store resolved keys, not raw names
+  const [termKeys, setTermKeys] = useState([]);
 
-  const register = (name) => {
-    setTerms(prev => prev.includes(name) ? prev : [...prev, name]);
+  const register = (key) => {
+    if (!key) return;
+    setTermKeys((prev) => (prev.includes(key) ? prev : [...prev, key]));
   };
 
+  const value = useMemo(() => ({ termKeys, register }), [termKeys]);
+
   return (
-    <TermRegistryContext.Provider value={{ terms, register }}>
+    <TermRegistryContext.Provider value={value}>
       {children}
     </TermRegistryContext.Provider>
   );

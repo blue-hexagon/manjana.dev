@@ -1,5 +1,5 @@
 import React from 'react';
-import {Typography, Box} from '@mui/material';
+import {Typography} from '@mui/material';
 import {
   Table,
   TableHead,
@@ -13,7 +13,8 @@ import ZoomableImage from "./components/ZoomableImage";
 import BlogLink from "./components/mdxblog/BlogLink";
 import StructuredNote from "./components/mdxblog/StructuredNote";
 import Term from "./components/mdxblog/GlossarySystem/Term";
-import GlossaryTable from "./components/mdxblog/GlossarySystem/GlossaryTable";
+import GlossaryTableMDX from "./components/mdxblog/GlossarySystem/GlossaryTableMdx";
+import PageGlossaryTable from "./components/mdxblog/GlossarySystem/PageGlossaryTable";
 
 const neonTextStyle = {
     color: '#00ffcc',
@@ -132,6 +133,7 @@ export const DesignSystemComponents = {
     td: MDXTd,
     StructuredNote,
     Term,
-    GlossaryTable,
+    Glossary:GlossaryTableMDX,
+    PageGlossary:PageGlossaryTable,
 };
 

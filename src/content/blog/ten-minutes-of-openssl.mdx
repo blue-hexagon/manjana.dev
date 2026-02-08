@@ -47,7 +47,7 @@ It provides:
   - Keys
   - TLS connections
   - Hashes
-  - <Term name="SAN"></Term>
+  - <Term name="DNS" context="SAN"/>
   - Encryption and decryption
   - CSRs and CAs
 
@@ -326,52 +326,6 @@ This is still X.509 and TLS; it is just modernized identity and automation on to
 
 # Appendix — terminology, abbreviations, and acronyms
 
-<GlossaryTable />
+<PageGlossary />
 
-## Quick glossary
-
-| Term      | Full name                    | What it is                            | Where you see it                  | Why it matters                            |
-|-----------|------------------------------|---------------------------------------|-----------------------------------|-------------------------------------------|
-| OpenSSL   | —                            | Crypto toolkit and TLS implementation | CLI + linked library              | Core engine behind certs, keys, TLS       |
-| `openssl` | —                            | Command-line tool                     | Terminal                          | Generate keys/certs, debug TLS            |
-| X.509     | —                            | Certificate structure standard        | Certificates                      | Defines what a cert contains              |
-| PEM       | Privacy Enhanced Mail        | Text encoding wrapper                 | `.pem`, `.crt`, `.key`            | Most common file encoding                 |
-| DER       | Distinguished Encoding Rules | Binary encoding                       | `.der`, `.cer`                    | Same data as PEM, binary                  |
-| CSR       | Certificate Signing Request  | Cert application                      | `.csr`                            | Requests identity + proves key possession |
-| DN        | Distinguished Name           | Subject identity fields               | `Subject:` line                   | Descriptive identity                      |
-| SAN       | Subject Alternative Name     | Identity extension                    | `X509v3 Subject Alternative Name` | Operational identity for hostname checks  |
-| CA        | Certificate Authority        | Cert signer                           | Root/intermediate certs           | Signs certs; anchors trust                |
-| PFX / P12 | PKCS#12 container            | Encrypted bundle                      | Windows, browsers                 | Key + cert + chain in one file            |
-
-## DN field reference
-
-| Field | Full name           | Meaning             | Example          | Used for              |
-|-------|---------------------|---------------------|------------------|-----------------------|
-| CN    | Common Name         | Human-readable name | `mqtt.lab.local` | Legacy hostname field |
-| O     | Organization        | Company/org         | `AgriTech`       | Metadata              |
-| OU    | Organizational Unit | Department/team     | `IoT`            | Metadata              |
-| C     | Country             | ISO country code    | `DK`             | Metadata              |
-| ST    | State/Province      | Region              | `Zealand`        | Metadata              |
-| L     | Locality            | City                | `Ringsted`       | Metadata              |
-
-## SAN identity types
-
-| SAN entry | Meaning                    | When used                         |
-|-----------|----------------------------|-----------------------------------|
-| DNS       | Hostname identity          | Most TLS clients (HTTPS, MQTT)    |
-| IP        | IP identity                | When connecting by IP address     |
-| URI       | Structured identity string | Service identity systems (SPIFFE) |
-
-
-| Term    | Full name                    | What it is                            | Where you see it  | Why it matters          |
-|---------|------------------------------|---------------------------------------|-------------------|-------------------------|
-| OpenSSL | —                            | Crypto toolkit and TLS implementation | CLI and libraries | Core engine behind TLS  |
-| openssl | —                            | Command line tool                     | Terminal          | Generate keys and certs |
-| X.509   | —                            | Certificate structure standard        | Certificates      | Defines cert fields     |
-| PEM     | Privacy Enhanced Mail        | Text encoding wrapper                 | .pem files        | Most common encoding    |
-| DER     | Distinguished Encoding Rules | Binary encoding                       | .der files        | Binary form of cert     |
-| CSR     | Certificate Signing Request  | Certificate application               | .csr files        | Requests CA signing     |
-| DN      | Distinguished Name           | Identity field block                  | Subject field     | Descriptive identity    |
-| SAN     | Subject Alternative Name     | Identity extension                    | SAN extension     | Hostname validation     |
-| CA      | Certificate Authority        | Certificate signer                    | Root/intermediate | Trust anchor            |
-| PFX     | PKCS#12 container            | Encrypted bundle                      | .pfx files        | Key + cert bundle       |
+#

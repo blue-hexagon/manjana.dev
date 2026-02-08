@@ -30,12 +30,13 @@ const StyledButton = styled(Button)(({theme}) => ({
     },
 }));
 
-const NewsletterForm = () => {
+const NewsletterForm = ({ source = "blog-index" }) => {
     const [email, setEmail] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
         setSuccess("");
@@ -51,11 +52,32 @@ const NewsletterForm = () => {
             return;
         }
 
-        // TODO: add the function to actually handle the subscription logic
-        // (e.g., API call to subscribe the user). This is a placeholder for now.
-        setSuccess("Thank you for subscribing!");
+        setLoading(true);
 
-        setEmail("");
+        const formData = new FormData();
+        formData.append("email", email);
+        formData.append("source", source);
+
+        try {
+            const res = await fetch("https://formspree.io/f/xykdyazo", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    Accept: "application/json",
+                },
+            });
+
+            if (!res.ok) {
+                throw new Error("Subscription failed");
+            }
+
+            setSuccess("Thank you for subscribing!");
+            setEmail("");
+        } catch (err) {
+            setError("Something went wrong. Please try again later.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -68,7 +90,17 @@ const NewsletterForm = () => {
             </Typography>
 
             <Box component="form" onSubmit={handleSubmit} sx={{width: "100%", mt: 2}}>
+                {/* Honeypot */}
+                <input
+                    type="text"
+                    name="company"
+                    style={{ display: "none" }}
+                    tabIndex={-1}
+                    autoComplete="off"
+                />
+
                 <TextField
+                    name="email"
                     variant="outlined"
                     label="Your Email"
                     fullWidth
@@ -76,33 +108,28 @@ const NewsletterForm = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     error={!!error}
                     helperText={error}
-                    InputProps={{
-                        style: {color: "#ffffff"},
-                    }}
-                    InputLabelProps={{
-                        style: {color: "#bdbdbd"},
-                    }}
+                    InputProps={{ style: { color: "#ffffff" } }}
+                    InputLabelProps={{ style: { color: "#bdbdbd" } }}
                     sx={{
                         "& .MuiOutlinedInput-root": {
-                            "& fieldset": {
-                                borderColor: "#8ab4f8",
-                            },
-                            "&:hover fieldset": {
-                                borderColor: "#6a93d7",
-                            },
-                            "&.Mui-focused fieldset": {
-                                borderColor: "#8ab4f8",
-                            },
+                            "& fieldset": { borderColor: "#8ab4f8" },
+                            "&:hover fieldset": { borderColor: "#6a93d7" },
+                            "&.Mui-focused fieldset": { borderColor: "#8ab4f8" },
                         },
                     }}
                 />
 
-                <StyledButton type="submit" variant="contained" fullWidth>
-                    Subscribe
+                <StyledButton
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    disabled={loading}
+                >
+                    {loading ? "Subscribing…" : "Subscribe"}
                 </StyledButton>
 
                 {success && (
-                    <Alert severity="success" sx={{mt: 2}}>
+                    <Alert severity="success" sx={{ mt: 2 }}>
                         {success}
                     </Alert>
                 )}

@@ -33,14 +33,16 @@ const BlogCard = ({data}) => {
                         <Divider sx={{my: 2}}/>
                         <Box>
                             <Stack direction="row"
-                                   spacing={1}
+                                   spacing={0.1}
+                                   gap={0.9}
                                    sx={{display: 'flex', flexWrap: 'wrap', alignSelf: 'center'}}>
                                 {data.frontmatter.tags.map((tag, index) => (<Chip
+                                    size="small"
                                     key={index}
                                     label={tag}
                                     variant="outlined"
                                     color="primary"
-                                    sx={{fontSize: '0.75rem'}}
+                                    sx={{fontSize: '0.75rem', height:"2rem", px:"2px", borderRadius: "12px"}}
                                 />))}
                             </Stack>
                         </Box>
