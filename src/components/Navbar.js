@@ -20,15 +20,21 @@ const Navbar = () => {
         {text: "Knowledge", link: "/knowledge"}
     ];
 
-    return (<AppBar position="static">
-        <Toolbar>
-            <Link to={"/"} style={{textDecoration: 'none', marginRight: '16px'}}>
-                <Typography variant="h6" color={"text.primary"}
-                            component="div"
-                            sx={{flexGrow: 1, textDecoration: 'none'}}>
-                    >> manjana.dev
-                </Typography>
-            </Link>
+    return (<AppBar position="sticky">
+        <Toolbar
+            sx={{
+                minHeight: 64,        // desktop
+                '@media (max-width:600px)': {
+                    minHeight: 56,      // mobile (Material default)
+                },
+            }}
+        > <Link to={"/"} style={{textDecoration: 'none', marginRight: '16px'}}>
+            <Typography variant="h6" color={"text.primary"}
+                        component="div"
+                        sx={{flexGrow: 1, textDecoration: 'none'}}>
+                >> manjana.dev
+            </Typography>
+        </Link>
             {/* Desktop Menu */}
             <Box sx={{display: {xs: "none", md: "block"}}}>
                 {menuItems.map((item) => (

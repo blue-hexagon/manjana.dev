@@ -1,5 +1,5 @@
 ---
-title: "From ASCII to Unicode: Understanding the Foundations of Text Encoding"
+title: "From ASCII to Unicode"
 date: "2025-04-28"
 slug: "blog/ten-minutes-of-unicode"
 path: "/blog/ten-minutes-of-unicode"
@@ -9,6 +9,7 @@ tags: ["Unicode", "Character Encoding", "Text Encoding", "Python", "Security"]
 featured: true
 series: "Understanding Systems Deeply"
 featuredImage: "ten-minutes-of-unicode.png"
+glossaryPrefix: UNICODE
 ---
 
 import StructuredNote from "../../components/mdxblog/StructuredNote";
@@ -17,9 +18,6 @@ import {Box} from "@mui/system";
 import ZoomableImage from "../../components/ZoomableImage";
 import ImageWithText from "../../components/mdxblog/ImageParagraph";
 import BlogLink from "../../components/mdxblog/BlogLink";
-import NotePopupMicro from "../../components/mdxblog/NotePopupMicro";
-
-import ZigzagHelpText from "../../components/mdxblog/ZigzagHelpText";
 import ShadowComment from "../../components/mdxblog/ShadowComment";
 import HelperLinkText from "../../components/mdxblog/HelperLinkText";
 
@@ -27,8 +25,7 @@ import HelperLinkText from "../../components/mdxblog/HelperLinkText";
     <Typography variant="h1" sx={{pt: 5}} gutterBottom>
         # {props.pageContext.frontmatter.title}
     </Typography>
-    <Typography variant="h5" color="textSecondary" gutterBottom>
-        {props.pageContext.frontmatter.date}
+    <Typography variant="span" color="textSecondary" gutterBottom>
     </Typography>
 </Box>
 <Divider sx={{
@@ -39,21 +36,37 @@ import HelperLinkText from "../../components/mdxblog/HelperLinkText";
     margin: '2px 0',
     boxShadow: '0 0 10px rgba(255, 64, 129, 0.1)' // Adds a glowing shadow effect
 }}/>
-
-<Box>
-
+<Box sx={{display: 'flex', flexDirection: 'row', justifyContent: "space-between", alignItems: "end", mb: 4}}>
+<Typography variant="h2" align="left" fontStyle="italic" sx={{
+    color: '#ffcc00',
+    fontWeight: 600,
+    fontSize: '2rem',
+    paddingBottom: 0
+}}>Understanding the Foundations of Text Encoding</Typography>
+    <Typography variant="span" color="textSecondary" gutterBottom>
+        {props.pageContext.frontmatter.date}
+    </Typography>
 </Box>
-&nbsp;
-## A Deep Dive into Unicode
 
 <ImageWithText imageWidth="180px" imageSrc="/graphics/blog/10-minutes-of-unicode/New_Unicode_logo.svg.png">
-The <BlogLink href="https://www.unicode.org/standard/standard.html">Unicode Standard</BlogLink> is a universal framework for encoding, representing, and managing text across digital systems — including computers, databases, and operating systems. Introduced in 1991, and maintained by the <BlogLink href="https://www.unicode.org/consortium/consort.html">Unicode Consortium</BlogLink>, it defines more than **150,000 characters** — covering everything from modern scripts to ancient, even extinct languages.
-For example, thanks to Unicode, we can now easily render languages like <BlogLink href="https://www.cbc.ca/news/canada/thunder-bay/%E1%90%8A%E1%90%A3%E1%91%95%E1%94%9A%E1%90%A3%E1%90%A6%E1%90%83-%E1%90%81%E1%90%8F%E1%92%8B%E1%91%AD%E1%90%8D-%E1%90%85%E1%91%95%E1%90%B1%E1%93%87%E1%92%AA%E1%90%A3-%E1%93%82%E1%92%AA%E1%92%AA-%E1%90%85%E1%91%8E%E1%94%91%E1%91%AD%E1%94%91%E1%90%8D%E1%90%8F%E1%90%A3-%E1%92%B7%E1%94%A6-%E1%90%83%E1%90%A1%E1%91%BF%E1%93%AD%E1%90%A0-1.6385526" hoverText="Oji-Cree article on CBC">Oji-Cree</BlogLink> — a historically endangered language — directly in a browser. <HelperLinkText href="https://www.cbc.ca/news/canada/thunder-bay/first-person-rochelle-bragg-reclaiming-language-1.6371587" popoverText="Translation article">(translated here)</HelperLinkText>.
-<ShadowComment>It’s pretty mind-blowing that prehistoric scripts can be rendered effortlessly online, right?</ShadowComment>
+    The <BlogLink href="https://www.unicode.org/standard/standard.html">Unicode Standard</BlogLink> is a universal
+    framework for encoding, representing, and managing text across digital systems — including computers, databases, and
+    operating systems. Introduced in 1991, and maintained by the <BlogLink
+    href="https://www.unicode.org/consortium/consort.html">Unicode Consortium</BlogLink>, it defines more than **150,000
+    characters** — covering everything from modern scripts to ancient, even extinct languages.
+    For example, thanks to Unicode, we can now easily render languages like <BlogLink
+    href="https://www.cbc.ca/news/canada/thunder-bay/%E1%90%8A%E1%90%A3%E1%91%95%E1%94%9A%E1%90%A3%E1%90%A6%E1%90%83-%E1%90%81%E1%90%8F%E1%92%8B%E1%91%AD%E1%90%8D-%E1%90%85%E1%91%95%E1%90%B1%E1%93%87%E1%92%AA%E1%90%A3-%E1%93%82%E1%92%AA%E1%92%AA-%E1%90%85%E1%91%8E%E1%94%91%E1%91%AD%E1%94%91%E1%90%8D%E1%90%8F%E1%90%A3-%E1%92%B7%E1%94%A6-%E1%90%83%E1%90%A1%E1%91%BF%E1%93%AD%E1%90%A0-1.6385526"
+    hoverText="Oji-Cree article on CBC">Oji-Cree</BlogLink> — a historically endangered language — directly in a
+    browser. <HelperLinkText
+    href="https://www.cbc.ca/news/canada/thunder-bay/first-person-rochelle-bragg-reclaiming-language-1.6371587"
+    popoverText="Translation article">(translated here)</HelperLinkText>.
+    <ShadowComment>It’s pretty mind-blowing that prehistoric scripts can be rendered effortlessly online,
+        right?</ShadowComment>
 </ImageWithText>
 
-Because of its **ambition to be the final text encoding standard**, Unicode is a **layered** and **multi-faceted system**. To truly understand it, we need to explore these layers carefully — and that’s exactly what this article is designed to help you do.
-Working with Unicode can seem complex, but the main takeaway is this: Unicode standardizes the representation of text across different languages and platforms. Encodings (like UTF-8) implement Unicode by translating its code points into bytes. Each character we see is not just a letter or symbol but a defined code point, encoded into bytes, and then rendered as a glyph.
+Because of its **ambition to be the final text encoding standard**, Unicode is a **layered** and **multi-faceted system**. Working with Unicode can seem complex until you grasp the different layers, facets and the details of it; this article aims to explore this carefully by throughful analyses, and by the end of it, my goal for you is that you have a clear mental model of Unicode — what it is, why we have and how it works.
+
+The main initial takeaway is this: Unicode **standardizes** the *representation* of text across different languages and platforms. Encodings (like <Term name="UTF8" prefix="UNICODE"/>) implement Unicode by translating its code points into bytes. Each character we see is not just a letter or symbol but a defined code point, encoded into bytes, and then rendered as a glyph.
 #### **How This Deep Dive Will Work**
 
 - Each section tackles one key concept or layer of Unicode.
@@ -61,8 +74,8 @@ Working with Unicode can seem complex, but the main takeaway is this: Unicode st
 - **Real Python code examples** are provided throughout — so you can immediately apply the concepts hands-on.
 
 <StructuredNote type="warning">
-Never trust certificate validity based only on local system clock.
-Attackers can manipulate client time.
+    Never trust certificate validity based only on local system clock.
+    Attackers can manipulate client time.
 </StructuredNote>
 
 By the end, you’ll have a **practical, layered understanding** of Unicode — from its historical roots to its modern applications in encoding, text processing, and even security.

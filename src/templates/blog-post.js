@@ -53,7 +53,9 @@ export const query = graphql`
         slug
         description
         featuredImage
+        glossaryPrefix
       }
+      tableOfContents(maxDepth: 3)
     }
   }
 `;
