@@ -17,7 +17,6 @@ import {IconContext} from "react-icons";
 
 import {Link} from "gatsby";
 import {
-    SiCsharp,
     SiDart,
     SiPython,
     SiLatex,
@@ -49,9 +48,7 @@ import {
     SiReact,
     SiPycharm,
     SiPytest,
-    SiPlaywright,
     SiSqlite,
-    SiPowershell,
     SiGatsby,
     SiTerraform,
     SiGit,
@@ -86,7 +83,7 @@ const projects = [
         image: "/graphics/projects/hypersnitch.png",
         link: "/projects/hypersnitch",
         tags: ["Monitoring", "Automation", "Web Scraping"],
-        icons: [SiPython, SiPytest, SiPlaywright, SiGit],
+        icons: [SiPython, SiPytest, SiGit],
         packageAvailable: null,
         id: 0
     },

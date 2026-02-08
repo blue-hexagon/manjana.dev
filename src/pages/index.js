@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 import Typewriter from 'typewriter-effect';
 import {
-    SiCsharp,
     SiDart,
     SiPython,
     SiLatex,
@@ -43,9 +42,7 @@ import {
     SiReact,
     SiPycharm,
     SiPytest,
-    SiPlaywright,
     SiSqlite,
-    SiPowershell,
     SiGatsby,
     SiTerraform,
     SiGit,
@@ -67,7 +64,7 @@ const CategoryEnum = {
 }
 // Define an array of icon configurations
 export const iconsData = [
-    {Icon: SiCsharp, label: 'C#', level: 3, categories: []},
+    // {Icon: SiCsharp, label: 'C#', level: 3, categories: []},
     {Icon: SiDart, label: 'Dart', level: 2, categories: []},
     {Icon: DiJava, label: 'Java', level: 3, categories: []},
     {Icon: SiPython, label: 'Python', level: 4, categories: []},
@@ -84,7 +81,7 @@ export const iconsData = [
     {Icon: SiSass, label: 'Sass', level: 2, categories: []},
     {Icon: SiBootstrap, label: 'Bootstrap', level: 4, categories: []},
     {Icon: SiTailwindcss, label: 'Tailwind CSS', level: 3, categories: []},
-    {Icon: SiPlaywright, label: 'Playwright', level: 5, categories: []},
+    // {Icon: SiPlaywright, label: 'Playwright', level: 5, categories: []},
     {Icon: SiDjango, label: 'Django', level: 4, categories: []},
     {Icon: SiFlask, label: 'Flask', level: 2, categories: []},
     {Icon: SiFlutter, label: 'Flutter', level: 2, categories: []},
@@ -100,7 +97,7 @@ export const iconsData = [
     {Icon: SiDocker, label: 'Docker', level: 3, categories: []},
     {Icon: SiGithubactions, label: 'GitHub Actions', level: 2, categories: []},
     {Icon: SiLinux, label: 'Linux', level: 5, categories: []},
-    {Icon: SiPowershell, label: 'Powershell', level: 2, categories: []},
+    // {Icon: SiPowershell, label: 'Powershell', level: 2, categories: []},
     {Icon: SiDigitalocean, label: 'DigitalOcean', level: 3, categories: []},
     {Icon: SiJetbrains, label: 'JetBrains', level: 4, categories: []},
     {Icon: SiPycharm, label: 'PyCharm', level: 5, categories: []},

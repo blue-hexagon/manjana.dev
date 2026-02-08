@@ -31,9 +31,7 @@ import {
   SiReact,
   SiPycharm,
   SiPytest,
-  SiPlaywright,
   SiSqlite,
-  SiPowershell,
   SiGatsby,
   SiTerraform,
   SiGit,
@@ -43,7 +41,7 @@ import {
 } from "react-icons/si";
 
 const iconMap = {
-  SiCsharp: { icon: SiCsharp, label: "C#" },
+  // SiCsharp: { icon: SiCsharp, label: "C#" },
   SiDart: { icon: SiDart, label: "Dart" },
   SiPython: { icon: SiPython, label: "Python" },
   SiLatex: { icon: SiLatex, label: "LaTeX" },
@@ -75,9 +73,9 @@ const iconMap = {
   SiReact: { icon: SiReact, label: "React" },
   SiPycharm: { icon: SiPycharm, label: "PyCharm" },
   SiPytest: { icon: SiPytest, label: "Pytest" },
-  SiPlaywright: { icon: SiPlaywright, label: "Playwright" },
+  // SiPlaywright: { icon: SiPlaywright, label: "Playwright" },
   SiSqlite: { icon: SiSqlite, label: "SQLite" },
-  SiPowershell: { icon: SiPowershell, label: "PowerShell" },
+  // SiPowershell: { icon: SiPowershell, label: "PowerShell" },
   SiGatsby: { icon: SiGatsby, label: "Gatsby" },
   SiTerraform: { icon: SiTerraform, label: "Terraform" },
   SiGit: { icon: SiGit, label: "Git" },
