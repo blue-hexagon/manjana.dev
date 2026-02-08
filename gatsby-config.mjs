@@ -75,9 +75,6 @@ const config = {
     // ✅ Images
     "gatsby-plugin-sharp",
     "gatsby-transformer-sharp",
-
-    // ✅ Helmet
-    "gatsby-plugin-react-helmet",
   ],
 };
 

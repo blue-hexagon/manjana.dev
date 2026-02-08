@@ -9,7 +9,7 @@ import {
     Snackbar,
     Grid,
     Stack,
-    Icon
+    Icon, NoSsr
 } from '@mui/material';
 import Layout from "../components/Layout";
 import {FaNpm, FaPython} from "react-icons/fa";
@@ -189,15 +189,15 @@ const ContactMe = () => {
                         </Button>
                     </Stack>
                 </form>
-
-                {/* Success Snackbar */}
-                <Snackbar
-                    open={successMessage}
-                    autoHideDuration={4000}
-                    onClose={() => setSuccessMessage(false)}
-                    message="Your message has been sent successfully!"
-                    anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
-                />
+                <NoSsr>
+                    <Snackbar
+                        open={successMessage}
+                        autoHideDuration={4000}
+                        onClose={() => setSuccessMessage(false)}
+                        message="Your message has been sent successfully!"
+                        anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
+                    />
+                </NoSsr>
             </Box>
         </Container>
     );

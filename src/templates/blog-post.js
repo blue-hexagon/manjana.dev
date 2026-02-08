@@ -1,34 +1,52 @@
 import * as React from "react";
-import {graphql} from "gatsby";
-import {Helmet} from "react-helmet";
+import { graphql } from "gatsby";
 
-const BlogPostTemplate = ({data, children}) => {
-    const {frontmatter} = data.mdx;
+const BlogPostTemplate = ({ data, children }) => {
+  return <>{children}</>;
+};
 
-    return (
-        <>
-            <Helmet>
-                <title>{frontmatter.title} | Manjana.dev</title>
-                <meta name="description" content={frontmatter.description}/>
+export const Head = ({ data }) => {
+  const { frontmatter } = data.mdx;
 
-                <link rel="canonical" href={`https://manjana.dev/blog/${frontmatter.slug}`}/>
+  const {
+    title,
+    description,
+    slug,
+    featuredImage,
+  } = frontmatter;
 
-                <meta property="og:title" content={frontmatter.title}/>
-                <meta property="og:description" content={frontmatter.description}/>
-                <meta property="og:type" content="article"/>
-                <meta property="og:url" content={`https://manjana.dev/blog/${frontmatter.slug}`}/>
-                <meta property="og:site_name" content="Manjana.dev"/>
-                <meta property="og:image" content={`https://manjana.dev/images/${frontmatter.featuredImage}`}/>
+  const safeDescription =
+    description ??
+    "Technical articles and deep dives on systems, networking, and security.";
 
-                <meta name="twitter:card" content="summary_large_image"/>
-                <meta name="twitter:title" content={frontmatter.title}/>
-                <meta name="twitter:description" content={frontmatter.description}/>
-                <meta name="twitter:image" content={`https://manjana.dev/images/${frontmatter.featuredImage}`}/>
-                {/*<meta name="twitter:site" content="@manjana.dev"/>*/}
-            </Helmet>
-            {children}
-        </>
-    );
+  const canonicalUrl = `https://manjana.dev/blog/${slug}`;
+
+  const imageUrl = featuredImage
+    ? `https://manjana.dev/images/${featuredImage}`
+    : null;
+
+  return (
+    <>
+      <title>{title} | Manjana.dev</title>
+
+      <meta name="description" content={safeDescription} />
+      <link rel="canonical" href={canonicalUrl} />
+
+      {/* Open Graph */}
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={safeDescription} />
+      <meta property="og:type" content="article" />
+      <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:site_name" content="Manjana.dev" />
+      {imageUrl && <meta property="og:image" content={imageUrl} />}
+
+      {/* Twitter */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={safeDescription} />
+      {imageUrl && <meta name="twitter:image" content={imageUrl} />}
+    </>
+  );
 };
 
 export const query = graphql`
