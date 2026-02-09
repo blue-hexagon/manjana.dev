@@ -1,19 +1,43 @@
 import React from "react";
-import {Box, Typography} from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import ZoomableImage from "./ZoomableImage";
 
-const ImageWithText = ({imageSrc, altText, children,imageWidth="200px"}) => {
+const ImageWithText = ({
+    imageSrc,
+    altText,
+    caption,
+    children,
+    imageWidth = "200px",
+}) => {
     return (
-        <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-end', mb:"1rem"}}>
-            <Typography variant="body1" sx={{maxWidth: '100vw', textAlign: 'justify', wordBreak: 'break-word'}}>
+        <Box
+            sx={{
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "flex-end",
+                gap: "16px",
+                mb: "1rem",
+            }}
+        >
+            <Typography
+                variant="body1"
+                sx={{
+                    maxWidth: "100%",
+                    textAlign: "justify",
+                    wordBreak: "break-word",
+                }}
+            >
                 {children}
             </Typography>
-            <Box
-                component="img"
+
+            <ZoomableImage
                 src={imageSrc}
                 alt={altText}
+                caption={caption}
                 sx={{
                     maxWidth: imageWidth,
-                    marginLeft: '16px',
+                    flexShrink: 0,
+                    mt: 2,
                 }}
             />
         </Box>

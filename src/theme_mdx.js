@@ -9,21 +9,18 @@ import {
   TableContainer,
   Paper
 } from "@mui/material";
-import ZoomableImage from "./components/ZoomableImage";
+import ZoomableImage from "./components/mdxblog/ZoomableImage";
 import BlogLink from "./components/mdxblog/BlogLink";
 import StructuredNote from "./components/mdxblog/StructuredNote";
 import Term from "./components/mdxblog/GlossarySystem/Term";
 import GlossaryTableMDX from "./components/mdxblog/GlossarySystem/GlossaryTableMdx";
 import PageGlossaryTable from "./components/mdxblog/GlossarySystem/PageGlossaryTable";
+import {ArticleHeader} from "./components/mdxblog/ArticleHeader";
 
-const neonTextStyle = {
-    color: '#00ffcc',
-    textShadow: '0 0 15px rgba(0, 255, 204, 0.75)',
-    fontFamily: `'Fira Code', monospace`,
-};
+
 export const H1 = ({children, ...props}) => (
     <>
-        <Typography sx={{...neonTextStyle, fontSize: '3rem', fontWeight: 900}} variant="h1" {...props}>
+        <Typography sx={{fontSize: '3rem', fontWeight: 900}} variant="h1" {...props}>
             {children}
         </Typography>
     </>
@@ -135,5 +132,6 @@ export const DesignSystemComponents = {
     Term,
     Glossary:GlossaryTableMDX,
     PageGlossary:PageGlossaryTable,
+    ArticleHeader,
 };
 

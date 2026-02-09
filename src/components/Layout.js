@@ -11,6 +11,7 @@ import {GlossaryContext} from "./mdxblog/GlossarySystem/GlossaryContext";
 export default function Layout({children, data}) {
     const title = data?.mdx?.frontmatter?.title
     const toc = data?.mdx?.tableOfContents
+    const tocDepth = data?.mdx?.frontmatter?.tocDepth ?? 2;
     const glossaryPrefix = data?.mdx?.frontmatter?.glossaryPrefix ?? null;
     const location = useLocation()
     let specialPage = false;
@@ -22,7 +23,7 @@ export default function Layout({children, data}) {
     return (
         <Box sx={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
             <Navbar></Navbar>
-            {toc?.items && <ToCDrawer title={title} toc={toc}/>}
+            {toc?.items && <ToCDrawer title={title} toc={toc} tocDepth={tocDepth}/>}
             <Box sx={{flexGrow: 1, padding: 2}}>
                 <Container>
                     <GlossaryContext.Provider value={glossaryPrefix}>

@@ -1,5 +1,6 @@
 ---
 title: "From ASCII to Unicode"
+subtitle: "Understanding the Foundations of Text Encoding"
 date: "2025-04-28"
 slug: "blog/ten-minutes-of-unicode"
 path: "/blog/ten-minutes-of-unicode"
@@ -10,98 +11,217 @@ featured: true
 series: "Understanding Systems Deeply"
 featuredImage: "ten-minutes-of-unicode.png"
 glossaryPrefix: UNICODE
+tocDepth: 4
 ---
 
 import StructuredNote from "../../components/mdxblog/StructuredNote";
+import EncodingBoundary from "../../components/encoding-boundary/EncodingBoundary";
 import {Container, Divider, Link, Paper, Typography} from "@mui/material";
 import {Box} from "@mui/system";
-import ZoomableImage from "../../components/ZoomableImage";
+import ZoomableImage from "../../components/mdxblog/ZoomableImage";
 import ImageWithText from "../../components/mdxblog/ImageParagraph";
 import BlogLink from "../../components/mdxblog/BlogLink";
 import ShadowComment from "../../components/mdxblog/ShadowComment";
 import HelperLinkText from "../../components/mdxblog/HelperLinkText";
 
-<Box sx={{display: 'flex', flexDirection: 'row', justifyContent: "space-between", alignItems: "end", mb: 0}}>
-    <Typography variant="h1" sx={{pt: 5}} gutterBottom>
-        # {props.pageContext.frontmatter.title}
-    </Typography>
-    <Typography variant="span" color="textSecondary" gutterBottom>
-    </Typography>
-</Box>
-<Divider sx={{
-    background: 'linear-gradient(to right, #ff4081, #1b1b1b)',
-    height: '2px',
-    width: "100%",
-    borderRadius: '4px',
-    margin: '2px 0',
-    boxShadow: '0 0 10px rgba(255, 64, 129, 0.1)' // Adds a glowing shadow effect
-}}/>
-<Box sx={{display: 'flex', flexDirection: 'row', justifyContent: "space-between", alignItems: "end", mb: 4}}>
-<Typography variant="h2" align="left" fontStyle="italic" sx={{
-    color: '#ffcc00',
-    fontWeight: 600,
-    fontSize: '2rem',
-    paddingBottom: 0
-}}>Understanding the Foundations of Text Encoding</Typography>
-    <Typography variant="span" color="textSecondary" gutterBottom>
-        {props.pageContext.frontmatter.date}
-    </Typography>
-</Box>
+<ArticleHeader
+    title={props.pageContext.frontmatter.title}
+    subtitle={props.pageContext.frontmatter.subtitle}
+    date={props.pageContext.frontmatter.date}
+/>
 
-<ImageWithText imageWidth="180px" imageSrc="/graphics/blog/10-minutes-of-unicode/New_Unicode_logo.svg.png">
-    The <BlogLink href="https://www.unicode.org/standard/standard.html">Unicode Standard</BlogLink> is a universal
-    framework for encoding, representing, and managing text across digital systems — including computers, databases, and
-    operating systems. Introduced in 1991, and maintained by the <BlogLink
-    href="https://www.unicode.org/consortium/consort.html">Unicode Consortium</BlogLink>, it defines more than **150,000
-    characters** — covering everything from modern scripts to ancient, even extinct languages.
-    For example, thanks to Unicode, we can now easily render languages like <BlogLink
-    href="https://www.cbc.ca/news/canada/thunder-bay/%E1%90%8A%E1%90%A3%E1%91%95%E1%94%9A%E1%90%A3%E1%90%A6%E1%90%83-%E1%90%81%E1%90%8F%E1%92%8B%E1%91%AD%E1%90%8D-%E1%90%85%E1%91%95%E1%90%B1%E1%93%87%E1%92%AA%E1%90%A3-%E1%93%82%E1%92%AA%E1%92%AA-%E1%90%85%E1%91%8E%E1%94%91%E1%91%AD%E1%94%91%E1%90%8D%E1%90%8F%E1%90%A3-%E1%92%B7%E1%94%A6-%E1%90%83%E1%90%A1%E1%91%BF%E1%93%AD%E1%90%A0-1.6385526"
-    hoverText="Oji-Cree article on CBC">Oji-Cree</BlogLink> — a historically endangered language — directly in a
-    browser. <HelperLinkText
-    href="https://www.cbc.ca/news/canada/thunder-bay/first-person-rochelle-bragg-reclaiming-language-1.6371587"
-    popoverText="Translation article">(translated here)</HelperLinkText>.
-    <ShadowComment>It’s pretty mind-blowing that prehistoric scripts can be rendered effortlessly online,
-        right?</ShadowComment>
-</ImageWithText>
+The <BlogLink href="https://www.unicode.org/standard/standard.html">Unicode Standard</BlogLink> is a universal
+framework for encoding, representing, and managing text across digital systems — including computers, databases, and
+operating systems. Introduced in 1991, and maintained by the <BlogLink
+href="https://www.unicode.org/consortium/consort.html">Unicode Consortium</BlogLink>, it defines more than **150,000
+characters** — covering everything from modern scripts to ancient, even extinct languages.
+For example, thanks to Unicode, we can now easily render languages like <BlogLink
+href="https://www.cbc.ca/news/canada/thunder-bay/%E1%90%8A%E1%90%A3%E1%91%95%E1%94%9A%E1%90%A3%E1%90%A6%E1%90%83-%E1%90%81%E1%90%8F%E1%92%8B%E1%91%AD%E1%90%8D-%E1%90%85%E1%91%95%E1%90%B1%E1%93%87%E1%92%AA%E1%90%A3-%E1%93%82%E1%92%AA%E1%92%AA-%E1%90%85%E1%91%8E%E1%94%91%E1%91%AD%E1%94%91%E1%90%8D%E1%90%8F%E1%90%A3-%E1%92%B7%E1%94%A6-%E1%90%83%E1%90%A1%E1%91%BF%E1%93%AD%E1%90%A0-1.6385526"
+hoverText="Oji-Cree article on CBC">Oji-Cree</BlogLink> — a historically endangered language — directly in a
+browser. <HelperLinkText
+href="https://www.cbc.ca/news/canada/thunder-bay/first-person-rochelle-bragg-reclaiming-language-1.6371587"
+popoverText="Translation article">(translated here)</HelperLinkText>.
+<ShadowComment>It’s pretty mind-blowing that prehistoric scripts can be rendered effortlessly online,
+    right?</ShadowComment>
 
-Because of its **ambition to be the final text encoding standard**, Unicode is a **layered** and **multi-faceted system**. Working with Unicode can seem complex until you grasp the different layers, facets and the details of it; this article aims to explore this carefully by throughful analyses, and by the end of it, my goal for you is that you have a clear mental model of Unicode — what it is, why we have and how it works.
-
-The main initial takeaway is this: Unicode **standardizes** the *representation* of text across different languages and platforms. Encodings (like <Term name="UTF8" prefix="UNICODE"/>) implement Unicode by translating its code points into bytes. Each character we see is not just a letter or symbol but a defined code point, encoded into bytes, and then rendered as a glyph.
-#### **How This Deep Dive Will Work**
+<Typography variant="h3" fontStyle="bold">How This Deep Dive Will Work</Typography>
 
 - Each section tackles one key concept or layer of Unicode.
 - **Summary tables** at the end of each section help reinforce learning.
 - **Real Python code examples** are provided throughout — so you can immediately apply the concepts hands-on.
 
-<StructuredNote type="warning">
-    Never trust certificate validity based only on local system clock.
-    Attackers can manipulate client time.
+
+<StructuredNote type="info">
+    When a ⧫ appear next to a term, you can hover or click that word and have it lookup a structured explanation of what
+    it means, applies to, examples and more.
 </StructuredNote>
 
 By the end, you’ll have a **practical, layered understanding** of Unicode — from its historical roots to its modern applications in encoding, text processing, and even security.
 
-Let's begin our journey into the heart of how text really works - I hope you'll like it!
-<Divider></Divider>
-### Layer Zero: Pre-Unicode — ASCII and Code Pages
-#### The Era Before Unicode
+Because of its **ambition to be the final text encoding standard**, Unicode is a **layered** and **multi-faceted system**. Working with Unicode can seem complex until you grasp those different layers, facets and details; this article aims to explore this carefully by throughful analyses, and by the end of it, my goal for you is that you have a clear mental model of Unicode — what it replaced and how it functions.
 
+<Divider sx={{my: 5, mx: 2}}></Divider>
+
+## Layer Zero: Pre-Unicode — ASCII and Code Pages
+### The Era Before Unicode
+
+
+<ImageWithText
+    imageSrc="/graphics/blog/10-minutes-of-unicode/mojibake01.png"
+    altText="Example of mojibake caused by encoding mismatch"
+    caption="Mojibake: text decoded using the wrong character encoding."
+    imageWidth="200px"
+>
 Before Unicode, text encoding was fragmented into various character encodings specific to
 languages or regions (e.g., ASCII, ISO 8859, and Windows-1252). These encoding standards often conflicted,
 resulting in garbled text when transferred across systems that used different encoding schemes - a phenomenon that has its own name: *mojibake* (Japanese for "character transformation", or simply: gibberish).
+</ImageWithText>
+The main initial takeaway is this: Unicode **standardizes** the *representation* of text across different languages
+and platforms. Encodings (like <Term name="UTF8"/>) *implement* Unicode by translating its <Term name="CodePoint"
+                                                                                                 ending="s"/> into
+bytes. Each character we see is simply not just a letter or a symbol - that's its representation (aka. <Term
+name="Glyph"/>) - its true nature within the computer is a defined code point, encoded into bytes and then later
+rendered as a glyph.
 
-<ZoomableImage src="/graphics/blog/10-minutes-of-unicode/mojibake01.png" center="true"/>
-<Divider></Divider>
+<Divider sx={{my: 4, mx: 2}}></Divider>
 
-### Layer One: Unicode Core Concepts
-#### Why There’s No Such Thing as "Plain Text"
+## Layer One: Why Encoding Matters
+### Why There’s No Such Thing as "Plain Text"
 
 When dealing with text as bytes, knowing the encoding used to generate those bytes is crucial.
-
-This is especially true in I/O operations. When a text file is sent from computer A in Japan to computer B in the USA, we need the correct encoding to interpret the byte stream properly.
+This is especially true in I/O operations just take a look at the following examples:
 
 Encoding is often specified by context, for example:
 - Over the internet, it’s specified in HTTP headers (e.g., `"Content-Type: text/html; charset=UTF-8"`).
 - In HTML or XML files, it appears in metadata (`<meta charset="UTF-8">`).
+- In databases (`ENCODING 'UTF8'`)
+
+But there places that even bites experienced engineers - an example of such are log files which may be whatever encoding the OS feels like, or it may be in an implicit format and working fine until it suddenly breaks; corrupting a database, taking a system offline or something far worse.
+
+Encoding may also be an emergent implicit behaviour of OS-defaults, locale configuration, runtime assumptions, libraries silently coverting strings to bytes or tooling that tries to be helpful - and as long as all components accidentially agrees, everything works — the moment one component disagress however, is where the damage happends (and that's how real production failures happen).
+
+Logfiles are often treated as diagnostic exhaust, not something you take much care of which means encoding is rarely specified, validated or tested end-to-end.
+And they sit at the intersection of:
+* Application code
+* OS
+* Runtime
+* Pipelines
+* Storage backend
+* Viewer/UI
+
+And nobody owns encoding end-to-end.
+
+<EncodingBoundary
+    initialScenarioId="mysql-utf8mb3"
+    scenarios={[
+        {
+            id: "mysql-utf8mb3",
+            label: "MySQL 'utf8' silently drops 4-byte characters",
+            source: "Web application",
+            sourceEncoding: "UTF-8",
+            sourceText: "User status: 💩",
+            bytes: "55 73 65 72 20 73 74 61 74 75 73 3A 20 F0 9F 92 A9",
+            target: "MySQL database",
+            targetEncoding: "utf8 (mb3)",
+            targetText: "User status: Ǵ",
+            description:
+                "MySQL’s legacy 'utf8' encoding only supports up to 3 bytes per character. Emoji are silently truncated or replaced, corrupting production data without errors.",
+        },
+        {
+            id: "log-pipeline-mojibake",
+            label: "UTF-8 logs misread by ingestion pipeline",
+            source: "Backend service",
+            sourceEncoding: "UTF-8",
+            sourceText: "latency=123µs",
+            bytes: "6C 61 74 65 6E 63 79 3D 31 32 33 C2 B5 73",
+            target: "Log aggregator",
+            targetEncoding: "ISO-8859-1",
+            targetText: "latency=123Âµs",
+            description:
+                "Logs are emitted in UTF-8 but decoded as Latin-1 downstream. Systems remain operational, but metrics and forensic timelines become unreliable.",
+        },
+        {
+            id: "csv-excel-corruption",
+            label: "UTF-8 CSV opened as Windows-1252",
+            source: "Reporting service",
+            sourceEncoding: "UTF-8",
+            sourceText: "José García",
+            bytes: "4A 6F 73 C3 A9 20 47 61 72 63 C3 AD 61",
+            target: "Excel",
+            targetEncoding: "Windows-1252",
+            targetText: "JosÃ© GarcÃ­a",
+            description:
+                "CSV files exported as UTF-8 are opened in Excel without explicit encoding. Names are corrupted in payroll, finance, and legal documents.",
+        },
+        {
+            id: "unicode-normalization-auth",
+            label: "Authentication fails due to Unicode normalization",
+            source: "User input",
+            sourceEncoding: "UTF-8",
+            sourceText: "café",
+            bytes: "63 61 66 65 CC 81",
+            target: "Auth service",
+            targetEncoding: "Unicode (NFC)",
+            targetText: "café",
+            description:
+                "Visually identical strings with different Unicode normalization forms fail equality checks, breaking authentication in real-world systems.",
+        },
+        {
+            id: "ascii-api-gateway",
+            label: "API gateway assumes ASCII",
+            source: "Client SDK",
+            sourceEncoding: "UTF-8",
+            sourceText: "東京",
+            bytes: "E6 9D B1 E4 BA AC",
+            target: "API gateway",
+            targetEncoding: "ASCII",
+            targetText: "??",
+            description:
+                "An API gateway validates requests as ASCII-only. International customer data is rejected or corrupted after launch.",
+        },
+        {
+            id: "jwt-signature-encoding",
+            label: "JWT signature verification fails due to encoding mismatch",
+            source: "Auth issuer",
+            sourceEncoding: "UTF-8",
+            sourceText: "header.payload",
+            bytes: "2E E2 80 8B",
+            target: "API verifier",
+            targetEncoding: "ASCII",
+            targetText: "header.payload",
+            description:
+                "A zero-width Unicode character survives signing but is stripped during verification. Tokens randomly fail validation, causing intermittent authentication outages.",
+        },
+        {
+            id: "filesystem-db-encoding",
+            label: "Filename stored differently than filesystem path",
+            source: "Upload service",
+            sourceEncoding: "UTF-8",
+            sourceText: "résumé.pdf",
+            bytes: "72 C3 A9 73 75 6D C3 A9 2E 70 64 66",
+            target: "Database",
+            targetEncoding: "Unicode (NFD)",
+            targetText: "resumé.pdf",
+            description:
+                "The database and filesystem normalize Unicode differently. Files exist on disk but cannot be retrieved, deleted, or audited.",
+        },
+        {
+            id: "queue-poison-pill",
+            label: "Message queue consumer crashes on unexpected encoding",
+            source: "Producer service",
+            sourceEncoding: "UTF-8",
+            sourceText: "event=✓",
+            bytes: "65 76 65 6E 74 3D E2 9C 93",
+            target: "Consumer service",
+            targetEncoding: "ASCII",
+            targetText: "",
+            description:
+                "A single UTF-8 message crashes an ASCII-only consumer. The message is retried indefinitely, blocking the entire partition.",
+        },
+    ]}
+/>
+
+#### Testing Encodings with Python
 
 ```python{numberLines: true}
 import sys
@@ -151,13 +271,14 @@ if __name__ == '__main__':
         print(ascii_encoded) # b'Hello World! '
 ```
 
-When encoding isn’t specified, heuristics can help and was used in browsers like IE - but they are unreliable. Always specify encoding to avoid misinterpretation.
+When encoding isn’t specified, heuristics are sometimes used as a legacy compatability-hack and was used in browsers like IE - but they are unreliable and should be avoided. Always specify encoding to avoid misinterpretation.
 
-<Divider></Divider>
-### Layer Two: Scripts, Symbols, and Categories
+<Divider sx={{my: 4, mx: 2}}></Divider>
+
+## Layer Two: Scripts, Symbols, and Categories
 The first layer of Unicode is that of **scripts** and **symbols**.
 
-#### Scripts
+### Scripts
 <BlogLink href="https://en.wikipedia.org/wiki/Latin_alphabet">Latin
     script</BlogLink> *(also known as Roman script)* is based on the classical Latin alphabet used by the Romans and is one of the oldest and most widely adopted writing systems in the world. It's the foundation for many modern languages including English, French, German, Italian, Portuguese and many more.
 It has evolved to include diacritical marks (e.g., accents like é, umlauts like ü) to adapt to various languages.
@@ -169,7 +290,7 @@ Created in the 9th century by Saints Cyril and Methodius to write Old Church Sla
 
 Unicode supports current and historic scripts, including extinct languages and as of Unicode v16.0 released in September 2024, the standard includes 168 scripts *(that's a lot - we only very briefly talked about two!)*.
 
-#### Symbols
+### Symbols
 Symbols are characters that are not part of a writing-system (a script), but serve other purposes such as emojis, mathmatical operators or geometric shapes for instance. They may be:
 * Mathematical symbols `+`, `-`, `∑`, `∫`
 * Currency symbols `$`, `€`, `¥`, `₹`
@@ -189,23 +310,23 @@ def is_symbol(char):
     return category.startswith("S")  # an 'S'-prefix indicates symbol categories
 ```
 
-#### The Intersection of Scripts & Symbols
+### The Intersection of Scripts & Symbols
 Scripts and symbols are not rigid, mutually exclusive categories in Unicode. Instead, scripts often contain symbols, and the distinction between them can be fluid, depending on how they are used and categorized in Unicode.
 While a script is usually thought of as the collection of alphabetic characters or logograms, many scripts also combes bundled with symbols, such as:
 * Latin Script: `@`, `$`, `%`, `&`
 
 This will become a bit more clear, once we start talking about code blocks and code points.
 
-<Divider></Divider>
+<Divider sx={{my: 4, mx: 2}}></Divider>
 
-### Layer Three: Code Points and Code Blocks
-#### Code Blocks & Code Points
+## Layer Three: Code Points and Code Blocks
+### Code Blocks & Code Points
 Unicode is a semantic system working in so-called code-points, it doesn't handle appearances - for that we have fonts. Rendered code points are referred to as glyphs and may vary across fonts.
 Unicode uses two other concepts that are functionally significant of code blocks and code points. Unicode assigns each character a unique numerical (hexadecimal) value preprended with `U+`, e.g. `U+2638`.
 
 Codepoints range from `U+0000` to `U+10FFFF`. The set of all code points are divided into contiguous ranges for different languages and categories.
 
-#### Characters, not glyphs!
+### Characters, not glyphs!
 Unicode standardizes characters and not glyphs which is the visual representation of a character. Different fonts can render the same Unicode code point (character) with different representations and typographic styles - these different representations of codepoints/characters are called glyhphs.
 
 <ZoomableImage src="/graphics/blog/10-minutes-of-unicode/glyph-representation-of-characters.png" maxWidth="75%"/>
@@ -226,15 +347,15 @@ If you take the string "Hello", it can be represented as:
 * In Unicode: The code points for "Hello" in Unicode are `U+0048` (H), `U+0065` (e), `U+006C` (l), `U+006C` (l), `U+006F` (o). These are identical to ASCII code points.
 
 <ZoomableImage src="/graphics/blog/10-minutes-of-unicode/unicode-basic-latin.png" maxWidth="60%"></ZoomableImage>
-<Divider></Divider>
+<Divider sx={{my: 4, mx: 2}}></Divider>
 
-### Layer Four: Unicode Planes
+## Layer Four: Unicode Planes
 (Note: You haven't written anything yet specifically about Planes — BMP, SMP, etc. I can generate a fitting paragraph here if you want.)
 
 Placeholder: To Be Written
-<Divider></Divider>
+<Divider sx={{my: 4, mx: 2}}></Divider>
 
-### Layer Five: Encodings — UTF-8, UTF-16, UTF-32
+## Layer Five: Encodings — UTF-8, UTF-16, UTF-32
 UTF-8 is a variable-length encoding that represents Unicode code points in 1 to 4 bytes. It’s backward-compatible with ASCII, meaning ASCII text is also valid UTF-8 text.
 
 Example:
@@ -242,37 +363,38 @@ Example:
 
 UTF-8 is widely used on the web and is often the default encoding in systems, programming languages, and applications.
 
-#### Notes on Encoding Variants
+### Notes on Encoding Variants
 - UTF-16 uses 2 or 4 bytes per character, which can be beneficial for languages with many non-ASCII characters but has disadvantages in storage efficiency.
 - UTF-32 uses 4 bytes per character uniformly, offering simple processing but with significant storage costs.
 
 In most applications, UTF-8 is the best choice due to its compatibility and efficiency but they all have their place, which I'll get to later.
 
-#### Why the Fuss About Unicode?
+### Why the Fuss About Unicode?
 Why not just stick with ASCII? ASCII only covers 128 characters — barely enough for basic English. Unicode, however, aims to cover all text systems in a single, universal standard, eliminating the confusion and compatibility issues of past encoding schemes.
 
 In the early 90s, the internet accelerated Unicode’s adoption as more text needed to be exchanged globally. Unicode incorporates characters from legacy encodings (e.g., Windows-1252) to ensure backward compatibility.
 
-#### Common Unicode Myths
+### Common Unicode Myths
 1. **"Unicode is 16-bit and has 65,536 characters."**
 Incorrect. Unicode is not limited to 16 bits. While early Unicode proposals suggested a 16-bit system, Unicode today spans over 1 million code points (0 to 0x10FFFF).
 
 2. **"Unicode is an encoding."**
 Also incorrect. Unicode is a standard, not an encoding. UTF-8, UTF-16, and UTF-32 are encoding formats that define how to represent Unicode code points in bytes.
 
-#### Practical Advice for Working with Unicode
+### Practical Advice for Working with Unicode
 Handling Unicode effectively requires knowing:
 - The level of representation you’re dealing with — code points, bytes, or glyphs.
 - Encoding consistency — never assume encoding, especially for data from unknown sources.
 
 *Modern systems default to UTF-8, but misinterpretations can still occur, often with ISO-8859-1 (latin1) or cp1252 on legacy systems.*
 
-#### Exploring Unicode in Python
+### Exploring Unicode in Python
 Here's a Python example to illustrate basic Unicode encoding and decoding.
-<ZoomableImage src={"/graphics/blog/10-minutes-of-unicode/string_to_x.png"} maxWidth="100%"></ZoomableImage>
+<ZoomableImage src={"/graphics/blog/10-minutes-of-unicode/string_to_x.png"} sx={{maxWidth: "70vw"}}></ZoomableImage>
 
 
 ```shell{outputLines: 2-10,12}{promptUser: python}
+ print(chr(0x1F64F)) # (Unicode character represented by code point U+1F64F)
  print(chr(0x1F64F)) # (Unicode character represented by code point U+1F64F)
  🙏
  # Also, chr() creates characters from code points.
@@ -317,45 +439,45 @@ print(
 ```
 
 Encoding text with UTF-8 converts characters into byte representations, which is crucial for I/O operations.
-<Divider></Divider>
+<Divider sx={{my: 4, mx: 2}}></Divider>
 
-### Layer 6: Unicode Properties
+## Layer 6: Unicode Properties
 Layer Six: Unicode Properties
 (Note: You haven't specifically explained General Categories, Bidi properties, Numeric values, Combining classes yet.)
 
 Placeholder: To Be Written
-<Divider></Divider>
+<Divider sx={{my: 4, mx: 2}}></Divider>
 
-### Layer 7: Unicode Normalization
+## Layer 7: Unicode Normalization
 Layer Seven: Unicode Normalization
 (Note: You haven't yet explained NFC, NFD, NFKC, NFKD normalization.)
 
 Placeholder: To Be Written
-<Divider></Divider>
+<Divider sx={{my: 4, mx: 2}}></Divider>
 
-### Layer 8: Unicode Security Issues
+## Layer 8: Unicode Security Issues
 Layer Eight: Unicode Security Issues
 (Note: You haven't yet covered homoglyph attacks, Trojan Source attacks, zero-width attacks.)
 
 Placeholder: To Be Written
-<Divider></Divider>
+<Divider sx={{my: 4, mx: 2}}></Divider>
 
-### Layer 9: Unicode in Systems and Protocols
-#### Why There’s No Such Thing as "Plain Text" (continued)
+## Layer 9: Unicode in Systems and Protocols
+### Why There’s No Such Thing as "Plain Text" (continued)
 
 (Your examples fit here too because you explain encoding in internet protocols, HTTP headers, etc.)
 
 - Over the internet, it's specified in HTTP headers...
 - In HTML/XML, it's in `<meta charset="UTF-8">`...
-<Divider></Divider>
+<Divider sx={{my: 4, mx: 2}}></Divider>
 
-### Layer 10: Advanced Unicode Algorithms
+## Layer 10: Advanced Unicode Algorithms
 Layer Ten: Advanced Unicode Algorithms
 (Note: You haven't yet covered Unicode Text Segmentation (TR29), Collation (sorting), Bidirectional Algorithm.)
 
 Placeholder: To Be Written
 
-# Further Reading
+<Typography variant="h3">Further Reading</Typography>
 https://peps.python.org/pep-0263/ PEP 263 – Defining Python Source Code Encodings
 
 

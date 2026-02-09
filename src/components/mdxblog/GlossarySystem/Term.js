@@ -5,7 +5,7 @@ import {useTermRegistry} from "./TermRegistry";
 import {resolveGlossaryEntry} from "./resolveGlossaryEntry";
 import {useGlossaryPrefix} from "./GlossaryContext";
 
-const Term = ({name, prefix}) => {
+const Term = ({name, prefix, ending}) => {
 
     // -----------------------------
     // Hooks (MUST be unconditional)
@@ -107,7 +107,7 @@ const Term = ({name, prefix}) => {
                         "&:hover": {borderBottom: "1px dotted #00ffcc"},
                     }}
                 >
-                    {hoverData.term}
+                    {hoverData.term}{ending ?? ending}
                 </Box>
 
                 <Box

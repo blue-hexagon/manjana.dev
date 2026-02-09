@@ -49,13 +49,15 @@ export const query = graphql`
     mdx(id: { eq: $id }) {
       frontmatter {
         title
+        subtitle
         date(formatString: "MMMM DD, YYYY")
         slug
         description
         featuredImage
         glossaryPrefix
+        tocDepth
       }
-      tableOfContents(maxDepth: 3)
+      tableOfContents(maxDepth: 6)
     }
   }
 `;

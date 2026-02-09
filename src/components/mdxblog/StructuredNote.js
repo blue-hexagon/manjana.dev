@@ -3,23 +3,19 @@ import { Box, Typography } from "@mui/material";
 
 const typeStyles = {
   info: {
-    border: "#00ffcc",
-    glow: "rgba(0,255,204,0.35)",
+    accent: "#00ffcc",
     label: "INFO",
   },
   warning: {
-    border: "#ffcc00",
-    glow: "rgba(255,204,0,0.35)",
+    accent: "#ffcc00",
     label: "WATCH OUT",
   },
   danger: {
-    border: "#ff4081",
-    glow: "rgba(255,64,129,0.35)",
+    accent: "#ff4081",
     label: "SECURITY",
   },
   deep: {
-    border: "#7aa2ff",
-    glow: "rgba(122,162,255,0.35)",
+    accent: "#7aa2ff",
     label: "DEEP DIVE",
   },
 };
@@ -30,31 +26,38 @@ const StructuredNote = ({ type = "info", title, children }) => {
   return (
     <Box
       sx={{
-        borderLeft: `4px solid ${style.border}`,
-        backgroundColor: "#141414",
-        padding: 2,
-        marginY: 3,
-        borderRadius: 2,
-        boxShadow: `0 0 18px ${style.glow}`,
+        position: "relative",
+        my: 3,
+        px: 2.5,
+        py: 2,
+        background:
+          "linear-gradient(180deg, #121212 0%, #0e0e0e 100%)",
+        borderLeft: `3px solid ${style.accent}`,
+        borderRadius: "6px",
+        boxShadow: "inset 0 0 0 1px #1f1f1f",
       }}
     >
+      {/* Label */}
       <Typography
         sx={{
           fontFamily: `'Fira Code', monospace`,
-          fontSize: "0.85rem",
-          fontWeight: 700,
-          color: style.border,
+          fontSize: "0.7rem",
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+          color: style.accent,
+          opacity: 0.9,
           mb: 1,
         }}
       >
-        {title || style.label}
+        {title ?? style.label}
       </Typography>
 
+      {/* Content */}
       <Typography
         sx={{
-          color: "#e0e0e0",
-          lineHeight: 1.6,
-          fontSize: "1rem",
+          color: "#d6d6d6",
+          fontSize: "0.95rem",
+          lineHeight: 1.65,
         }}
       >
         {children}
