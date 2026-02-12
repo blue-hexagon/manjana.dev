@@ -2,6 +2,7 @@ import * as React from "react"
 import { Box, Divider, Typography } from "@mui/material"
 
 export function Pipeline(props: {
+  isExpanded: boolean
   source: string
   sourceEncoding: string
   sourceText: string
@@ -13,8 +14,8 @@ export function Pipeline(props: {
   byteCount: number
   onBytesClick: () => void
 }) {
-  const { source, sourceEncoding, sourceText, target, targetEncoding, targetText, bytes, invalidCount, byteCount, onBytesClick } = props
-
+  const { source, sourceEncoding, sourceText, target, targetEncoding, targetText, bytes, invalidCount, byteCount, onBytesClick, isExpanded } = props
+  if (isExpanded == false) return null
   return (
     <Box sx={{ display: "grid", gap: 2 }}>
       <Box>
@@ -67,7 +68,7 @@ export function Pipeline(props: {
       </Box>
 
       <Box sx={{ textAlign: "right" }}>
-        <Typography sx={{ color: "#ff4081", fontSize: ".8rem" }}>
+        <Typography sx={{ color: "rgba(255,64,129,0.8)", fontSize: ".8rem" }}>
           {target} · {targetEncoding}
         </Typography>
         <Typography sx={{ fontSize: "1.05rem" }}>{targetText}</Typography>

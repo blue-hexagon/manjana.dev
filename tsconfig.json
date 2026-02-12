@@ -2,33 +2,33 @@
   "compilerOptions": {
     /* Language & Emit */
     "target": "ES2020",
-    "lib": ["DOM", "DOM.Iterable", "ES2020"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2020",
+      "ES2021",
+      "ES2021.Intl"
+    ]
     "jsx": "react-jsx",
-
     /* Module System */
     "module": "ESNext",
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-
     /* JS / TS Interop */
     "allowJs": true,
     "checkJs": false,
     "resolveJsonModule": true,
-
     /* Type Safety (relaxed for now) */
     "strict": false,
     "noImplicitAny": false,
     "skipLibCheck": true,
-
     /* Build Hygiene */
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-
     /* Output */
     "noEmit": true
   },
-
   "include": [
     "src",
     "**/*.ts",
@@ -36,7 +36,6 @@
     "**/*.js",
     "**/*.jsx"
   ],
-
   "exclude": [
     "node_modules",
     "dist",

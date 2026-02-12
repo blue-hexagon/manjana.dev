@@ -1,6 +1,12 @@
 import * as React from "react"
-import {Box} from "@mui/material"
-import type {ByteGroup, HoveredMeta, ParsedByte, SelectionRange, SelectionText} from "../../../types"
+import {Box, Typography} from "@mui/material"
+import type {
+    ByteGroup,
+    HoveredMeta,
+    ParsedByte,
+    SelectionRange,
+    SelectionText,
+} from "../../../types"
 import {ASCII_CELL_W, GAP_W, HEX_CELL_W} from "../../../constants"
 import {HexToolbar} from "./HexToolbar"
 import {HexStatusLine} from "./HexStatusLine"
@@ -48,15 +54,16 @@ export function HexView(props: {
 
     return (
         <Box>
+            {/* ───────────────────────── Sticky control plane ───────────────────────── */}
             <Box
                 sx={{
                     position: "sticky",
                     top: 0,
-                    zIndex: 2,
+                    zIndex: 3,
                     backdropFilter: "blur(8px)",
-                    background: "rgba(11,11,11,0.85)",
+                    background: "rgba(11,11,11,0.88)",
                     borderBottom: "1px solid rgba(255,255,255,0.06)",
-                    pb: 1,
+                    pb: 0.75,
                     mb: 1,
                 }}
             >
@@ -77,11 +84,11 @@ export function HexView(props: {
                 />
             </Box>
 
+            {/* ───────────────────────── Byte grid ───────────────────────── */}
             <Box
                 sx={{
                     fontSize: ".78rem",
                     overflowX: "auto",
-                    maxWidth: "100%",
                     whiteSpace: "nowrap",
                     pb: 0.5,
                 }}
@@ -95,37 +102,43 @@ export function HexView(props: {
                             key={row}
                             sx={{
                                 display: "grid",
-                                gridTemplateColumns: offsets ? "76px auto auto" : "auto auto",
+                                gridTemplateColumns: offsets ? "72px auto auto" : "auto auto",
                                 gap: 2,
                                 alignItems: "center",
                                 py: 0.25,
-                                mx: 0.5,
+                                px: 0.75,
                                 minWidth: "fit-content",
-                                "&:hover": {background: "rgba(255,255,255,0.03)"},
+                                "&:hover": {
+                                    background: "rgba(255,255,255,0.025)",
+                                },
                             }}
                         >
+                            {/* Offset column */}
                             {offsets && (
                                 <Box
                                     sx={{
-                                        opacity: 0.6,
+                                        fontFamily: `'Fira Code', monospace`,
+                                        opacity: 0.55,
                                         position: "sticky",
                                         left: 0,
                                         zIndex: 1,
                                         background: "#0b0b0b",
                                         pr: 1,
-                                        pl: 0.75,
                                     }}
                                 >
                                     0x{rowStart.toString(16).padStart(4, "0")}
                                 </Box>
                             )}
 
+                            {/* Hex bytes */}
                             <Box
                                 sx={{
                                     display: "grid",
                                     gridTemplateColumns: `repeat(${group}, ${HEX_CELL_W})`,
                                     columnGap: GAP_W,
-                                    "& > *:nth-of-type(4n)": {marginRight: "0.6ch"},
+                                    "& > *:nth-of-type(4n)": {
+                                        marginRight: "0.6ch",
+                                    },
                                 }}
                             >
                                 {slice.map((b, i) => {
@@ -143,17 +156,22 @@ export function HexView(props: {
                                             sx={{
                                                 textAlign: "center",
                                                 padding: "2px 0",
-                                                borderRadius: "3px",
+                                                borderRadius: "4px",
                                                 cursor: "default",
                                                 userSelect: "none",
-                                                width: "2.5ch",
+                                                width: "2.6ch",
                                                 boxSizing: "content-box",
+
                                                 background: selected
-                                                    ? "rgba(255,64,129,0.18)"
+                                                    ? "rgba(255,64,129,0.22)"
                                                     : hovered
-                                                        ? "rgba(0,255,204,0.15)"
+                                                        ? "rgba(0,255,204,0.14)"
                                                         : "transparent",
-                                                outline: anchor ? "1px solid rgba(255,64,129,0.55)" : "none",
+
+                                                outline: anchor
+                                                    ? "1px solid rgba(255,64,129,0.6)"
+                                                    : "none",
+
                                                 color: b.valid ? "#fff" : "#ff6b6b",
                                             }}
                                         >
@@ -163,19 +181,25 @@ export function HexView(props: {
                                 })}
                             </Box>
 
+                            {/* ASCII view (downstream, quieter) */}
                             <Box
                                 sx={{
                                     display: "grid",
                                     gridTemplateColumns: `repeat(${group}, ${ASCII_CELL_W})`,
                                     columnGap: GAP_W,
+                                    fontFamily: `'Fira Code', monospace`,
                                     opacity: 0.75,
-                                    "& > *:nth-of-type(4n)": {marginRight: "0.6ch"},
+                                    "& > *:nth-of-type(4n)": {
+                                        marginRight: "0.6ch",
+                                    },
                                 }}
                             >
+
                                 {slice.map((_, i) => {
                                     const index = rowStart + i
                                     const ch = targetText[index] ?? ""
-                                    const printable = ch && ch.length === 1 && ch >= " " && ch <= "~"
+                                    const printable =
+                                        ch.length === 1 && ch >= " " && ch <= "~"
                                     const hovered = clampedHover === index
                                     const selected = isSelected(index)
                                     const anchor = selAnchor === index
@@ -188,16 +212,19 @@ export function HexView(props: {
                                             onClick={ev => onByteClick(index, ev)}
                                             sx={{
                                                 textAlign: "center",
-                                                borderRadius: "3px",
+                                                borderRadius: "4px",
                                                 userSelect: "none",
-                                                width: "1.25ch",
-                                                boxSizing: "content-box",
+                                                width: "2ch",
+                                                boxSizing: "border-box",
                                                 background: selected
-                                                    ? "rgba(255,64,129,0.14)"
+                                                    ? "rgba(255,64,129,0.36)"
                                                     : hovered
-                                                        ? "rgba(0,255,204,0.10)"
+                                                        ? "rgba(0,255,204,0.20)"
                                                         : "transparent",
-                                                outline: anchor ? "1px solid rgba(255,64,129,0.45)" : "none",
+
+                                                outline: anchor
+                                                    ? "1px solid rgba(255,64,129,0.45)"
+                                                    : "none",
                                             }}
                                         >
                                             {printable ? ch : "·"}

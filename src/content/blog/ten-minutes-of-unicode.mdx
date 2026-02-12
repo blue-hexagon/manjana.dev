@@ -72,15 +72,16 @@ Because of its **ambition to be the final text encoding standard**, Unicode is a
     caption="Mojibake: text decoded using the wrong character encoding."
     imageWidth="200px"
 >
-Before Unicode, text encoding was fragmented into various character encodings specific to
-languages or regions (e.g., ASCII, ISO 8859, and Windows-1252). These encoding standards often conflicted,
-resulting in garbled text when transferred across systems that used different encoding schemes - a phenomenon that has its own name: *mojibake* (Japanese for "character transformation", or simply: gibberish).
+    Before Unicode, text encoding was fragmented into various character encodings specific to
+    languages or regions (e.g., ASCII, ISO 8859, and Windows-1252). These encoding standards often conflicted,
+    resulting in garbled text when transferred across systems that used different encoding schemes - a phenomenon that
+    has its own name: *mojibake* (Japanese for "character transformation", or simply: gibberish).
 </ImageWithText>
 The main initial takeaway is this: Unicode **standardizes** the *representation* of text across different languages
 and platforms. Encodings (like <Term name="UTF8"/>) *implement* Unicode by translating its <Term name="CodePoint"
                                                                                                  ending="s"/> into
 bytes. Each character we see is simply not just a letter or a symbol - that's its representation (aka. <Term
-name="Glyph"/>) - its true nature within the computer is a defined code point, encoded into bytes and then later
+    name="Glyph"/>) - its true nature within the computer is a defined code point, encoded into bytes and then later
 rendered as a glyph.
 
 <Divider sx={{my: 4, mx: 2}}></Divider>
@@ -123,7 +124,7 @@ And nobody owns encoding end-to-end.
             bytes: "55 73 65 72 20 73 74 61 74 75 73 3A 20 F0 9F 92 A9",
             target: "MySQL database",
             targetEncoding: "utf8 (mb3)",
-            targetText: "User status: Ǵ",
+            targetText: "User status: �",
             description:
                 "MySQL’s legacy 'utf8' encoding only supports up to 3 bytes per character. Emoji are silently truncated or replaced, corrupting production data without errors.",
         },
@@ -138,7 +139,7 @@ And nobody owns encoding end-to-end.
             targetEncoding: "ISO-8859-1",
             targetText: "latency=123Âµs",
             description:
-                "Logs are emitted in UTF-8 but decoded as Latin-1 downstream. Systems remain operational, but metrics and forensic timelines become unreliable.",
+                "Logs are emitted as UTF-8 but decoded as Latin-1 downstream. Systems remain operational, but metrics and forensic timelines become unreliable.",
         },
         {
             id: "csv-excel-corruption",
@@ -157,10 +158,12 @@ And nobody owns encoding end-to-end.
             id: "unicode-normalization-auth",
             label: "Authentication fails due to Unicode normalization",
             source: "User input",
+            sourceNormalizationFormat: null,
             sourceEncoding: "UTF-8",
             sourceText: "café",
             bytes: "63 61 66 65 CC 81",
             target: "Auth service",
+            targetNormalizationFormat: "NFC",
             targetEncoding: "Unicode (NFC)",
             targetText: "café",
             description:
@@ -184,13 +187,13 @@ And nobody owns encoding end-to-end.
             label: "JWT signature verification fails due to encoding mismatch",
             source: "Auth issuer",
             sourceEncoding: "UTF-8",
-            sourceText: "header.payload",
-            bytes: "2E E2 80 8B",
+            sourceText: "header.\<ZWSP\>payload",
+            bytes: "2E E2 80 8B E2 72 2E",
             target: "API verifier",
             targetEncoding: "ASCII",
-            targetText: "header.payload",
+            targetText: "header.",
             description:
-                "A zero-width Unicode character survives signing but is stripped during verification. Tokens randomly fail validation, causing intermittent authentication outages.",
+                "A zero-width Unicode character (ZWSP) survives signing but is stripped during verification. Tokens randomly fail validation, causing intermittent authentication outages.",
         },
         {
             id: "filesystem-db-encoding",
@@ -217,6 +220,45 @@ And nobody owns encoding end-to-end.
             targetText: "",
             description:
                 "A single UTF-8 message crashes an ASCII-only consumer. The message is retried indefinitely, blocking the entire partition.",
+        },
+        {
+            id: "utf8-bom-header-break",
+            label: "UTF-8 BOM breaks CSV / JSON header parsing",
+            source: "Reporting service",
+            sourceEncoding: "UTF-8 BOM",
+            sourceText: "id,name,email",
+            bytes: "EF BB BF 69 64 2C 6E 61 6D 65 2C 65 6D 61 69 6C",
+            target: "Data ingestion pipeline",
+            targetEncoding: "UTF-8",
+            targetText: "id,name,email",
+            description:
+                "A UTF-8 Byte Order Mark (BOM) is preserved at the start of the payload. Downstream systems treat the first header or JSON key as a different string, causing missing fields, broken mappings, or silent data loss."
+        },
+        {
+            id: "mixed-unicode-normalization",
+            label: "Decomposed Unicode normalization",
+            source: "User input pipeline",
+            sourceEncoding: "UTF-8",
+            sourceText: "café",
+            bytes: "63 61 66 C3 A9 CC 81",
+            target: "Application logic",
+            targetEncoding: "Unicode (mixed NFC/NFD)",
+            targetText: "caf\u00E9\u0301",
+            description:
+                "A string contains a mix of composed and decomposed Unicode characters. Partial normalization causes visually identical strings to fail equality checks, cache lookups, and hash comparisons."
+        },
+        {
+            id: "json-bytes-vs-text-signature",
+            label: "JSON signature breaks due to string vs bytes ambiguity",
+            source: "Client",
+            sourceEncoding: "UTF-8",
+            sourceText: "{\"amount\":\"100\",\"note\":\"paid\"}",
+            bytes: "7B 22 61 6D 6F 75 6E 74 22 3A 22 31 30 30 22 2C 22 6E 6F 74 65 22 3A 22 70 61 69 64 22 7D",
+            target: "API gateway",
+            targetEncoding: "UTF-8",
+            targetText: "b'{\"amount\":\"100\",\"note\":\"paid\"}'",
+            description:
+                "The payload is treated as a decoded text in one system and as bytes (b'...') in another, causing signatures to be computed over different representations."
         },
     ]}
 />

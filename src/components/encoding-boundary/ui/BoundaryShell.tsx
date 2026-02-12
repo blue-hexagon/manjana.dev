@@ -6,7 +6,10 @@ export function BoundaryShell({ children }: { children: React.ReactNode }) {
     <Box
       role="figure"
       sx={{
-        my: 4,
+        display: "flex",
+        flexDirection: "column",
+        flex: 1,
+        minHeight: 0, // important for nested scrolling
         p: 3,
         borderRadius: 2,
         border: "1px solid #1f1f1f",

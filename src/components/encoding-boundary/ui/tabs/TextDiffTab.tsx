@@ -15,7 +15,7 @@ export function TextDiffTab(props: { sourceText: string; targetText: string }) {
     >
       <Box>
         <Typography sx={{ fontSize: ".7rem", opacity: 0.6, mb: 0.5, ml: 0.8 }}>
-          sourceText
+          Good Encoding
         </Typography>
         <Box
           component="pre"
@@ -33,7 +33,7 @@ export function TextDiffTab(props: { sourceText: string; targetText: string }) {
 
       <Box>
         <Typography sx={{ fontSize: ".7rem", opacity: 0.6, mb: 0.5, ml: 0.8 }}>
-          targetText
+          Bad Encoding
         </Typography>
         <Box
           component="pre"
@@ -45,7 +45,7 @@ export function TextDiffTab(props: { sourceText: string; targetText: string }) {
             overflowX: "auto",
           }}
         >
-          {targetText}
+          {targetText == "" ? "<None>" : targetText}
         </Box>
       </Box>
     </Box>
