@@ -30,7 +30,7 @@ const StyledButton = styled(Button)(({theme}) => ({
     },
 }));
 
-const NewsletterForm = ({ source = "blog-index" }) => {
+const NewsletterForm = ({source = "blog-index"}) => {
     const [email, setEmail] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -94,7 +94,7 @@ const NewsletterForm = ({ source = "blog-index" }) => {
                 <input
                     type="text"
                     name="company"
-                    style={{ display: "none" }}
+                    style={{display: "none"}}
                     tabIndex={-1}
                     autoComplete="off"
                 />
@@ -108,13 +108,13 @@ const NewsletterForm = ({ source = "blog-index" }) => {
                     onChange={(e) => setEmail(e.target.value)}
                     error={!!error}
                     helperText={error}
-                    InputProps={{ style: { color: "#ffffff" } }}
-                    InputLabelProps={{ style: { color: "#bdbdbd" } }}
+                    InputProps={{style: {color: "#ffffff"}}}
+                    InputLabelProps={{style: {color: "#bdbdbd"}}}
                     sx={{
                         "& .MuiOutlinedInput-root": {
-                            "& fieldset": { borderColor: "#8ab4f8" },
-                            "&:hover fieldset": { borderColor: "#6a93d7" },
-                            "&.Mui-focused fieldset": { borderColor: "#8ab4f8" },
+                            "& fieldset": {borderColor: "#8ab4f8"},
+                            "&:hover fieldset": {borderColor: "#6a93d7"},
+                            "&.Mui-focused fieldset": {borderColor: "#8ab4f8"},
                         },
                     }}
                 />
@@ -129,7 +129,7 @@ const NewsletterForm = ({ source = "blog-index" }) => {
                 </StyledButton>
 
                 {success && (
-                    <Alert severity="success" sx={{ mt: 2 }}>
+                    <Alert severity="success" sx={{mt: 2}}>
                         {success}
                     </Alert>
                 )}
@@ -174,9 +174,13 @@ export const PostsComponent = ({heading, featuredOnly, data}) => {
 
 
 const IndexPage = () => {
+    const [search, setSearch] = useState("");
+    const [activeCategory, setActiveCategory] = useState(null);
     const data = useStaticQuery(graphql`
   query {
-    allMdx {
+    allMdx(
+      sort: { frontmatter: { date: DESC } }
+    ) {
       totalCount
       edges {
         node {
@@ -184,7 +188,7 @@ const IndexPage = () => {
           body
           frontmatter {
             slug
-            date(formatString: "MMMM DD, YYYY")
+            date
             title
             description
             categories
@@ -207,19 +211,67 @@ const IndexPage = () => {
         }
     });
     const categoryArray = Array.from(uniqueCategories);
+    const filteredPosts = data.allMdx.edges
+        .filter(({node}) => {
+            const query = search.toLowerCase();
+
+            const matchesSearch =
+                node.frontmatter.title?.toLowerCase().includes(query) ||
+                node.frontmatter.description?.toLowerCase().includes(query) ||
+                node.frontmatter.tags?.some(tag =>
+                    tag.toLowerCase().includes(query)
+                );
+
+            const matchesCategory =
+                !activeCategory ||
+                node.frontmatter.categories?.includes(activeCategory);
+
+            return matchesSearch && matchesCategory;
+        })
+        .slice(0, 6); // only show most recent 6
 
     return (
         <>
             <Container>
-
-                <CategoriesComponent categories={categoryArray} articlesCount={count}></CategoriesComponent>
+                <CategoriesComponent
+                    categories={categoryArray}
+                    articlesCount={count}
+                    search={search}
+                    onSearchChange={setSearch}
+                    activeCategory={activeCategory}
+                    onCategorySelect={setActiveCategory}
+                />
                 <Box my={4}>
-                    <PostsComponent heading={"Recent Posts"} featuredOnly={false} data={data}></PostsComponent>
-                    <PostsComponent heading={"Featured Posts"} featuredOnly={true} data={data}></PostsComponent>
+                    {/*<Box sx={{mb: 4}}>*/}
+                    {/*    <TextField*/}
+                    {/*        fullWidth*/}
+                    {/*        variant="outlined"*/}
+                    {/*        placeholder="Search articles..."*/}
+                    {/*        value={search}*/}
+                    {/*        onChange={(e) => setSearch(e.target.value)}*/}
+                    {/*        InputProps={{*/}
+                    {/*            style: {color: "#ffffff"},*/}
+                    {/*        }}*/}
+                    {/*        InputLabelProps={{*/}
+                    {/*            style: {color: "#bdbdbd"},*/}
+                    {/*        }}*/}
+                    {/*        sx={{*/}
+                    {/*            "& .MuiOutlinedInput-root": {*/}
+                    {/*                "& fieldset": {borderColor: "#8ab4f8"},*/}
+                    {/*                "&:hover fieldset": {borderColor: "#6a93d7"},*/}
+                    {/*                "&.Mui-focused fieldset": {borderColor: "#8ab4f8"},*/}
+                    {/*            },*/}
+                    {/*        }}*/}
+                    {/*    />*/}
+                    {/*</Box>*/}
+                    <PostsComponent
+                        heading={"Recent Posts"}
+                        featuredOnly={false}
+                        data={{allMdx: {edges: filteredPosts}}}
+                    /> <PostsComponent heading={"Featured Posts"} featuredOnly={true} data={data}></PostsComponent>
                 </Box>
                 <Box>
                     <NewsletterForm></NewsletterForm>
-
                 </Box>
             </Container>
         </>

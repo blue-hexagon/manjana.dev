@@ -28,10 +28,10 @@ export const ArticleHeader: React.FC<PostHeaderProps> = ({
           justifyContent: "space-between",
           alignItems: "flex-end",
           mb: 0,
-            mt: 4,
+            mt: 0,
         }}
       >
-        <Typography sx={{...neonTextStyle, fontSize: '3rem', fontWeight: 900, pt: 2}} variant="h1">
+        <Typography sx={{...neonTextStyle, fontSize: '3rem', fontWeight: 900, pt: 0}} variant="h1">
             {title}
         </Typography>
 

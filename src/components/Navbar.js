@@ -1,77 +1,176 @@
-import React from "react";
-import {AppBar, Toolbar, Typography, Button, IconButton, Drawer, List, ListItem, ListItemText} from "@mui/material";
-import {Menu as MenuIcon} from "@mui/icons-material";
-import {Box} from "@mui/system";
-import {useState} from "react";
-import {Link} from "gatsby";
-
+import React, { useState } from "react";
+import {
+    AppBar,
+    Toolbar,
+    Typography,
+    Button,
+    IconButton,
+    Drawer,
+    List,
+    ListItemButton,
+    ListItemText,
+    Box
+} from "@mui/material";
+import { Menu as MenuIcon } from "@mui/icons-material";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import { Link } from "gatsby";
+import { useLocation } from "@reach/router";
+import HomeIcon from "@mui/icons-material/Home";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import ArticleIcon from "@mui/icons-material/Article";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
 const Navbar = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const location = useLocation();
+
 
     const handleDrawerToggle = () => {
         setDrawerOpen(!drawerOpen);
     };
 
-    // Define your menu items
-    const menuItems = [
-        {text: "Home", link: "/"}, {text: "Projects", link: "/projects"},
-        {text: "Writings", link: "/blog"},
-        {text: "Contact", link: "/contact"},
-        {text: "Knowledge", link: "/knowledge"}
-    ];
+const menuItems = [
+    { text: "Projects", link: "/projects", icon: <DashboardIcon fontSize="small" /> },
+    { text: "Writings", link: "/blog", icon: <ArticleIcon fontSize="small" /> },
+    { text: "Knowledge", link: "/knowledge", icon: <MenuBookIcon fontSize="small" /> },
+    { text: "Contact", link: "/contact", icon: <MailOutlineIcon fontSize="small" /> }
+];
 
-    return (<AppBar position="sticky">
-        <Toolbar
+    return (
+        <AppBar
+            position="static"
+            elevation={0}
             sx={{
-                minHeight: 64,        // desktop
-                '@media (max-width:600px)': {
-                    minHeight: 56,      // mobile (Material default)
-                },
+                backgroundColor: "rgba(18,18,18,0.85)",
+                backdropFilter: "blur(12px)",
+                borderBottom: "1px solid rgba(255,255,255,0.06)"
             }}
-        > <Link to={"/"} style={{textDecoration: 'none', marginRight: '16px'}}>
-            <Typography variant="h6" color={"text.primary"}
-                        component="div"
-                        sx={{flexGrow: 1, textDecoration: 'none'}}>
-                >> manjana.dev
-            </Typography>
-        </Link>
-            {/* Desktop Menu */}
-            <Box sx={{display: {xs: "none", md: "block"}}}>
-                {menuItems.map((item) => (
-
-                    <Button color="inherit" key={item.text} mx="2" component={Link} to={item.link}>
-                        {item.text}
-                    </Button>))}
-            </Box>
-
-            {/* Mobile Menu Icon */}
-            <IconButton
-                edge="end"
-                color="inherit"
-                aria-label="menu"
-                sx={{display: {md: "none"}, ml: "auto"}}
-                onClick={handleDrawerToggle}
+        >
+            <Toolbar
+                sx={{
+                    minHeight: 64,
+                    px: 3
+                }}
             >
-                <MenuIcon/>
-            </IconButton>
+                {/* Brand */}
+                <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
+                    <Link to="/" style={{ textDecoration: "none" }}>
+                        <Typography
+                            variant="h6"
+                            sx={{
+                                fontWeight: 600,
+                                letterSpacing: "1px",
+                                fontFamily: "monospace",
+                                color: "#ffffff"
+                            }}
+                        >
+                            manjana
+                            <Box
+                                component="span"
+                                sx={{ color: "#00ffcc" }}
+                            >
+                                .dev
+                            </Box>
+                        </Typography>
+                    </Link>
+                </Box>
 
-            {/* Mobile Drawer */}
-            <Drawer anchor="left" open={drawerOpen} onClose={handleDrawerToggle}>
-                <Box
-                    sx={{width: 250}}
-                    role="presentation"
+                {/* Desktop Navigation */}
+                <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}>
+                    {menuItems.map((item) => {
+                        const isActive = location.pathname === item.link;
+
+                        return (
+                            <Button
+    key={item.text}
+    component={Link}
+    to={item.link}
+    sx={{
+        mx: 1,
+        color: isActive ? "#00ffcc" : "#ffffff",
+        borderBottom: isActive
+            ? "2px solid #00ffcc"
+            : "2px solid transparent",
+        borderRadius: 0,
+        "&:hover": {
+            backgroundColor: "rgba(255,255,255,0.05)"
+        }
+    }}
+>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        {item.icon}
+        {item.text}
+    </Box>
+</Button>
+                        );
+                    })}
+
+                    {/* GitHub Icon */}
+                    <IconButton
+                        component="a"
+                        href="https://github.com/blue-hexagon"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{
+                            ml: 2,
+                            color: "#ffffff",
+                            "&:hover": {
+                                color: "#00ffcc"
+                            }
+                        }}
+                    >
+                        <GitHubIcon />
+                    </IconButton>
+                </Box>
+
+                {/* Mobile Menu Icon */}
+                <IconButton
+                    edge="end"
+                    color="inherit"
+                    sx={{ display: { md: "none" } }}
                     onClick={handleDrawerToggle}
-                    onKeyDown={handleDrawerToggle}
+                >
+                    <MenuIcon />
+                </IconButton>
+
+                {/* Mobile Drawer */}
+                <Drawer
+                    anchor="left"
+                    open={drawerOpen}
+                    onClose={handleDrawerToggle}
+                    PaperProps={{
+                        sx: {
+                            backgroundColor: "#121212",
+                            width: 250
+                        }
+                    }}
                 >
                     <List>
-                        {menuItems.map((item) => (<ListItem button key={item.text} component={Link} to={item.link}>
-                            <ListItemText primary={item.text}/>
-                        </ListItem>))}
+                        {menuItems.map((item) => {
+                            const isActive = location.pathname === item.link;
+
+                            return (
+                                <ListItemButton
+    key={item.text}
+    component={Link}
+    to={item.link}
+    onClick={handleDrawerToggle}
+    sx={{
+        color: isActive ? "#00ffcc" : "#ffffff"
+    }}
+>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+        {item.icon}
+        <ListItemText primary={item.text} />
+    </Box>
+</ListItemButton>
+                            );
+                        })}
                     </List>
-                </Box>
-            </Drawer>
-        </Toolbar>
-    </AppBar>);
+                </Drawer>
+            </Toolbar>
+        </AppBar>
+    );
 };
 
 export default Navbar;

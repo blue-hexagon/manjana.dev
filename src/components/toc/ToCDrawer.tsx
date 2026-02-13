@@ -5,6 +5,7 @@ import {useScrollSpy} from "./useScrollSpy"
 import {useTocKeyboard} from "./useTocKeyboard"
 import "./toc.css"
 import {extractTocIds, filterTocByDepth} from "./tocUtils"
+import {Box} from "@mui/system";
 
 interface ToCDrawerProps {
     title: string
@@ -27,24 +28,27 @@ export const ToCDrawer: React.FC<ToCDrawerProps> = ({title, toc, tocDepth}) => {
 
     return (
         <>
-            <button
-                className="toc-toggle"
-                aria-label="Toggle table of contents"
-                aria-expanded={isOpen}
-                onClick={() => setIsOpen(v => !v)}
-            >
-                ☰
-            </button>
+            <Box sx={{display: {md: "none"}}}>
 
-            {isOpen && (
-                <>
-                    <div className="toc-backdrop" onClick={() => setIsOpen(false)}/>
-                    <aside className="toc-drawer" role="navigation">
-                        <h2 className="toc-title">{title}</h2>
-                        <ToCList items={filteredItems} activeId={activeId} />
-                    </aside>
-                </>
-            )}
+                <button
+                    className="toc-toggle"
+                    aria-label="Toggle table of contents"
+                    aria-expanded={isOpen}
+                    onClick={() => setIsOpen(v => !v)}
+                >
+                    ☰
+                </button>
+
+                {isOpen && (
+                    <>
+                        <div className="toc-backdrop" onClick={() => setIsOpen(false)}/>
+                        <aside className="toc-drawer" role="navigation">
+                            <h2 className="toc-title">{title}</h2>
+                            <ToCList items={filteredItems} activeId={activeId}/>
+                        </aside>
+                    </>
+                )}
+            </Box>
         </>
     )
 }

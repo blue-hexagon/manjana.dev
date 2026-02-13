@@ -1,13 +1,18 @@
-export const extractTocIds = (items?: any[]): Set<string> => {
+import {ToCItem} from "./ToCList"
+export const extractTocIds = (items?: ToCItem[]): Set<string> => {
   const ids = new Set<string>()
 
-  const walk = (nodes?: any[]) => {
+  const walk = (nodes?: ToCItem[]) => {
     if (!nodes) return
-    for (const n of nodes) {
-      if (n.url?.startsWith("#")) {
-        ids.add(n.url.slice(1))
+
+    for (const node of nodes) {
+      if (node.url?.startsWith("#")) {
+        ids.add(node.url.substring(1))
       }
-      walk(n.items)
+
+      if (node.items?.length) {
+        walk(node.items)
+      }
     }
   }
 
@@ -15,21 +20,25 @@ export const extractTocIds = (items?: any[]): Set<string> => {
   return ids
 }
 
-// tocUtils.ts
 export function filterTocByDepth(
-    items: any[] | undefined,
-    maxDepth: number,
-    currentDepth = 1
-): any[] | undefined {
-    if (!items) return items
-    if (currentDepth > maxDepth) return undefined
+  items: ToCItem[] | undefined,
+  maxDepth: number,
+  currentDepth = 1
+): ToCItem[] | undefined {
+  if (!items) return undefined
+  if (currentDepth > maxDepth) return undefined
 
-    return items.map(item => ({
+  return items
+    .map(item => {
+      const filteredChildren = filterTocByDepth(
+        item.items,
+        maxDepth,
+        currentDepth + 1
+      )
+
+      return {
         ...item,
-        items: filterTocByDepth(
-            item.items,
-            maxDepth,
-            currentDepth + 1
-        ),
-    }))
+        items: filteredChildren,
+      }
+    })
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {
     Container,
     Card,
@@ -14,6 +14,10 @@ import {
 import {styled} from "@mui/system";
 import {FaPython, FaNpm} from "react-icons/fa";
 import {IconContext} from "react-icons";
+import {useState} from "react";
+import {IconButton, Tooltip} from "@mui/material";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
+import {Modal} from "@mui/material";
 
 import {Link} from "gatsby";
 import {
@@ -189,68 +193,207 @@ const PackageIconBadge = ({type}) => {
 };
 
 export const ProjectShowcase = ({indices}) => {
+    const [showImages, setShowImages] = useState(true);
+    const [zoomOpen, setZoomOpen] = useState(false);
+    const [zoomSrc, setZoomSrc] = useState(null);
+    useEffect(() => {
+        if (zoomOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+    }, [zoomOpen]);
     return (
+        <>
+            {/* Toggle Button Row */}
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    mb: 2,
+                }}
+            >
+                <Tooltip title={showImages ? "Hide images" : "Show images"}>
+                    <IconButton
+                        onClick={() => setShowImages(prev => !prev)}
+                        sx={{
+                            color: showImages ? "rgba(255,255,255,0.5)" : "#888",
+                            backgroundColor: showImages
+                                ? "rgba(255,255,255,0.15)"
+                                : "rgba(255,255,255,0.05)",
+                            border: showImages
+                                ? "1px solid rgba(255,255,255,0.1)"
+                                : "1px solid rgba(255,255,255,0.1)",
+                            transition: "all 0.2s ease",
+                            "&:hover": {
+                                backgroundColor: showImages
+                                    ? "rgba(255,255,255,0.25)"
+                                    : "rgba(255,255,255,0.1)",
+                            }
+                        }}
+                    >
+                        {showImages ? <Visibility/> : <VisibilityOff/>}
+                    </IconButton>
+                </Tooltip>
+            </Box>
+            <Modal disableScrollLock
+                   disableRestoreFocus
+                   disableAutoFocus
+                   open={zoomOpen} onClose={() => setZoomOpen(false)}>
+                <Box
+                    onClick={() => setZoomOpen(false)}
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100vh",
+                        backgroundColor: "rgba(0,0,0,0.9)",
+                        backdropFilter: "blur(6px)",
+                        cursor: "zoom-out",
+                    }}
+                >
+                    {zoomSrc && (
+                        <Box
+                            component="img"
+                            src={zoomSrc}
+                            sx={{
+                                maxWidth: "92vw",
+                                maxHeight: "92vh",
+                                borderRadius: 2,
+                                boxShadow: "0 25px 80px rgba(0,0,0,0.8)",
+                                transition: "0.2s ease",
+                            }}
+                        />
+                    )}
+                </Box>
+            </Modal>
 
-        <Grid2 container spacing={4} height="100%" sx={{height: "100%", display: "flex", alignItems: "center"}}>
-            {projects.map((project, index) => (
-                <Grid2 item key={index} size={{xs: 12, sm: 6, lg: 4}}>
-                    <StyledCard>
-                        <Box position="relative">
-                            <CardMedia
-                                component="img"
-                                height="180"
-                                image={project.image}
-                                alt={project.title}
-                                sx={{
-                                    filter: "brightness(0.75)",
-                                    "&:hover": {filter: "brightness(1)",}
-                                }}
-                            />
-                            {project.packageAvailable && (
-                                <Box position="absolute" top={8} right={8}>
-                                    <PackageIconBadge type={project.packageAvailable}/>
-                                </Box>
-                            )}
-                        </Box>
-                        <Link to={project.link}
-                              style={{textDecoration: 'none', color: "inherit"}}>
-                            <CardActionArea sx={{height: "100%"}}>
-                                <CardContent>
-                                    <Typography gutterBottom variant="h5" color="#ffffff">
-                                        {project.title}
-                                    </Typography>
-                                    <Typography variant="body2" color="#bdbdbd" className="truncated-text-three">
-                                        {project.description}
-                                    </Typography>
-                                    <Divider></Divider>
-                                    <Box mt={2}>
-                                        {project.tags.map((tag, idx) => (
-                                            <Chip sx={{marginRight: "4px"}} key={idx} label={tag}
-                                                  variant="outlined"></Chip>
-                                        ))}
+            <Grid2
+                container
+                spacing={4}
+                height="100%"
+                sx={{height: "100%", display: "flex", alignItems: "center"}}
+            >
+                {projects.map((project, index) => (
+                    <Grid2 item key={index} size={{xs: 12, sm: 6, lg: 4}}>
+                        <StyledCard>
+                            <Box position="relative">
+                                {showImages && (
+                                    <CardMedia
+                                        component="img"
+                                        height="180"
+                                        image={project.image}
+                                        alt={project.title}
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // prevent navigation
+                                            e.preventDefault();
+                                            setZoomSrc(project.image);
+                                            setZoomOpen(true);
+                                        }}
+                                        sx={{
+                                            cursor: "zoom-in",
+                                            filter: "brightness(0.75)",
+                                            transition: "0.25s ease",
+                                            "&:hover": {
+                                                filter: "brightness(1)",
+                                                transform: "scale(1.02)",
+                                            }
+                                        }}
+                                    />
+                                )}
+
+                                {project.packageAvailable && (
+                                    <Box position="absolute" top={8} right={8}>
+                                        <PackageIconBadge type={project.packageAvailable}/>
                                     </Box>
-                                    <Box mt={2}>
-                                        <IconList icons={project.icons}/>
-                                    </Box>
-                                </CardContent>
-                            </CardActionArea>
-                        </Link>
-                    </StyledCard>
-                </Grid2>
-            ))}
-        </Grid2>
+                                )}
+                            </Box>
+
+                            <Link
+                                to={project.link}
+                                style={{textDecoration: "none", color: "inherit"}}
+                            >
+                                <CardActionArea sx={{height: "100%"}}>
+                                    <CardContent>
+                                        <Typography gutterBottom variant="h5" color="#ffffff">
+                                            {project.title}
+                                        </Typography>
+
+                                        <Typography
+                                            variant="body2"
+                                            color="#bdbdbd"
+                                            className="truncated-text-three"
+                                        >
+                                            {project.description}
+                                        </Typography>
+
+                                        <Divider/>
+
+                                        <Box mt={2}>
+                                            {project.tags.map((tag, idx) => (
+                                                <Chip
+                                                    sx={{marginRight: "4px"}}
+                                                    key={idx}
+                                                    label={tag}
+                                                    variant="outlined"
+                                                />
+                                            ))}
+                                        </Box>
+
+                                        <Box mt={2}>
+                                            <IconList icons={project.icons}/>
+                                        </Box>
+                                    </CardContent>
+                                </CardActionArea>
+                            </Link>
+                        </StyledCard>
+                    </Grid2>
+                ))}
+            </Grid2>
+        </>
     );
 };
 const Main = () => {
     return (
         <>
-            <Container sx={{py: 5}}>
-                <Typography variant="h2" color="#ffffff" gutterBottom>
-                    My Projects
-                </Typography>
-                <Typography sx={{pb: 2}} variant="subtitle1" color="#bdbdbd">
-                    A selection of some of my work.
-                </Typography>
+            <Container sx={{pt: 5, pb: 1}}>
+                <Box sx={{mb: 0}}>
+                    <Typography
+                        variant="h2"
+                        sx={{
+                            fontWeight: 600,
+                            letterSpacing: "-0.5px",
+                            color: "#ffffff",
+                            lineHeight: 1.1,
+                        }}
+                    >
+                        Selected Work
+                    </Typography>
+
+                    <Box
+                        sx={{
+                            width: 80,
+                            height: 4,
+                            mt: 2,
+                            mb: 3,
+                            background: "linear-gradient(90deg, #00ffcc, transparent)",
+                            borderRadius: 2,
+                        }}
+                    />
+
+                    <Typography
+                        variant="subtitle1"
+                        sx={{
+                            color: "#bdbdbd",
+                            maxWidth: 720,
+                            lineHeight: 1.6,
+                            fontSize: "1.05rem",
+                            fontStyle: ""
+                        }}
+                    >
+                        Cross-platform tooling, system introspection utilities, automation scripts and web applications.
+                    </Typography>
+                </Box>
                 <ProjectShowcase></ProjectShowcase>
             </Container>
         </>)

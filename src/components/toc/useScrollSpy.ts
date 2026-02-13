@@ -1,74 +1,82 @@
-import { useEffect, useRef, useState } from "react"
+import {useEffect, useRef, useState} from "react"
 
 const NAVBAR_HEIGHT = 64
 const READ_OFFSET = 24
 
 export const useScrollSpy = (allowedIds: Set<string>) => {
-  const [activeId, setActiveId] = useState<string | null>(null)
-  const headingsRef = useRef<{ id: string; top: number }[]>([])
-  const lastActiveRef = useRef<string | null>(null)
+    const [activeId, setActiveId] = useState<string | null>(null)
+    const headingsRef = useRef<{ id: string; top: number }[]>([])
+    const lastActiveRef = useRef<string | null>(null)
 
-  useEffect(() => {
-    const collectHeadings = () => {
-const headings = Array.from(
-  document.querySelectorAll<HTMLElement>("h2, h3, h4")
-).filter(h => h.id && allowedIds.has(h.id))
 
-      headingsRef.current = headings.map(h => ({
-        id: h.id,
-        top: h.offsetTop,
-      }))
+    useEffect(() => {
+        if (!allowedIds || allowedIds.size === 0) return
 
-      // ✅ THIS IS WHERE YOUR SNIPPET GOES
-      if (headingsRef.current.length) {
-        lastActiveRef.current = headingsRef.current[0].id
-        setActiveId(headingsRef.current[0].id)
-      }
-    }
+        const collectHeadings = () => {
+            const headings = Array.from(
+                document.querySelectorAll<HTMLElement>("h2, h3, h4")
+            ).filter(h => h.id && allowedIds.has(h.id))
 
-    // Wait for layout / fonts / MDX hydration
-    setTimeout(collectHeadings, 100)
+            headingsRef.current = headings
+                .map(h => ({
+                    id: h.id,
+                    top: h.getBoundingClientRect().top + window.scrollY,
+                }))
+                .sort((a, b) => a.top - b.top)
 
-    const onScroll = () => {
-      const scrollY = window.scrollY + NAVBAR_HEIGHT + READ_OFFSET
-
-      let current: string | null = null
-
-      for (const h of headingsRef.current) {
-        if (scrollY >= h.top) {
-          current = h.id
-        } else {
-          break
+            // Initialize to first heading
+            if (headingsRef.current.length) {
+                const firstId = headingsRef.current[0].id
+                lastActiveRef.current = firstId
+                setActiveId(firstId)
+            }
         }
-      }
 
-      // ✅ NEVER allow "no active section"
-      if (!current) {
-        current = lastActiveRef.current
-      }
+        const onScroll = () => {
+            const scrollY =
+                window.scrollY + NAVBAR_HEIGHT + READ_OFFSET + 1
 
-      if (current && current !== lastActiveRef.current) {
-        lastActiveRef.current = current
-        setActiveId(current)
-      }
-    }
+            let current: string | null = null
 
-    const onHashChange = () => {
-      const id = window.location.hash.replace("#", "")
-      if (id) {
-        lastActiveRef.current = id
-        setActiveId(id)
-      }
-    }
+            for (const h of headingsRef.current) {
+                if (scrollY >= h.top) {
+                    current = h.id
+                } else {
+                    break
+                }
+            }
 
-    window.addEventListener("scroll", onScroll, { passive: true })
-    window.addEventListener("hashchange", onHashChange)
+            if (!current && headingsRef.current.length) {
+                current = headingsRef.current[0].id
+            }
 
-    return () => {
-      window.removeEventListener("scroll", onScroll)
-      window.removeEventListener("hashchange", onHashChange)
-    }
-  }, [])
+            if (current && current !== lastActiveRef.current) {
+                lastActiveRef.current = current
+                setActiveId(current)
+            }
+        }
 
-  return activeId
+        const onHashChange = () => {
+            const id = window.location.hash.replace("#", "")
+            if (id && allowedIds.has(id)) {
+                lastActiveRef.current = id
+                setActiveId(id)
+            }
+        }
+
+        collectHeadings()
+        onScroll()
+
+        window.addEventListener("scroll", onScroll, {passive: true})
+        window.addEventListener("resize", collectHeadings)
+        window.addEventListener("hashchange", onHashChange)
+
+        return () => {
+            window.removeEventListener("scroll", onScroll)
+            window.removeEventListener("resize", collectHeadings)
+            window.removeEventListener("hashchange", onHashChange)
+        }
+    }, [allowedIds])
+
+    return activeId
 }
