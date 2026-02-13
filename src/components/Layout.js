@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect} from "react"
 import Navbar from "./Navbar"
-import {Container, Box, IconButton} from "@mui/material"
+import {Container, Box, IconButton, NoSsr} from "@mui/material"
 import {useLocation} from "@reach/router"
 import useMediaQuery from "@mui/material/useMediaQuery"
 import {PlainIconFooter, SpecialIconFooter} from "./Footers"
@@ -23,11 +23,16 @@ export default function Layout({children, data}) {
     /* ===========================
        Resizable Width Logic
        =========================== */
+    const [tocWidth, setTocWidth] = useState(420)
 
-    const [tocWidth, setTocWidth] = useState(() => {
+    useEffect(() => {
+        if (typeof window === "undefined") return
+
         const saved = localStorage.getItem("toc-width")
-        return saved ? Number(saved) : 420
-    })
+        if (saved) {
+            setTocWidth(Number(saved))
+        }
+    }, [])
 
     const resizingRef = useRef(false)
     const tocRef = useRef(null)
@@ -42,8 +47,11 @@ export default function Layout({children, data}) {
     const stopResize = () => {
         if (!resizingRef.current) return
         resizingRef.current = false
-        document.body.style.userSelect = ""
-        localStorage.setItem("toc-width", String(tocWidth))
+
+        if (typeof window !== "undefined") {
+            document.body.style.userSelect = ""
+            localStorage.setItem("toc-width", String(tocWidth))
+        }
     }
 
     const handleResize = (e) => {
@@ -58,6 +66,8 @@ export default function Layout({children, data}) {
         setTocWidth(clamped)
     }
     useEffect(() => {
+        if (typeof window === "undefined") return
+
         window.addEventListener("mousemove", handleResize)
         window.addEventListener("mouseup", stopResize)
 

@@ -58,7 +58,7 @@ import {
     SiGit,
     SiGithub,
     SiVim,
-    SiJest, SiWebpack
+    SiJest, SiWebpack, SiMqtt, SiGrafana, SiTelegraph, SiInfluxdb
 } from "react-icons/si";
 import IconList from "./IconList";
 
@@ -81,11 +81,31 @@ const projects = [
     //     packageAvailable: null,
     //     id: 6
     // },
+            {
+        title: "MQ-Hero",
+        description: "A distributed IoT simulation and management platform built around MQTT — featuring policy-driven topic modeling, multi-tenant schemas, and observability integration (Telegraf, InfluxDB, Grafana).",
+        image: "/graphics/projects/mq_hero.png",
+        link: "/graphics/projects/pdf/dt_svendeprove_presentation2026-02-12-4601h6dakn21.pdf",
+        tags: ["IoT", "MQTT", "Distributed Systems"],
+        icons: [SiPython,SiMqtt,SiGrafana, SiTelegraph, SiInfluxdb],
+        packageAvailable: null,
+        id: -2
+    },
+        {
+        title: "manjana.dev",
+        description: "A Gatsby + MDX technical platform showcasing deep dives into systems, encoding, networking, and infrastructure — powered by custom React components and advanced UI tooling.",
+        image: "/graphics/projects/manjana_dev.png",
+        link: "https://manjana.dev",
+        tags: ["Web Application"],
+        icons: [SiMarkdown,SiGatsby,SiJavascript, SiTypescript, SiReact, SiGit],
+        packageAvailable: null,
+        id: -1
+    },
     {
         title: "HyperSnitch",
-        description: "An auto-deployable website multi-monitoring tool – with an integrated SMTP server – that alerts when specific strings is added or removed from a website.",
+        description: "An auto-deployable website monitoring tool with built-in SMTP alerts. Detects when specific strings are added or removed from target pages.",
         image: "/graphics/projects/hypersnitch.png",
-        link: "/projects/hypersnitch",
+        link: "https://github.com/blue-hexagon/HyperSnitch",
         tags: ["Monitoring", "Automation", "Web Scraping"],
         icons: [SiPython, SiPytest, SiGit],
         packageAvailable: null,
@@ -93,7 +113,7 @@ const projects = [
     },
     {
         title: "JHHuse",
-        description: "JhHuse.dk is a website for a homeowner association, providing document features and member information updates.",
+        description: "A Django-powered website for a homeowners association, featuring document management and member information updates.",
         image: "/graphics/projects/jhhuse_dk.png",
         link: "https://www.jhhuse.dk/",
         tags: ["Web Application"],
@@ -102,7 +122,7 @@ const projects = [
         id: 1
     }, {
         title: "WinScraper",
-        description: "A combined CLI tool and library used for collecting information about Windows devices.",
+        description: "Windows system reconnaissance CLI and library in Python.",
         image: "/graphics/projects/winscraper.png",
         link: "/projects/hypersnitch",
         tags: ["Utility"],
@@ -112,7 +132,7 @@ const projects = [
     },
     {
         title: "BashLAMP",
-        description: "A Bash script that sets up a Rocky Linux LAMP server with Wordpress and a SSL configured FTP server",
+        description: "One-command provisioning of a Rocky Linux LAMP stack with WordPress and secure FTP.",
         image: "/graphics/projects/bashlamp.png",
         link: "https://github.com/blue-hexagon/BashLAMP",
         tags: ["Bash", "LAMP", "vsftpd", "Linux"],
@@ -122,9 +142,9 @@ const projects = [
     },
     {
         title: "Cheatsheet.wtf",
-        description: "An evolution of shellmagic.xyz where I added many more cheatsheets.",
+        description: "A modernized evolution of ShellMagic.xyz — interactive and searchable terminal cheatsheet platform.",
         image: "/graphics/projects/cheatsheet_wtf.png",
-        link: "https://www.cheatsheet.wtf",
+        link: "https://web.archive.org/web/20250426052813/https://www.cheatsheet.wtf/",
         tags: ["Bash", "Vim", "Linux", "Git"],
         icons: [SiPython, SiFlask, SiGit, SiHeroku, SiHtml5, SiCss3, SiJavascript],
         packageAvailable: null,
@@ -132,7 +152,7 @@ const projects = [
     },
     {
         title: "TS-Calculator",
-        description: "A custom keyboard/GUI controlled calculator written (almost) from scratch in TypeScript.",
+        description: "A custom TypeScript calculator built from scratch with full keyboard input handling and a modular UI architecture.",
         image: "/graphics/projects/ts_calculator.gif",
         link: "https://github.com/blue-hexagon/TS-Calculator",
         tags: ["TypeScript", "Webpack"],
@@ -141,7 +161,7 @@ const projects = [
         id: 4
     }, {
         title: "ShellMagic.Xyz",
-        description: "A Bash cheatsheet – my first website (kind of).",
+        description: "A minimalist Bash cheatsheet site — my first serious web project.",
         image: "/graphics/projects/shellmagic_xyz.png",
         link: "https://web.archive.org/web/20200411230156/https:/shellmagic.xyz/",
         tags: ["Bash", "Webarchived"],
