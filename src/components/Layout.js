@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect} from "react"
 import Navbar from "./Navbar"
-import {Container, Box, IconButton, NoSsr} from "@mui/material"
+import {Container, Box, IconButton} from "@mui/material"
 import {useLocation} from "@reach/router"
 import useMediaQuery from "@mui/material/useMediaQuery"
 import {PlainIconFooter, SpecialIconFooter} from "./Footers"
@@ -9,6 +9,7 @@ import {GlossaryContext} from "./mdxblog/GlossarySystem/GlossaryContext"
 import {ToCAside} from "./toc/ToCAside"
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import mermaid from "./mermaidConfig"; // noqa
 
 export default function Layout({children, data}) {
     const title = data?.mdx?.frontmatter?.title
@@ -124,7 +125,7 @@ export default function Layout({children, data}) {
                                         "&:hover": {color: "#00ffcc"},
                                         right: "1rem",
                                         top: "5.25rem",
-                                        zIndex: 2000,
+                                        zIndex: 10,
 
                                     }}
                                     aria-label="Toggle table of contents"

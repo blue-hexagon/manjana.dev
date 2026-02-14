@@ -37,6 +37,7 @@ export const ToCAside: React.FC<ToCAsideProps> = ({
                     : "1px solid rgba(255,255,255,0.08)",
                 pl: collapsed ? 0 : 3,
                 pr: 0,
+                height: "100vh",
                 transition: "all 0.25s ease",
 
             }}

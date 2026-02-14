@@ -81,28 +81,32 @@ const projects = [
     //     packageAvailable: null,
     //     id: 6
     // },
-            {
+    {
         title: "MQ-Hero",
+        yearStart: 2026,
         description: "A distributed IoT simulation and management platform built around MQTT — featuring policy-driven topic modeling, multi-tenant schemas, and observability integration (Telegraf, InfluxDB, Grafana).",
         image: "/graphics/projects/mq_hero.png",
         link: "/graphics/projects/pdf/dt_svendeprove_presentation2026-02-12-4601h6dakn21.pdf",
         tags: ["IoT", "MQTT", "Distributed Systems"],
-        icons: [SiPython,SiMqtt,SiGrafana, SiTelegraph, SiInfluxdb],
+        icons: [SiPython, SiMqtt, SiGrafana, SiTelegraph, SiInfluxdb],
         packageAvailable: null,
         id: -2
     },
-        {
+    {
         title: "manjana.dev",
+        yearStart: 2025,
         description: "A Gatsby + MDX technical platform showcasing deep dives into systems, encoding, networking, and infrastructure — powered by custom React components and advanced UI tooling.",
         image: "/graphics/projects/manjana_dev.png",
         link: "https://manjana.dev",
         tags: ["Web Application"],
-        icons: [SiMarkdown,SiGatsby,SiJavascript, SiTypescript, SiReact, SiGit],
+        icons: [SiMarkdown, SiGatsby, SiJavascript, SiTypescript, SiReact, SiGit],
         packageAvailable: null,
         id: -1
     },
     {
         title: "HyperSnitch",
+        yearStart: 2025,
+        yearEnd: 2025,
         description: "An auto-deployable website monitoring tool with built-in SMTP alerts. Detects when specific strings are added or removed from target pages.",
         image: "/graphics/projects/hypersnitch.png",
         link: "https://github.com/blue-hexagon/HyperSnitch",
@@ -112,62 +116,76 @@ const projects = [
         id: 0
     },
     {
-        title: "JHHuse",
-        description: "A Django-powered website for a homeowners association, featuring document management and member information updates.",
-        image: "/graphics/projects/jhhuse_dk.png",
-        link: "https://www.jhhuse.dk/",
-        tags: ["Web Application"],
-        icons: [SiPython, SiDjango, SiBootstrap, SiNginx, SiHtml5, SiDigitalocean, SiGit],
-        packageAvailable: null,
-        id: 1
-    }, {
-        title: "WinScraper",
-        description: "Windows system reconnaissance CLI and library in Python.",
-        image: "/graphics/projects/winscraper.png",
-        link: "/projects/hypersnitch",
-        tags: ["Utility"],
-        icons: [SiPython, SiGit],
-        packageAvailable: null,
-        id: 2
-    },
-    {
         title: "BashLAMP",
+        yearStart: 2022,
+        yearEnd: 2022,
         description: "One-command provisioning of a Rocky Linux LAMP stack with WordPress and secure FTP.",
         image: "/graphics/projects/bashlamp.png",
         link: "https://github.com/blue-hexagon/BashLAMP",
         tags: ["Bash", "LAMP", "vsftpd", "Linux"],
         icons: [SiLinux, SiGnubash, SiGit],
         packageAvailable: null,
-        id: 3
-    },
-    {
-        title: "Cheatsheet.wtf",
-        description: "A modernized evolution of ShellMagic.xyz — interactive and searchable terminal cheatsheet platform.",
-        image: "/graphics/projects/cheatsheet_wtf.png",
-        link: "https://web.archive.org/web/20250426052813/https://www.cheatsheet.wtf/",
-        tags: ["Bash", "Vim", "Linux", "Git"],
-        icons: [SiPython, SiFlask, SiGit, SiHeroku, SiHtml5, SiCss3, SiJavascript],
-        packageAvailable: null,
-        id: 4
+        id: 1
     },
     {
         title: "TS-Calculator",
+        yearStart: 2022,
+        yearEnd: 2022,
         description: "A custom TypeScript calculator built from scratch with full keyboard input handling and a modular UI architecture.",
         image: "/graphics/projects/ts_calculator.gif",
         link: "https://github.com/blue-hexagon/TS-Calculator",
         tags: ["TypeScript", "Webpack"],
         icons: [SiTypescript, SiWebpack],
         packageAvailable: null,
-        id: 4
+        id: 2
+    },
+    {
+        title: "JHHuse",
+        yearStart: 2021,
+        yearEnd: 2022,
+        description: "A Django-powered website for a homeowners association, featuring document management and member information updates.",
+        image: "/graphics/projects/jhhuse_dk.png",
+        link: "https://www.jhhuse.dk/",
+        tags: ["Web Application"],
+        icons: [SiPython, SiDjango, SiBootstrap, SiNginx, SiHtml5, SiDigitalocean, SiGit],
+        packageAvailable: null,
+        id: 3
     }, {
+        title: "WinScraper",
+        yearStart: 2021,
+        yearEnd: 2022,
+        description: "Windows system reconnaissance CLI and library in Python.",
+        image: "/graphics/projects/winscraper.png",
+        link: "/projects/hypersnitch",
+        tags: ["Utility"],
+        icons: [SiPython, SiGit],
+        packageAvailable: null,
+        id: 4
+    },
+
+    {
+        title: "Cheatsheet.wtf",
+        yearStart: 2021,
+        yearEnd: 2021,
+        description: "A modernized evolution of ShellMagic.xyz — interactive and searchable terminal cheatsheet platform.",
+        image: "/graphics/projects/cheatsheet_wtf.png",
+        link: "https://web.archive.org/web/20250426052813/https://www.cheatsheet.wtf/",
+        tags: ["Bash", "Vim", "Linux", "Git"],
+        icons: [SiPython, SiFlask, SiGit, SiHeroku, SiHtml5, SiCss3, SiJavascript],
+        packageAvailable: null,
+        id: 5
+    },
+    {
         title: "ShellMagic.Xyz",
+        yearStart: 2020,
+        yearEnd: 2020,
         description: "A minimalist Bash cheatsheet site — my first serious web project.",
         image: "/graphics/projects/shellmagic_xyz.png",
         link: "https://web.archive.org/web/20200411230156/https:/shellmagic.xyz/",
         tags: ["Bash", "Webarchived"],
         icons: [SiHtml5, SiCss3],
         packageAvailable: null,
-        id: 5
+        id: 6
     },
 ];
 
@@ -298,7 +316,36 @@ export const ProjectShowcase = ({indices}) => {
                     <Grid2 item key={index} size={{xs: 12, sm: 6, lg: 4}}>
                         <StyledCard>
                             <Box position="relative">
+                                <Box
+                                    position="absolute"
+                                    top={8}
+                                    right={8}
+                                    sx={{
+                                        background: "rgba(0,0,0,0.6)",
+                                        backdropFilter: "blur(6px)",
+                                        px: 1.5,
+                                        py: 0.5,
+                                        borderRadius: "12px",
+                                        fontSize: "0.75rem",
+                                        color: "#ffffff",
+                                        fontWeight: 500,
+                                        zIndex: 5,
+                                    }}
+                                >
+                                    {project.yearStart && (
+                                        <>
+                                            {project.yearEnd && project.yearEnd !== project.yearStart
+                                                ? `${project.yearStart}–${project.yearEnd}`
+                                                : project.yearEnd === project.yearStart
+                                                    ? project.yearStart
+                                                    : `${project.yearStart}–Present`}
+                                        </>
+                                    )}
+                                </Box>
+
+
                                 {showImages && (
+
                                     <CardMedia
                                         component="img"
                                         height="180"
@@ -317,7 +364,11 @@ export const ProjectShowcase = ({indices}) => {
                                             "&:hover": {
                                                 filter: "brightness(1)",
                                                 transform: "scale(1.02)",
-                                            }
+                                            },
+                                            borderTop: "1px solid rgba(27, 27, 27, 0.99)",
+                                            borderLeft: "1px solid rgba(27, 27, 27, 0.99)",
+                                            borderRight: "1px solid rgba(27, 27, 27, 0.99)",
+                                            borderRadius: "10px 10px 0px 0px",
                                         }}
                                     />
                                 )}
@@ -412,6 +463,16 @@ const Main = () => {
                         }}
                     >
                         Cross-platform tooling, system introspection utilities, automation scripts and web applications.
+                    </Typography>
+                    <Typography variant="subtitle2" sx={{
+                        color: "rgba(189,189,189,0.45)",
+                        maxWidth: 720,
+                        lineHeight: 1.4,
+                        mt: ".25rem",
+                        fontSize: "0.85rem",
+                        fontStyle: ""
+                    }}>
+                        For all public works checkout my Github
                     </Typography>
                 </Box>
                 <ProjectShowcase></ProjectShowcase>

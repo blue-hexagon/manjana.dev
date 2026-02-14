@@ -21,7 +21,7 @@ pre[class*="language-"] {
     white-space: pre;
     word-spacing: normal;
     word-break: normal;
-    line-height: 1.5;
+    line-height: 1.15;
     margin: 0;
     padding: 0;
 
@@ -217,7 +217,7 @@ pre.line-numbers::before, pre.line-numbers::after {
     border-right: 0px solid #999;
     display: block;
     float: left;
-    font-size: 60%;
+    font-size: 100%;
     letter-spacing: -1px;
     margin-right: -0.01em;
     pointer-events: none;

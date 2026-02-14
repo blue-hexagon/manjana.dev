@@ -18,61 +18,79 @@ import PageGlossaryTable from "./components/mdxblog/GlossarySystem/PageGlossaryT
 import {ArticleHeader} from "./components/mdxblog/ArticleHeader";
 
 
-export const H1 = ({children, ...props}) => (
-    <>
-        <Typography sx={{fontSize: '3rem', fontWeight: 900}} variant="h1" {...props}>
-            {children}
-        </Typography>
-    </>
+/**
+ * Modular scale: Perfect Fourth (1.333)
+ * Base: 1rem
+ */
+
+export const H1 = ({ children, ...props }) => (
+  <Typography
+    variant="h1"
+    sx={{
+      fontSize: { xs: "2.4rem", md: "3.157rem" },
+      fontWeight: 800,
+      lineHeight: 1.15,
+      letterSpacing: "-0.02em",
+        color: "#ffcc00",
+      marginBottom: 3,
+    }}
+    {...props}
+  >
+    {children}
+  </Typography>
 );
 
-const H2 = ({children, ...props}) => (
-    <Typography
-        variant="h2"
-        sx={{
-            color: '#ffcc00',
-            fontWeight: 600,
-            fontSize: '2rem',
-            marginBottom: 2
-        }}
-        {...props}
-    >
-        {children}
-    </Typography>
+export const H2 = ({ children, ...props }) => (
+  <Typography
+    variant="h2"
+    sx={{
+      fontSize: { xs: "1.9rem", md: "2.369rem" },
+      fontWeight: 700,
+      lineHeight: 1.2,
+      letterSpacing: "-0.01em",
+      color: "#ffcc00",
+      marginBottom: 2.5,
+      marginTop: 4,
+    }}
+    {...props}
+  >
+    {children}
+  </Typography>
 );
 
-const H3 = ({children, ...props}) => (
-    <Typography
-        variant="h3"
-        sx={{
-            color: '#ff4081',
-            fontWeight: 550,
-            fontSize: '1.6rem',
-            marginBottom: 1,
-            paddingTop: 1,
-        }}
-        {...props}
-    >
-        {children}
-    </Typography>
+export const H3 = ({ children, ...props }) => (
+  <Typography
+    variant="h3"
+    sx={{
+      fontSize: { xs: "1.5rem", md: "1.777rem" },
+      fontWeight: 600,
+      lineHeight: 1.3,
+      color: "#ff4081",
+      marginBottom: 1.5,
+      marginTop: 3,
+    }}
+    {...props}
+  >
+    {children}
+  </Typography>
 );
 
-const H4 = ({children, ...props}) => (
-    <Typography
-        variant="h4"
-        sx={{
-            color: '#ff84ad',
-            fontWeight: 550,
-            fontSize: '1.2rem',
-            marginBottom: 1,
-            paddingTop: 1,
-        }}
-        {...props}
-    >
-        {children}
-    </Typography>
+export const H4 = ({ children, ...props }) => (
+  <Typography
+    variant="h4"
+    sx={{
+      fontSize: "1.333rem",
+      fontWeight: 600,
+      lineHeight: 1.4,
+      color: "#ff84ad",
+      marginBottom: 1,
+      marginTop: 2,
+    }}
+    {...props}
+  >
+    {children}
+  </Typography>
 );
-
 const Paragraph = ({children, ...props}) => (
     <Typography
         variant="body1"
@@ -96,8 +114,53 @@ const ZoomableImageComponent = (props) => {
 };
 
 const MDXTable = ({ children, ...props }) => (
-  <TableContainer component={Paper} sx={{ my: 3 }}>
-    <Table {...props}>{children}</Table>
+  <TableContainer
+    component={Paper}
+    sx={{
+      my: 4,
+      background: "rgba(18, 18, 22, 0.75)",
+      backdropFilter: "blur(6px)",
+      border: "1px solid rgba(0,255,204,0.15)",
+      borderRadius: "12px",
+      boxShadow: "0 0 30px rgba(0,255,204,0.08)",
+      overflow: "hidden",
+
+      "& table": {
+        borderCollapse: "separate",
+        borderSpacing: 0,
+      },
+
+      "& thead": {
+        background: "rgba(0,255,204,0.05)",
+      },
+
+      "& th": {
+        fontWeight: 600,
+        fontSize: "0.85rem",
+        letterSpacing: "0.04em",
+        textTransform: "uppercase",
+        borderBottom: "1px solid rgba(0,255,204,0.25)",
+        color: "#00ffcc",
+      },
+
+      "& td": {
+        fontSize: "0.95rem",
+        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        color: "rgba(255,255,255,0.85)",
+      },
+
+      "& tr:hover td": {
+        background: "rgba(255,255,255,0.02)",
+      },
+
+      "& tr:last-child td": {
+        borderBottom: "none",
+      },
+    }}
+  >
+    <Table {...props}>
+      {children}
+    </Table>
   </TableContainer>
 );
 

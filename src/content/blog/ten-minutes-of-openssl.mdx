@@ -14,25 +14,15 @@ glossaryPrefix: TLS
 tocDepth: 4
 ---
 
+import {ArticleHeader} from "../../components/mdxblog/ArticleHeader";
 import { Box } from "@mui/system";
 import {Divider, Typography} from "@mui/material";
 
-<Box sx={{display: 'flex', flexDirection: 'row', justifyContent: "space-between", alignItems: "end", mb: 0}}>
-    <Typography variant="h1" sx={{pt: 5}} gutterBottom>
-        # {props.pageContext.frontmatter.title}
-    </Typography>
-    <Typography variant="h5" color="textSecondary" gutterBottom>
-        {props.pageContext.frontmatter.date}
-    </Typography>
-</Box>
-<Divider sx={{
-    background: 'linear-gradient(to right, #ff4081, #1b1b1b)',
-    height: '2px',
-    width: "100%",
-    borderRadius: '4px',
-    margin: '2px 0',
-    boxShadow: '0 0 10px rgba(255, 64, 129, 0.1)' // Adds a glowing shadow effect
-}}/>
+<ArticleHeader
+    title={props.pageContext.frontmatter.title}
+    subtitle={props.pageContext.frontmatter.subtitle}
+    date={props.pageContext.frontmatter.date}
+/>
 
 <Box>
 
@@ -330,5 +320,3 @@ This is still X.509 and TLS; it is just modernized identity and automation on to
 # Appendix — terminology, abbreviations, and acronyms
 
 <PageGlossary />
-
-#

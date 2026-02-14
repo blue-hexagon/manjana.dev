@@ -71,9 +71,9 @@ export const ArticleHeader: React.FC<PostHeaderProps> = ({
             align="left"
             fontStyle="italic"
             sx={{
-              color: "#ffcc00",
+              color: "rgba(128,128,128,0.8)",
               fontWeight: 300,
-              fontSize: "2rem",
+              fontSize: "1.5rem",
               paddingBottom: 0,
               paddingTop: 1,
             }}

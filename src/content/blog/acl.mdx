@@ -1,0 +1,138 @@
+
+# Layer Four: ACL – Deterministic Filtering
+
+ACLs are not “firewalls.”
+
+They are ordered match lists.
+
+First match wins.
+Implicit deny at end.
+
+## Execution Order (Data Plane)
+
+Inbound ACL is evaluated:
+
+1. Before routing lookup
+
+Outbound ACL is evaluated:
+
+1. After routing lookup
+
+## Wildcard Masks (Inverse Logic)
+
+| Bit | Meaning |
+|-----|---------|
+| 0   | Must match |
+| 1   | Ignore |
+
+Example:
+
+192.168.10.0/24 → 0.0.0.255
+
+## Named Extended ACL Example
+
+```bash
+ip access-list extended WEB-FILTER
+remark Allow HTTP/HTTPS
+permit tcp 192.168.10.0 0.0.0.255 any eq 80
+permit tcp 192.168.10.0 0.0.0.255 any eq 443
+deny ip any any
+```
+
+Apply:
+
+```bash
+interface g0/0
+ip access-group WEB-FILTER in
+```
+
+<StructuredNote type="danger">
+    The implicit deny is always there.
+    If traffic disappears, assume it hit the implicit deny.
+</StructuredNote>
+
+# Layer Five: NAT – Identity Rewriting
+
+NAT modifies packet headers after routing decision.
+
+Order (simplified):
+
+1. Inbound ACL
+2. Routing lookup
+3. NAT translation
+4. Outbound ACL
+
+## Static NAT
+
+```bash
+ip nat inside source static 192.168.1.10 203.0.113.10
+```
+
+## PAT (Overload)
+
+```bash
+access-list 1 permit 192.168.0.0 0.0.255.255
+ip nat inside source list 1 interface g0/1 overload
+```
+
+## Verification
+
+```bash
+show ip nat translations
+show ip nat statistics
+```
+
+⚠ Static entries cannot be cleared.
+
+<Divider sx={{my: 5, mx: 2}}/>
+
+# Layer Six: Failure Pattern Recognition
+
+## OSPF Fails
+
+| Symptom | Likely Cause |
+|----------|--------------|
+| Stuck in INIT | Hello mismatch |
+| Stuck in EXSTART | MTU mismatch |
+| No adjacency | Area mismatch |
+| Routes missing | Cost issue |
+
+## ACL Fails
+
+| Symptom | Cause |
+|---------|-------|
+| Everything blocked | Implicit deny |
+| Nothing blocked | Applied wrong direction |
+| Random issues | Return traffic not permitted |
+
+## NAT Fails
+
+| Symptom | Cause |
+|---------|-------|
+| No translation entry | ACL mismatch |
+| Works one way | Missing route back |
+| Pool unused | Missing overload |
+
+<Divider sx={{my: 5, mx: 2}}/>
+
+# Layer Seven: Mental Compression
+
+If you remember nothing else:
+
+- OSPF builds topology knowledge
+- ACL enforces deterministic filtering
+- NAT rewrites identity statefully
+
+Everything else is mechanics.
+
+<ShadowComment>
+    Networking becomes simpler the moment you stop memorizing commands and start modeling packet flow.
+</ShadowComment>
+
+# Summary Table
+
+| System | Plane | Core Failure Mode |
+|--------|-------|------------------|
+| OSPF | Control | Adjacency mismatch |
+| ACL | Data | Implicit deny |
+| NAT | Data | Translation state |
