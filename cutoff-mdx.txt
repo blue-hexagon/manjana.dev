@@ -1,0 +1,92 @@
+### Minimal Single-Area Example (Area 0)
+
+*The following example shows the broad steps OSPF goes through from the beginning until the network finally converges - we'll go a lot deeper as this article progresses*
+
+<Mermaid center="true"
+         chart={`flowchart TD
+subgraph Area0["Area 0 (Backbone)"]
+   R1["R1<br/>RID: 1.1.1.1<br/>Lo0: 1.1.1.1/32"]
+   R2["R2<br/>RID: 2.2.2.2<br/>Lo0: 2.2.2.2/32"]
+   R1 ---|"10.0.12.0/30<br/>.1      .2"| R2
+end
+classDef router fill:#141A22,stroke:#4F6BFF,color:#E6EDF3,stroke-width:1px;
+class R1,R2 router;
+`}
+/>
+
+
+#### Router Configuration
+
+<Box sx={{display: "flex", gap: 3, alignItems: "flex-start"}}>
+    <Box sx={{flex: 1, height: "100%"}}>
+        ```text
+        hostname R1
+
+        interface g0/0
+        ip address 10.0.12.1 255.255.255.252
+        no shutdown
+
+        interface loopback0
+        ip address 1.1.1.1 255.255.255.255
+
+        router ospf 10
+        router-id 1.1.1.1
+        network 10.0.12.0 0.0.0.3 area 0
+        network 1.1.1.1 0.0.0.0 area 0
+        ```
+    </Box>
+
+    <Box sx={{flex: 1, height: "100%"}}>
+        ```text
+        hostname R2
+
+        interface g0/0
+        ip address 10.0.12.2 255.255.255.252
+        no shutdown
+
+        interface loopback0
+        ip address 2.2.2.2 255.255.255.255
+
+        router ospf 10
+        router-id 2.2.2.2
+        network 10.0.12.0 0.0.0.3 area 0
+        network 2.2.2.2 0.0.0.0 area 0
+        ```
+    </Box>
+</Box>
+
+#### Walkthrough
+From the first Hello packet exchange and all the way to SPF calculations and route installment the primary steps OSPF transitions through are:
+1. Hellos are exchanged on 10.0.12.0/30
+2. If Hello-parameters match, neighbor state transitions to `FULL`
+3. Each router originates a Type 1 Router LSA
+4. LSDB synchronizes through the flooded LSAs
+5. SPF runs locally
+6. Each router installs the remote loopback as an OSPF route
+
+<StructuredNote type="warning" title="Adjacencies are at the heart of OSPF">
+    If adjacency breaks ⇒ LSDB synchronization fails.
+
+    If LSDB synchronization fails ⇒ SPF diverges.
+
+    If SPF diverges ⇒ routing diverges.
+</StructuredNote>
+
+<Mermaid
+    chart={`
+    flowchart LR
+      subgraph CP["Control Plane (OSPF)"]
+        N["Neighbor / Adjacency Table"] --> LSDB["Link-State Database (LSDB)"]
+        LSDB --> SPF["SPF Computation (Dijkstra)"]
+        SPF --> RIB["Routing Information Base (RIB)"]
+      end
+      subgraph DP["Data Plane"]
+        FIB["Forwarding Table (FIB/CEF)"]
+      end
+      RIB --> FIB
+      classDef cp fill:#141A22,stroke:#4F6BFF,stroke-width:1px,color:#E6EDF3;
+      classDef dp fill:#141A22,stroke:#FF4D8D,stroke-width:1px,color:#E6EDF3;
+      class N,LSDB,SPF,RIB cp;
+      class FIB dp;
+`}
+/>

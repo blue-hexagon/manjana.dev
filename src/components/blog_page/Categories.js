@@ -1,71 +1,18 @@
-import { Button, TextField, Typography, Box } from "@mui/material";
+import {Button, TextField, Typography, Box, Stack, Chip} from "@mui/material";
 import React from "react";
 
 const CategoriesComponent = ({
-    articlesCount,
-    categories,
-    search,
-    onSearchChange,
-    activeCategory,
-    onCategorySelect
-}) => {
+                                 articlesCount,
+                                 categories,
+                                 search,
+                                 onSearchChange,
+                                 activeCategory,
+                                 onCategorySelect
+                             }) => {
     return (
         <>
-            <Typography
-                variant="h6"
-                gutterBottom
-                sx={{ mt: 2, mb: 2 }}
-            >
-                Filter
-            </Typography>
-
-            {/* Category Row */}
-            <Box
-                sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: 2,
-                    mb: 4,
-                }}
-            >
-                {Array.isArray(categories) && categories.length > 0 ? (
-                    categories.map((category) => {
-                        const isActive = activeCategory === category;
-
-                        return (
-                            <Button
-                                key={category}
-                                variant={isActive ? "contained" : "outlined"}
-                                onClick={() =>
-                                    onCategorySelect(
-                                        isActive ? null : category
-                                    )
-                                }
-                                sx={{
-                                    borderColor: "#00ffcc",
-                                    color: isActive ? "#000" : "#00ffcc",
-                                    backgroundColor: isActive
-                                        ? "#00ffcc"
-                                        : "transparent",
-                                    "&:hover": {
-                                        backgroundColor: isActive
-                                            ? "#00e6b8"
-                                            : "rgba(0,255,204,0.08)",
-                                        borderColor: "#00ffcc",
-                                    }
-                                }}
-                            >
-                                {category}
-                            </Button>
-                        );
-                    })
-                ) : (
-                    <Typography>No categories available.</Typography>
-                )}
-            </Box>
-
             {/* Search Field */}
-            <Box sx={{ mb: 2 }}>
+            <Box sx={{mb: 2}}>
                 <TextField
                     label={`Search ${articlesCount} Articles`}
                     variant="standard"
@@ -73,10 +20,10 @@ const CategoriesComponent = ({
                     value={search}
                     onChange={(e) => onSearchChange(e.target.value)}
                     InputProps={{
-                        style: { color: "#ffffff" }
+                        style: {color: "#ffffff"}
                     }}
                     InputLabelProps={{
-                        style: { color: "#bdbdbd" }
+                        style: {color: "#bdbdbd"}
                     }}
                     sx={{
                         "& .MuiInput-underline:before": {
@@ -91,6 +38,65 @@ const CategoriesComponent = ({
                     }}
                 />
             </Box>
+            {/* Category Row */}
+            <Box
+                sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 2,
+                    mb: 1,
+                }}
+            >
+
+                {/* CATEGORY FILTERS */}
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{
+                        flexWrap: "wrap",
+                        rowGap: 1
+                    }}
+                >
+                    {Array.isArray(categories) && categories.length > 0 ? (
+
+                        categories.map((category) => {
+
+                            const isActive = activeCategory === category;
+
+                            return (
+                                <Chip
+                                    key={category}
+                                    label={category}
+                                    clickable
+                                    onClick={() =>
+                                        onCategorySelect(
+                                            isActive ? null : category
+                                        )
+                                    }
+                                    color={isActive ? "primary" : "default"}
+                                    variant={isActive ? "filled" : "outlined"}
+                                    sx={{
+                                        fontSize: "0.75rem",
+                                        borderRadius: 1
+                                    }}
+                                />
+                            );
+                        })
+
+                    ) : (
+
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                        >
+                            No categories available.
+                        </Typography>
+
+                    )}
+                </Stack>
+            </Box>
+
+
         </>
     );
 };

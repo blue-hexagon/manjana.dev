@@ -57,6 +57,7 @@ pre[class*="language-"] {
     padding: 0em;
     margin: 0em 0;
     overflow: auto;
+
 }
 
 :not(pre) > code[class*="language-"],
@@ -174,7 +175,10 @@ pre.line-numbers::before, pre.line-numbers::after {
     border-radius: 0.3em;
     margin: 0.5em 0;
     padding: 1em;
-    overflow: auto;
+    min-width: 0; /* critical for flex parents */
+    overflow: hidden;
+
+
 }
 
 /**
@@ -184,13 +188,26 @@ pre.line-numbers::before, pre.line-numbers::after {
  * 2. Always fill the visible space in .gatsby-highlight.
  * 3. Adjust the position of the line numbers
  */
+/* FIX: make Prism <pre> behave inside flex/grid */
 .gatsby-highlight pre[class*="language-"] {
     background-color: transparent;
     margin: 0;
     padding: 0;
-    overflow: initial;
-    float: left; /* 1 */
-    min-width: 100%; /* 2 */
+
+    /* critical: stop float-based sizing */
+    float: none;
+    display: block;
+
+    /* critical: allow flex children to shrink */
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+
+    /* restore expected scrolling */
+    overflow: auto;
+
+    /* avoids width bugs with padding/line-numbers */
+    box-sizing: border-box;
 }
 
 /**
@@ -200,6 +217,7 @@ pre.line-numbers::before, pre.line-numbers::after {
 /* Adjust the position of the line numbers */
 .gatsby-highlight pre[class*="language-"].line-numbers {
     padding-left: 2.8em;
+    overflow: auto;
 }
 
 /**

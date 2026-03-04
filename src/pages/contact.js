@@ -79,7 +79,7 @@ const ContactMe = () => {
         }
     };
     return (
-        <Container>
+        <Container maxWidth="md">
             <Box sx={{p: 3, mt: 4, borderRadius: 2}}>
                 <Typography variant="h5" sx={{mb: 2}}>Contact Me</Typography>
                 <Typography variant="body1" sx={{mb: 3}}>

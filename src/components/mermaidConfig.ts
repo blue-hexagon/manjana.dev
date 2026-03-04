@@ -26,7 +26,16 @@ mermaid.initialize({
           .flowchart,
           .statediagram {
             display: flex;
+            flex-grow: 1;
             justify-content: center;
+            justify-items: center;
+            justify-self: center;
+            align-items: center;
+          }
+          .nodeLabel p,
+          .nodeLabel {
+              line-height: 2;
+              white-space: nowrap;
           }
           .node rect,
           .node circle,

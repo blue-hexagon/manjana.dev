@@ -16,6 +16,7 @@ import Term from "./components/mdxblog/GlossarySystem/Term";
 import GlossaryTableMDX from "./components/mdxblog/GlossarySystem/GlossaryTableMdx";
 import PageGlossaryTable from "./components/mdxblog/GlossarySystem/PageGlossaryTable";
 import {ArticleHeader} from "./components/mdxblog/ArticleHeader";
+import BlockQuote from "./components/mdxblog/blockquote";
 
 
 /**
@@ -184,6 +185,7 @@ export const DesignSystemComponents = {
     h4: H4,
     p: Paragraph,
     a: BlogLink,
+    blockquote: BlockQuote,
     img: ZoomableImageComponent,
     table: MDXTable,
     thead: MDXThead,

@@ -151,7 +151,7 @@ export default function Layout({children, data}) {
                                         minHeight: 0,
                                         scrollBehavior: "smooth",
                                         scrollPaddingTop: "128px",
-                                        scrollPaddingBottom: "48px",
+                                        scrollPaddingBottom: "128px",
                                     }}
                                 >
                                     {/* Resize Handle */}

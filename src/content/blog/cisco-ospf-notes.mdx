@@ -1,6 +1,6 @@
 ---
 title: "Cisco IOS Field Notes: OSPFv2"
-subtitle: "Single-area OSPFv2 design, adjacency mechanics, cost modeling and real-world Cisco IOS troubleshooting."
+subtitle: "Single and multi-area OSPFv2 design, adjacency mechanics, cost modeling and real-world Cisco IOS troubleshooting."
 date: "2026-02-14"
 slug: "blog/cisco-ios-ospf-field-notes"
 path: "/blog/cisco-ios-ospf-field-notes"
@@ -16,146 +16,384 @@ tocDepth: 4
 
 import Mermaid from "../../components/mdxblog/Mermaid";
 import StructuredNote from "../../components/mdxblog/StructuredNote";
-import {Divider} from "@mui/material";
+import {Box, Divider, Typography} from "@mui/material";
+import BlockQuote from "../../components/mdxblog/blockquote";
 import ShadowComment from "../../components/mdxblog/ShadowComment";
 import BlogLink from "../../components/mdxblog/BlogLink";
+import ExamplePanel from "../../components/mdxblog/ExamplePanel";
 
+## ACT I — Control Plane Model
+_This article is being continuously updated - consider it a work in progress! [2026-03-03]_
 
+### OSPF as a Distributed Graph Computation System
+OSPF (Open Shortest Path First) is an Interior Gateway Protocol (<Term name="IGP"/>) that builds a
+synchronized network graph and derives forwarding decisions by computing a shortest-path tree using Dijkstra’s SPF algorithm.
 
-## Introduction to OSPFv2
-OSPF (Open Shortest Path First) — notice the SPF — is an Interior Gateway Protocol (<Term name="IGP"/>) that builds a synchronized topological model of a network and derives forwarding decisions from that model using Dijkstra’s Shortest Path First algorithm.
+Unlike distance-vector protocols (such as <Term name="RIP"/>), OSPF does not exchange routes.
+It exchanges topology information and derives routes from a synchronized graph model; it is hence more like a distributed network synchronization system.
 
-It is a link-state database synchronization protocol, which implies something fundamental:
+OSPF is a link-state protocol - and that classification is fundamental since that OSPF is event-driven, dynamic, and autonomously convergent:
+* Event-driven because topology changes trigger incremental <Term name="LSA"/> flooding and <Term name="SPF"/> recalculation.
+* Dynamic because neighbor and database state continuously adapt to link and node conditions (hence link-state).
+* Autonomously convergent because each router independently recomputes shortest paths from the synchronized <Term name="LSDB"/> until the network reaches a stable equilibrium (and it does this pretty fast!).
 
-OSPF is event-driven, dynamic, and autonomously convergent:
-* Event-driven because topology changes trigger incremental LSA flooding and SPF recalculation.
-* Dynamic because  neighbor and database state continuously adapt to link and node conditions.
-* Autonomously convergent because each router independently recomputes shortest paths from the synchronized LSDB until the network reaches a stable equilibrium.
+*OSPF is an eventually consistent topology replication system with bounded failure domains (areas).*
 
-OSPF does not exchange routes — it exchanges topology information through adjacencies (neighbors).
-Each router then independently calculates its own routing table from that shared topology using Edgar <BlogLink href="https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm">Djikstra's SPF algorithm</BlogLink>.
+<StructuredNote type="takeaway">
+    OSPF does not exchange routes — it exchanges topology information through adjacencies (neighbors) by the
+    usage of <Term name="LSA" ending="s"/>.
+    Each LSA updates the LSDB and once the LSDB changes, SPF is triggered locally, and the routing table (<Term
+    name="RIB"/>) is
+    recomputed.
+</StructuredNote>
+
+### The LSDB — What Actually Gets Replicated
+The **Link-State Database (LSDB)** is the *replicated state* of OSPF. It is not a routing table and it is not “routes.”
+It is a **topology model** encoded as **Link-State Advertisements (LSAs)**.
+
+Each router maintains an LSDB **per area** (even in single-area designs, that still means “Area 0”). In steady state, all routers
+inside the same area converge to the same LSDB content.
+
+At minimum in a clean single-area Ethernet design you will primarily see:
+
+- **Type 1 (Router LSA):** originated by every router; describes that router’s links and costs inside the area.
+- **Type 2 (Network LSA):** originated by the **DR** on broadcast/NBMA segments; describes the shared multi-access network and attached routers.
+
+That’s the key mental model:
+
+- **Adjacency** exists to establish a trusted replication channel.
+- **LSAs** are the replication payload.
+- **LSDB** is the synchronized dataset.
+- **SPF** converts the dataset into best paths.
+- **RIB/FIB** are derived consequences.
 
 <ShadowComment> <Term name="OSPF"/> is defined in <BlogLink href="https://datatracker.ietf.org/doc/html/rfc2328">RFC
     2328</BlogLink> (STD 54). Numerous later RFCs extend or update specific behaviors, including authentication, LLS,
-    and security considerations. </ShadowComment>
+    and security considerations.</ShadowComment>
 
-OSPF does not forward traffic.
-It operates entirely in the control plane.
+<Divider sx={{opacity: "0.15"}}/>
 
-Through neighbor discovery and reliable LSA flooding, routers construct a synchronized Link-State Database (LSDB) that represents the network as a graph. Each router then runs SPF locally against that database and installs the resulting best paths into its routing table.
+### Control Plane Mechanics and Derived State
+OSPF operates entirely in the control plane; it does not forward any data traffic (forwarding plane).
+Its packets (IP protocol 89) are control traffic and are punted to the CPU — never <Term name="CEF"/>-switched.
 
-Routes are a derived result, not the primary payload.
+Through <Term name="neighbor discovery"/> and reliable LSA flooding, routers construct a synchronized Link-State Database (LSDB) that represents the network as a graph.
+Each router then runs SPF locally against that database and installs the resulting best paths into its routing table (RIB -> FIB).
 
+Routes are therefore locally derived state — not the primary payload (which are the LSA's).
+OSPF does not transmit user data either; it simply derives best OSPF routes, inserts them into the <Term name="RIB"/> and the winners of those are inserted into the <Term name="FIB"/> and used in the forwarding-plane.
 
 <Mermaid
-    chart={`
-flowchart LR
-       A["1. Adjacency Table"]
-   --> B["2. Link State Database (LSDB)"]
-   --> C["3. SPF Tree"]
-   --> D["4. Routing Table"]
-
+    center="true"
+    chart={`flowchart LR
+    subgraph Routers
+        R1((R1))
+        R2((R2))
+        R3((R3))
+        R4((R4))
+    end
+    LSDB[(LSDB<br/>replica on each router)]
+    SPF[Dijkstra SPF<br/>runs locally]
+    SPT[Shortest Path Tree]
+    ROUTES[Routes RIB + FIB]
+    R1 <--> R2
+    R2 <--> R3
+    R2 <--> R4
+    R1 -->|LSAs| LSDB
+    R2 -->|LSAs| LSDB
+    R3 -->|LSAs| LSDB
+    R4 -->|LSAs| LSDB
+    LSDB --> SPF --> SPT --> ROUTES
+    ROUTES -. Forward traffic .-> R1
 `}
 />
 
-## The Adjacency State Machine
 
-OSPF is deterministic.
-It is a state machine.
+<ExamplePanel
+    title="Minimal Single-Area Example (Area 0)"
+    subtitle="A complete mini-run: Hello → FULL → LSAs → SPF → RIB/FIB"
+    tags={["Area 0", "P2P", "Single-area", "IOS"]}
+    defaultExpanded={false}
+>
+    #### Network Topology
+    <Mermaid
+        center="true"
+        chart={`flowchart TD
+subgraph Area0["Area 0 (Backbone)"]
+   R1["R1<br/>RID: 1.1.1.1<br/>Lo0: 1.1.1.1/32"]
+   R2["R2<br/>RID: 2.2.2.2<br/>Lo0: 2.2.2.2/32"]
+   R1 ---|"10.0.12.0/30<br/>.1      .2"| R2
+end
+classDef router fill:#141A22,stroke:#4F6BFF,color:#E6EDF3,stroke-width:1px;
+class R1,R2 router;`}
+    />
+    Two routers have just booted up from from a site-wide power-failure and has to reestablish adjacency.
+    This example will show the state transitions they go through to reach the `FULL` state.
+
+    #### Router Configuration
+
+    <Box sx={{display: "flex", gap: 3, alignItems: "flex-start"}}>
+        <Box sx={{flex: 1, height: "100%"}}>
+            ```text{13,18-19}{numberLines: true}
+            hostname R1
+
+            interface g0/0
+            ip address 10.0.12.1 255.255.255.252
+            ip ospf hello-interval 5
+            ip ospf dead-interval 20
+            ip ospf network point-to-point
+            no shutdown
+
+            interface loopback0
+            ip address 1.1.1.1 255.255.255.255
+
+            router ospf 10
+            router-id 1.1.1.1
+            auto-cost reference-bandwidth 100000
+            passive-interface default
+            no passive-interface g0/0
+            network 10.0.12.0 0.0.0.3 area 0
+            network 1.1.1.1 0.0.0.0 area 0
+            ```
+        </Box>
+
+        <Box sx={{flex: 1, height: "100%"}}>
+            ```text{5,13,15}{numberLines: true}
+            hostname R2
+
+            interface g0/0
+            ip address 10.0.12.2 255.255.255.252
+            ip ospf 20 area 0
+            ip ospf hello-interval 5
+            ip ospf dead-interval 20
+            ip ospf network point-to-point
+            no shutdown
+
+            interface loopback0
+            ip address 2.2.2.2 255.255.255.255
+            ip ospf 20 area 0
+
+            router ospf 20
+            router-id 2.2.2.2
+            auto-cost reference-bandwidth 100000
+            passive-interface default
+            no passive-interface g0/0
+            ```
+        </Box>
+    </Box>
+
+
+    * Process ID's don't have to match.
+    * You can mix OSPF interface and network activation as shown, but in practice it's cleaner sticking with one.
+    * RID can be 32-bit number expressed in dotted-quad notation as long as it's unique within the OSPF autonomuos
+    system.
+
+
+    #### Adjacency Process
+
+    1. Hellos are exchanged on 10.0.12.0/30
+    2. If Hello-parameters match, neighbor state transitions to `FULL`
+    3. Each router originates a Type 1 Router LSA
+    4. LSDB synchronizes through flooded LSAs
+    5. SPF runs locally
+    6. Each router installs the remote loopback as an OSPF route
+
+    <StructuredNote type="warning" title="Adjacencies are at the heart of OSPF">
+        If adjacency breaks ⇒ LSDB synchronization fails.<br/>
+        If LSDB synchronization fails ⇒ SPF diverges.<br/>
+        If SPF diverges ⇒ routing diverges.&nbsp;
+    </StructuredNote>
+
+    <Mermaid
+        chart={`
+flowchart LR
+  subgraph CP["Control Plane (OSPF)"]
+    N["Neighbor / Adjacency Table"] --> LSDB["Link-State Database (LSDB)"]
+    LSDB --> SPF["SPF Computation (Dijkstra)"]
+    SPF --> RIB["Routing Information Base (RIB)"]
+  end
+  subgraph DP["Data Plane"]
+    FIB["Forwarding Table (FIB/CEF)"]
+  end
+  RIB --> FIB
+  classDef cp fill:#141A22,stroke:#4F6BFF,stroke-width:1px,color:#E6EDF3;
+  classDef dp fill:#141A22,stroke:#FF4D8D,stroke-width:1px,color:#E6EDF3;
+  class N,LSDB,SPF,RIB cp;
+  class FIB dp;
+`}
+    />
+</ExamplePanel>
+
+<Divider sx={{opacity: "0.15"}}/>
+
+### The Adjacency State Machine
+
+OSPF is a deterministic state machine. This means that adjacency formation progresses through fixed states in a defined order — and if adjacency fails, it fails at a specific state for a well-defined reason we are simply able to determine.
+
+Adjacency formation is about establishing reliable database replication and avoiding corrupting the LSDB. OSPF does not trust neighbors until database synchronization is proven reliable.
 
 <Mermaid
     chart={`stateDiagram-v2
     direction LR
     [*] --> Down
-
-            Down --> Init
-            Init --> state2Way
-            state2Way --> ExStart
-            ExStart --> Exchange
-            Exchange --> Loading
-            Loading --> Full
-
-            state2Way --> Full
-
-            Init --> Down
-            state2Way --> Down
-            ExStart --> state2Way
-            Exchange --> ExStart
-            Loading --> Exchange
-            Full --> Down
-
-            state "2-Way" as state2Way
-            note right of Init
-              Hello mismatch
-              Dead timer expired
-            end note
-
-            note right of ExStart
-              MTU mismatch
-              Master/Slave negotiation failure
-            end note
-
-            note right of Exchange
-              DBD mismatch
-            end note
-
-            note right of Loading
-              LSA request retry
-            end note
-
-            note right of Full
-              Dead timer expiration
-            end note
-            class Init failure
+    Down --> Init
+    Init --> state2Way
+    state2Way --> ExStart
+    ExStart --> Exchange
+    Exchange --> Loading
+    Loading --> Full
+    %
+    state2Way --> Full
+    Init --> Down
+    state2Way --> Down
+    ExStart --> state2Way
+    Exchange --> ExStart
+    Loading --> Exchange
+    Full --> Down
+    %
+    state "2-Way" as state2Way
+    note right of Init
+        Hello mismatch
+        Dead timer expired
+    end note
+    note right of ExStart
+        MTU mismatch
+        Master/Slave negotiation failure
+    end note
+    note right of Exchange
+        DBD mismatch
+    end note
+    note right of Loading
+        LSA request retry
+    end note
+    note right of Full
+        Dead timer expiration
+    end note
+    class Init failure
 `}
 />
 
-If a neighbor is not `FULL`, stop and fix that first.
+#### States Explained
+OSPF adjacency is not “a connection.” It’s a controlled process for building a trusted replication channel for link-state data.
+The state machine exists to prevent polluted or partial databases from entering the LSDB.
 
-### Core Verification Commands
+The first states (Down / Init / 2-Way) are Hello-level liveness and compatibility.
+The later states (ExStart → Exchange → Loading) are database synchronization.
+Full simply means: “for this neighbor relationship, the LSDBs are synchronized enough to flood reliably.”
 
-```bash
-show ip ospf neighbor
-show ip ospf interface brief
-show ip ospf interface g0/0
-show ip ospf database
-show ip route ospf
-```
+- **Down**: No Hellos received yet (or the dead timer expired and the neighbor was declared gone).
+- **Init**: I received your Hello, but you haven’t acknowledged me (I’m not in your neighbor list).
+- **2-Way**: Bidirectional Hellos are confirmed (we see each other in our Hellos).
+- **ExStart**: We decide who is master/slave and begin DBD negotiation (sequence numbers).
+- **Exchange**: We swap DBD packets (LSA headers) to summarize our databases.
+- **Loading**: We request what we’re missing (LSR) and receive it (LSU), acknowledging with LSAck.
+- **Full**: Databases are synchronized (for this adjacency); the neighbor relationship is stable.
 
-If `show ip ospf neighbor` does not show `FULL` — stop there.
+<StructuredNote type="debug">
+    If a neighbor is not `FULL` stop and fix that first!
+</StructuredNote>
 
-### Hello Requirements (Must Match)
+### OSPF Packet Types
+Adjacency fails where packet exchange breaks, OSPF adjacency formation (and maintenance) uses five packet types.
 
+| Packet                         | Multicast           | What it does                                                          | Contains                           | Where you see it most                                                  | Most Common Break Cause                                    | What To Check                      |
+|--------------------------------|---------------------|-----------------------------------------------------------------------|------------------------------------|------------------------------------------------------------------------|------------------------------------------------------------|------------------------------------|
+| **Hello**                      | 224.0.0.5 / .6      | Discovers neighbors, verifies parameters, maintains neighbor liveness | Timers, RID, neighbor list, DR/BDR | **Down → Init → 2-Way**, and continues periodically even when **Full** | Area mismatch, auth mismatch, timer mismatch, network type | `show ip ospf interface`           |
+| **DBD (Database Description)** | Unicast / multicast | Exchanges **summaries** of the LSDB (LSA headers, not full LSAs)      | LSA headers only                   | **ExStart / Exchange**                                                 | MTU mismatch, RID conflict                                 | `show ip ospf neighbor detail`     |
+| **LSR (Link State Request)**   | Unicast             | Requests specific missing LSAs by type/ID/advertising router          | Specific LSA request               | **Loading**                                                            | LSA not delivered                                          | `show ip ospf database`            |
+| **LSU (Link State Update)**    | Multicast / unicast | Sends the requested LSAs (or floods updates)                          | Full LSAs                          | **Exchange / Loading**                                                 | Filtering, CPU overload                                    | `debug ip ospf packet`             |
+| **LSAck**                      | Multicast / unicast | Acknowledges received LSAs for reliable delivery                      | LSA header ack                     | **Exchange / Loading**                                                 | Retransmit storm                                           | `show ip ospf retransmission-list` |
+
+### Control-Plane Exchange Trace
+
+The following sequence shows the **actual packet-level exchange**
+that drives the adjacency state transitions shown above.
+
+Think of it as a runtime trace of the OSPF state machine:
+Hello establishes liveness, DBD negotiates synchronization,
+and LSR/LSU/LSAck complete database replication.
+
+<Mermaid
+    chart={`sequenceDiagram
+    autonumber
+    participant R1 as Router A
+    participant R2 as Router B
+    %
+    rect rgb(30,40,60)
+    Note over R1,R2: Phase 1 — Liveness Detection (Hello)
+    R1->>R2: Hello (224.0.0.5)
+    R2->>R1: Hello
+    Note over R1,R2: 2-Way achieved
+    end
+    %
+    alt Broadcast / NBMA
+        Note over R1,R2: Only DR/BDR form FULL
+    else Point-to-Point
+        Note over R1,R2: Both proceed toward FULL
+    end
+    %
+    rect rgb(30,40,60)
+    Note over R1,R2: Phase 2 — Database Negotiation (ExStart / Exchange)
+    R1->>R2: DBD (initial sequence)
+    R2->>R1: DBD (Master/Slave decision)
+    end
+    %
+    rect rgb(30,40,60)
+    Note over R1,R2: Phase 3 — Data Synchronization (Loading)
+    R1->>R2: LSR (request missing LSAs)
+    R2->>R1: LSU (send LSAs)
+    R1->>R2: LSAck
+    Note over R1,R2: FULL — LSDB synchronized
+    end
+`}
+/>
+
+<StructuredNote type="takeaway">
+    Adjacency formation is a staged escalation of trust:
+
+    1. Prove liveness.
+    2. Negotiate synchronization.
+    3. Compare database summaries.
+    4. Transfer missing data.
+    5. Enter steady-state flooding.
+
+    If any phase fails, the state machine rolls back.
+</StructuredNote>
+
+#### The Hello Packet
+The Hello packet is what initially transitions the router from `DOWN` to `INIT` when it recieves a neighbors `Hello`.
+But for the `2-WAY` state transition, the following Hello requirements must match between two neighbors communicating:
 - Area ID
 - Hello timer
 - Dead timer
 - Authentication
-- MTU (for full adjacency)
+- Router ID uniqueness
+- MTU (mismatch breaks DBD stage (ExStart), not Hello validation)
 - Network type
 
-Mismatch in any of these prevents FULL state.
+Mismatch in any of these prevents adjacency formation and result in a transition failure.
 
-## OSPF Packet Types
+<StructuredNote>
+    The `HELLO` packet is exchanged continiously back and forth every time the `Hello Timer` times out, even when
+    relationship reaches the `FULL` state.
+    If the router doesn't get a `HELLO` packet back within the duration of the `Dead Timer` the adjacency is teared down
+    and the process has to start over from scratch
+    A good rule of thumb is that the Dead Timer should be set to four times the Hello Timer.
+</StructuredNote>
+#### The DBD Packet
+The (DB) database (D) descriptor is used to exchange summaries (headers) of the neighbor routers LSAs.
 
-OSPF adjacency formation is built on five packet types:
+MTU size must match for this stage to complete or it will revert back to 2-Way
 
-| Packet                     | Purpose                        |
-|----------------------------|--------------------------------|
-| Hello                      | Neighbor discovery & keepalive |
-| DBD (Database Description) | LSDB summary exchange          |
-| LSR (Link State Request)   | Request specific LSAs          |
-| LSU (Link State Update)    | Deliver requested LSAs         |
-| LSAck                      | Acknowledge receipt            |
+#### The LSR Packet
 
-Adjacency fails where packet exchange breaks.
+#### The LSU Packet
 
-Typical failures:
+#### The LSAck Packet
 
-- Hello mismatch → INIT
-- MTU mismatch → EXSTART
-- LSA mismatch → LOADING
+## ACT II — Design Mechanics
 
-## DR / BDR Election (Broadcast Networks)
+### DR / BDR Election (Broadcast Networks)
 
 On broadcast networks (Ethernet), OSPF elects:
 
@@ -186,26 +424,33 @@ ip ospf priority 200
 
 Setting priority 0 → router will not become DR/BDR.
 
-## Network Types
+<Mermaid
+    chart={`
+flowchart LR
+  subgraph Before["Naïve adjacency (no DR/BDR)"]
+    A1((R1)) --- A2((R2))
+    A1 --- A3((R3))
+    A1 --- A4((R4))
+    A2 --- A3
+    A2 --- A4
+    A3 --- A4
+  end
+  subgraph After["Broadcast network with DR/BDR"]
+    DR((DR)) --- B1((R1))
+    DR --- B2((R2))
+    DR --- B3((R3))
+    DR --- B4((R4))
+    BDR((BDR)) --- B1
+    BDR --- B2
+    BDR --- B3
+    BDR --- B4
+  end
+  Before -->|"Reduces adjacency scaling"| After
+`}
+/>
 
-OSPF behavior depends on network type.
 
-| Type                | DR/BDR | Default     |
-|---------------------|--------|-------------|
-| Broadcast           | Yes    | Ethernet    |
-| Point-to-Point      | No     | Serial      |
-| Point-to-Multipoint | No     | Manual      |
-| NBMA                | Yes    | Frame Relay |
-
-Mismatch in network type causes adjacency asymmetry.
-
-Verify:
-
-```bash
-show ip ospf interface g0/0
-```
-
-## Router ID Determinism
+#### Router ID Determinism
 
 Router-ID selection order:
 
@@ -228,7 +473,180 @@ clear ip ospf process
 
 This resets adjacency and rebuilds LSDB.
 
-## Cost and Path Selection
+
+<Mermaid
+    chart={`
+flowchart TD
+  S["Router ID Selection"] --> M{Configured router-id?}
+  M -->|Yes| R1["Use configured RID"]
+  M -->|No| L{Any loopback interfaces?}
+  L -->|Yes| R2["Highest loopback IP"]
+  L -->|No| R3["Highest active interface IP"]
+  %
+  R1 --> C["RID chosen (sticky per process)"]
+  R2 --> C
+  R3 --> C
+  %
+  C --> X["Change requires OSPF process restart<br/>clear ip ospf process"]
+  %
+  classDef box fill:#141A22,stroke:#4F6BFF,color:#E6EDF3;
+  class S,R1,R2,R3,C,X box;
+`}
+/>
+<Divider sx={{opacity: "0.15"}}/>
+
+### Multi-area OSPF
+
+Multi-area OSPF exists to contain state propagation.
+
+Single-area is the optimal solution for smaller networks but starts degrading slowly along very specific control-plane
+stress vectors as the area grows.
+
+A 100-router backbone with flappy links can become troublesome whereas a stable 250-router backbone won't exhibit
+the same symptoms.
+
+Single-area OSPF stops scaling when:
+* SPF runs become frequent under normal operation (adjacency teardowns and restablisments from link flaps).
+* LSA flooding causes noticeable CPU spikes.
+* Convergence events affect the entire domain unnecessarily.
+* Troubleshooting becomes cognitively expensive.
+* It is a control-plane saturation problem, not a route-count problem.
+
+<StructuredNote type="" title="">
+    Multi-area beats single-area when the cost of global state synchronization exceeds the benefit of simplicity.
+</StructuredNote>
+
+#### Area Types
+Multi-area introduces:
+* LSDB scoping
+* Summarization
+* Reduced flooding
+* Reduced SPF scope
+* Failure containment
+
+And it is all about constraining blast radius.
+
+Think of area types as: Policies for LSA admission and flooding scope.
+
+Area types do not change SPF mechanics.
+
+They change which LSAs are allowed to exist inside an area.
+
+That is the entire game; think of it as scaling valves.
+
+#### Area 0
+The central transit area of a multi-area OSPF domain.
+All other areas must connect to Area 0 (logically or physically). Area 0 is the global transit fabric.
+
+### OSPF Synchronization Mechanics
+
+#### LSA Types and Flooding
+
+OSPF topology is encoded as LSAs as we talked about in the beginning, and LSAs get flooded to synchronize the LSDB.
+
+How, when and why they're flooded matters.
+
+| Type | Name                    | Generated By     | Flooding Scope                         | Appears When              | Purpose                                                  |
+|------|-------------------------|------------------|----------------------------------------|---------------------------|----------------------------------------------------------|
+| 1    | Router LSA              | Every router     | Area-local                             | Always                    | Describes router links + costs inside an area            |
+| 2    | Network LSA             | DR               | Area-local                             | Broadcast / NBMA networks | Describes multi-access segment and attached routers      |
+| 3    | Summary LSA             | ABR              | Inter-area                             | Multi-area design         | Advertises networks between areas                        |
+| 4    | ASBR Summary LSA        | ABR              | Inter-area                             | When ASBR exists          | Advertises path to ASBR                                  |
+| 5    | External LSA            | ASBR             | Entire OSPF domain (except stub areas) | Redistribution            | Advertises external routes (E1/E2)                       |
+| 6    | MOSPF LSA               | —                | —                                      | Rare (Multicast OSPF)     | Multicast extensions (almost never used)                 |
+| 7    | NSSA External LSA       | ASBR inside NSSA | NSSA area only                         | NSSA redistribution       | External routes inside NSSA (converted to Type 5 by ABR) |
+| 8    | Link LSA                | OSPFv3 only      | Link-local                             | OSPFv3                    | Carries link-local address info                          |
+| 9    | Opaque LSA (Link scope) | Router           | Link-local                             | Extensions                | Used for traffic engineering                             |
+| 10   | Opaque LSA (Area scope) | Router           | Area-local                             | Extensions                | MPLS-TE, Graceful Restart, etc.                          |
+| 11   | Opaque LSA (AS scope)   | Router           | AS-wide                                | Extensions                | Domain-wide opaque info                                  |
+
+
+
+#### Area Type Behaviour and LSA Propagation
+| Area Type            | Type 1 | Type 2 | Type 3 | Type 4 | Type 5 | Type 7 | Default Route Injected? | Use Case                         |
+|----------------------|--------|--------|--------|--------|--------|--------|-------------------------|----------------------------------|
+| Backbone (Area 0)    | ✔      | ✔      | ✔      | ✔      | ✔      | ✖      | No (unless configured)  | Core transit area                |
+| Normal Area          | ✔      | ✔      | ✔      | ✔      | ✔      | ✖      | No (unless configured)  | Standard multi-area design       |
+| Stub Area            | ✔      | ✔      | ✔      | ✖      | ✖      | ✖      | ✔ (by ABR)              | Edge area without redistribution |
+| Totally Stubby Area* | ✔      | ✔      | ✖      | ✖      | ✖      | ✖      | ✔ (by ABR)              | Smaller edge area                |
+| NSSA                 | ✔      | ✔      | ✔      | ✔      | ✖      | ✔      | Optional                | Edge area needing redistribution |
+| Totally NSSA*        | ✔      | ✔      | ✖      | ✖      | ✖      | ✔      | ✔                       | Controlled redistribution edge   |
+
+
+
+Verify LSDB:
+
+```bash
+show ip ospf database
+```
+
+All routers in same area must share identical LSDB (but during convergence, transient divergence exists).
+
+If LSDB differs → SPF differs → routing differs.
+
+<Mermaid
+    chart={`
+flowchart LR
+  subgraph Area0["Area 0 (single-area focus)"]
+    RLSA["Type 1: Router LSA<br/>links + costs"] --> LSDB["LSDB"]
+    NLSA["Type 2: Network LSA<br/>(DR describes segment)"] --> LSDB
+  end
+  subgraph Optional["Appears when you do more"]
+    S3["Type 3: Summary LSA<br/>(ABR)"]
+    S4["Type 4: ASBR Summary"]
+    E5["Type 5: External LSA<br/>(redistribution)"]
+  end
+Optional -.-> LSDB
+`}
+/>
+
+
+### Network Types
+
+OSPF behavior depends on network type.
+
+| Type                | DR/BDR | Multicast                   | Default     |
+|---------------------|--------|-----------------------------|-------------|
+| Broadcast           | Yes    | Yes                         | Ethernet    |
+| Point-to-Point      | No     | Yes                         | Serial      |
+| Point-to-Multipoint | No     | Yes/Varies                  | Manual      |
+| NBMA                | Yes    | Often no (manual neighbors) | Frame Relay |
+
+Mismatch in network type causes adjacency asymmetry.
+
+Verify:
+
+```bash
+show ip ospf interface g0/0
+```
+
+<Divider sx={{opacity: "0.15"}}/>
+
+
+<Divider sx={{opacity: "0.15"}}/>
+
+## SPF Mechanics in OSPF
+
+<Mermaid
+    center="true"
+    chart={`
+flowchart LR
+    %% Link-State Graph (LSDB abstraction)
+    R1((R1))
+    R2((R2))
+    R3((R3))
+    R4((R4))
+    R5((R5))
+    R1 ---|10| R2
+    R1 ---|5| R3
+    R2 ---|2| R3
+    R2 ---|1| R4
+    R3 ---|9| R5
+    R4 ---|4| R5
+`}
+/>
+
+### Cost and Path Selection
 
 Default reference bandwidth = 100 Mbps.
 
@@ -252,33 +670,54 @@ interface g0/1
 ip ospf cost 50
 ```
 
-## LSAs and The LSDB
+<Mermaid
+    chart={`
+flowchart TB
+  D["Default ref-bw = 100 Mbps"] --> P["Cost = ref-bw / interface-bw"]
+  P --> G["1G and 10G both clamp to cost 1 (often)"]
+  G --> BAD["Wrong mental model: faster links not preferred"]
+  FIX["Set auto-cost reference-bandwidth consistently (e.g. 10000 for 10G)"] --> GOOD["Costs differentiate 100M vs 1G vs 10G"]
+  BAD --> FIX
+  classDef warn fill:#141A22,stroke:#FFC857,color:#E6EDF3;
+  classDef ok fill:#141A22,stroke:#4F6BFF,color:#E6EDF3;
+  class BAD warn;
+  class GOOD ok;
+`}
+/>
 
-OSPF topology is encoded as LSAs.
+<Divider sx={{opacity: "0.15"}}/>
 
-Common LSA types (single-area focus):
+## ACT III — Failure & Doctrine
+### Troubleshooting OSPF - Failure Pattern Recognition
+OSPF does not fail randomly it fails at a specific layer for a specific reason; we talked briefly about this earlier regarding adjacency-formation:
 
-| Type | Meaning      |
-|------|--------------|
-| 1    | Router LSA   |
-| 2    | Network LSA  |
-| 3    | Summary LSA  |
-| 4    | ASBR Summary |
-| 5    | External LSA |
+<BlockQuote emphasis="strong" cite="This Article">Adjacency formation progresses through fixed states in a defined order
+    — and if it fails, it fails at a specific state for a specific reason.</BlockQuote>
 
-In pure single-area without redistribution, mostly Type 1 & 2.
+| Symptom              | Neighbor State        | Interpretation                         | Likely Root Cause(s)                                                                                                           |
+|----------------------|-----------------------|----------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| No adjacency         | Down / Init           | Adjacency never forms                  | Area mismatch, authentication mismatch, hello/dead timer mismatch, ACL blocking multicast (224.0.0.5/6), network type mismatch |
+| INIT only            | Init                  | One-way Hello seen                     | Hello parameter mismatch, duplicate Router ID, unidirectional link, multicast filtering                                        |
+| EXSTART loop         | ExStart               | DBD negotiation repeatedly restarts    | MTU mismatch, master/slave negotiation failure, duplicate Router ID                                                            |
+| Stuck LOADING        | Loading               | LSA exchange incomplete                | LSA request/retransmit failure, filtering, packet loss, CPU overload                                                           |
+| Missing routes       | Full (but wrong SPF)  | Adjacency up but routing incorrect     | Cost mismatch, reference bandwidth inconsistency, passive interface, filtering, LSDB divergence                                |
+| Inconsistent routing | Full (divergent LSDB) | SPF computed on inconsistent databases | LSDB desynchronization, LSA filtering, stub/NSSA misconfiguration, redistribution mismatch                                     |
 
-Verify LSDB:
+If the neighbor is not `FULL`, stay in the adjacency layer -- do not inspect routes yet.
 
-```bash
-show ip ospf database
-```
+### If You're Stuck, This Is Where to Look First
 
-All routers in same area must share identical LSDB.
+|        State | What it means                | Fastest checks (Cisco IOS)                                                 | Usual root causes                                                                                         |
+|-------------:|------------------------------|----------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|
+|     **Down** | No Hellos received           | `show ip ospf interface g0/0` / `show ip ospf neighbor`                    | L1/L2 down, wrong VLAN, OSPF not enabled on interface, passive-interface, ACL blocking proto 89/multicast |
+|     **Init** | One-way Hellos               | `show ip ospf neighbor detail` (do you appear in *their* neighbor list?)   | Unidirectional link, multicast blocked one direction, hello params mismatch, duplicate RID edge cases     |
+|    **2-Way** | Bidirectional Hellos         | On broadcast: check DR/BDR; `show ip ospf neighbor`                        | Normal on broadcast for non-DR/BDR peers; otherwise network type mismatch / adjacency expectation wrong   |
+|  **ExStart** | DBD negotiation              | `show ip ospf neighbor detail` + MTU; consider `ip ospf mtu-ignore` (temp) | **MTU mismatch** (most common), L2 fragmentation issues, broken negotiation due to flapping               |
+| **Exchange** | DBD summary exchange         | `debug ip ospf adj` (careful), `show ip ospf neighbor detail`              | DBD sequence issues, packet loss, CPU spikes, MTU problems still present                                  |
+|  **Loading** | LSR/LSU/LSAck not completing | `show ip ospf request-list` / retransmissions                              | Packet loss/filtering, ACL/QoS policing, CPU overload, LSA flooding blocked, interface errors             |
+|     **Full** | Synchronized                 | If routing is wrong: shift to **LSDB/SPF/cost** checks                     | Not an adjacency problem anymore                                                                          |
 
-If LSDB differs → SPF differs → routing differs.
-
-## Deterministic Troubleshooting Flow
+### Deterministic Troubleshooting
 
 Never jump randomly.
 
@@ -293,24 +732,85 @@ Follow this order:
 
 Do not inspect routing table before verifying adjacency.
 
-## Failure Pattern Recognition
+<Mermaid
+    chart={`
+flowchart TD
+  S["Start"] --> I{Interface up/up?}
+  I -->|No| I1["Fix L1/L2: cable/VLAN/port errdisable"]
+  I -->|Yes| H{Hello seen?}
+  H -->|No| H1["Check: area, auth, timers, network type, ACLs"]
+  H -->|Yes| N{Neighbor FULL?}
+  N -->|No| N1["Stop: fix adjacency state (INIT/EXSTART/LOADING)"]
+  N -->|Yes| D{LSDB identical?}
+  D -->|No| D1["DB sync issue: DBD/LSR/LSU/LSAck, MTU, filtering"]
+  D -->|Yes| C{Cost model sane?}
+  C -->|No| C1["Fix reference-bw / interface cost"]
+  C -->|Yes| R{OSPF route installed?}
+  R -->|No| R1["Check: route type, summarization, filtering, redistribution"]
+  R -->|Yes| OK["Done"]
+  %
+  classDef stop fill:#141A22,stroke:#FFC857,color:#E6EDF3;
+  classDef ok fill:#141A22,stroke:#4F6BFF,color:#E6EDF3;
+  class N1,D1,C1,R1 stop;
+  class OK ok;
+`}
+/>
 
-| Symptom              | Likely Root Cause    |
-|----------------------|----------------------|
-| No adjacency         | Area mismatch        |
-| INIT only            | Hello mismatch       |
-| EXSTART loop         | MTU mismatch         |
-| Missing routes       | Cost/reference issue |
-| Inconsistent routing | LSDB divergence      |
 
-## Mental Compression
+
+<Divider sx={{opacity: "0.15"}}/>
+
+## **Mental Compression**
 
 If you remember nothing else:
+- **OSPF is distributed topology synchronization.**
+- **LSA flooding maintains shared state (LSDB).**
+- **SPF converts shared state into forwarding decisions.**
+- **The RIB/FIB are derived consequences.**
 
-- OSPF synchronizes topology
-- LSDB represents reality
-- SPF computes paths
-- Routing table is derived state
+All OSPF failures reduce to one of four categories:
+1. Adjacency failure → no synchronization
+2. Flooding failure → inconsistent databases
+3. Cost model error → incorrect path selection
+4. Instability → constant recomputation (CPU churn)
 
-If adjacency breaks, everything upstream collapses.
+**Convergence is not magic** — it is the **network reaching equilibrium** after state change.
+
+If adjacency is unstable, flooding is unstable.
+
+If flooding is unstable, SPF thrashes.
+
+If SPF thrashes, routing oscillates.
+
+**Field doctrine**:
+
+    - Stabilize adjacency.
+    - Verify LSDB integrity.
+    - Normalize cost.
+    - Then inspect routes.
+
+And lastly: if adjacency breaks, everything upstream collapses.
+
+<Mermaid chart={`
+flowchart LR
+  Hello --> Adjacency
+  Adjacency --> LSDB
+  LSDB --> SPF
+  SPF --> RIB
+  RIB --> FIB
+  FIB --> Forwarding
+  Forwarding -->|Topology change| Hello
+`}/>
+
+## Reference Tables
+### Common Failure Modes
+| Layer       | Object   | Packet | LSA | Scope    | Failure Mode |
+|-------------|----------|--------|-----|----------|--------------|
+| Discovery   | Neighbor | Hello  | —   | Link     | INIT         |
+| Sync        | LSDB     | DBD    | 1/2 | Area     | ExStart      |
+| Replication | LSDB     | LSU    | 1–7 | Area/AS  | Loading      |
+| Computation | SPF      | —      | All | Local    | Wrong path   |
+| Forwarding  | FIB      | —      | —   | Hardware | Blackhole    |
+
+
 

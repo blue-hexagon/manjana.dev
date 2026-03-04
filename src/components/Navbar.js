@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {
     AppBar,
     Toolbar,
@@ -11,15 +11,17 @@ import {
     ListItemText,
     Box
 } from "@mui/material";
-import { Menu as MenuIcon } from "@mui/icons-material";
+import {Menu as MenuIcon} from "@mui/icons-material";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import { Link } from "gatsby";
-import { useLocation } from "@reach/router";
+import {Link} from "gatsby";
+import {useLocation} from "@reach/router";
 import HomeIcon from "@mui/icons-material/Home";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ArticleIcon from "@mui/icons-material/Article";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import CiViewTimeline from "@mui/icons-material/ViewTimeline";
+
 const Navbar = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const location = useLocation();
@@ -29,12 +31,13 @@ const Navbar = () => {
         setDrawerOpen(!drawerOpen);
     };
 
-const menuItems = [
-    { text: "Projects", link: "/projects", icon: <DashboardIcon fontSize="small" /> },
-    { text: "Writings", link: "/blog", icon: <ArticleIcon fontSize="small" /> },
-    { text: "Knowledge", link: "/knowledge", icon: <MenuBookIcon fontSize="small" /> },
-    { text: "Contact", link: "/contact", icon: <MailOutlineIcon fontSize="small" /> }
-];
+    const menuItems = [
+        {text: "Projects", link: "/projects", icon: <DashboardIcon fontSize="small"/>},
+        {text: "Writings", link: "/blog", icon: <ArticleIcon fontSize="small"/>},
+        {text: "Log", link: "/log", icon: <CiViewTimeline fontSize="small"/>},
+        {text: "Knowledge", link: "/knowledge", icon: <MenuBookIcon fontSize="small"/>},
+        {text: "Contact", link: "/contact", icon: <MailOutlineIcon fontSize="small"/>}
+    ];
 
     return (
         <AppBar
@@ -53,8 +56,8 @@ const menuItems = [
                 }}
             >
                 {/* Brand */}
-                <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
-                    <Link to="/" style={{ textDecoration: "none" }}>
+                <Box sx={{display: "flex", alignItems: "center", flexGrow: 1}}>
+                    <Link to="/" style={{textDecoration: "none"}}>
                         <Typography
                             variant="h6"
                             sx={{
@@ -67,7 +70,7 @@ const menuItems = [
                             manjana
                             <Box
                                 component="span"
-                                sx={{ color: "#00ffcc" }}
+                                sx={{color: "#00ffcc"}}
                             >
                                 .dev
                             </Box>
@@ -76,32 +79,32 @@ const menuItems = [
                 </Box>
 
                 {/* Desktop Navigation */}
-                <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}>
+                <Box sx={{display: {xs: "none", md: "flex"}, alignItems: "center"}}>
                     {menuItems.map((item) => {
                         const isActive = location.pathname === item.link;
 
                         return (
                             <Button
-    key={item.text}
-    component={Link}
-    to={item.link}
-    sx={{
-        mx: 1,
-        color: isActive ? "#00ffcc" : "#ffffff",
-        borderBottom: isActive
-            ? "2px solid #00ffcc"
-            : "2px solid transparent",
-        borderRadius: 0,
-        "&:hover": {
-            backgroundColor: "rgba(255,255,255,0.05)"
-        }
-    }}
->
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        {item.icon}
-        {item.text}
-    </Box>
-</Button>
+                                key={item.text}
+                                component={Link}
+                                to={item.link}
+                                sx={{
+                                    mx: 1,
+                                    color: isActive ? "#00ffcc" : "#ffffff",
+                                    borderBottom: isActive
+                                        ? "2px solid #00ffcc"
+                                        : "2px solid transparent",
+                                    borderRadius: 0,
+                                    "&:hover": {
+                                        backgroundColor: "rgba(255,255,255,0.05)"
+                                    }
+                                }}
+                            >
+                                <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
+                                    {item.icon}
+                                    {item.text}
+                                </Box>
+                            </Button>
                         );
                     })}
 
@@ -119,7 +122,7 @@ const menuItems = [
                             }
                         }}
                     >
-                        <GitHubIcon />
+                        <GitHubIcon/>
                     </IconButton>
                 </Box>
 
@@ -127,10 +130,10 @@ const menuItems = [
                 <IconButton
                     edge="end"
                     color="inherit"
-                    sx={{ display: { md: "none" } }}
+                    sx={{display: {md: "none"}}}
                     onClick={handleDrawerToggle}
                 >
-                    <MenuIcon />
+                    <MenuIcon/>
                 </IconButton>
 
                 {/* Mobile Drawer */}
@@ -151,19 +154,19 @@ const menuItems = [
 
                             return (
                                 <ListItemButton
-    key={item.text}
-    component={Link}
-    to={item.link}
-    onClick={handleDrawerToggle}
-    sx={{
-        color: isActive ? "#00ffcc" : "#ffffff"
-    }}
->
-    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        {item.icon}
-        <ListItemText primary={item.text} />
-    </Box>
-</ListItemButton>
+                                    key={item.text}
+                                    component={Link}
+                                    to={item.link}
+                                    onClick={handleDrawerToggle}
+                                    sx={{
+                                        color: isActive ? "#00ffcc" : "#ffffff"
+                                    }}
+                                >
+                                    <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
+                                        {item.icon}
+                                        <ListItemText primary={item.text}/>
+                                    </Box>
+                                </ListItemButton>
                             );
                         })}
                     </List>

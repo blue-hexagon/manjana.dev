@@ -1,56 +1,153 @@
-import {Card, CardActionArea, CardContent, Chip, Divider, Stack, Typography} from "@mui/material";
 import React from "react";
-import {Link} from "gatsby";
-import {Box} from "@mui/system";
+import { Card, CardActionArea, CardContent, Chip, Stack, Typography } from "@mui/material";
+import { Box } from "@mui/system";
+import { Link } from "gatsby";
 
-const BlogCard = ({data}) => {
-    if (!data) {
-        return null;
-    }
-    const slug = data.frontmatter?.slug || "no-slug";
-    return (<Card sx={{
-        maxWidth: 400, borderRadius: 2, boxShadow: 5, display: 'flex', flexDirecton: 'column', height: "100%"
-    }}>
-        <Link to={`/${slug}`} style={{textDecoration: 'none', color: "inherit"}}>
-            <CardActionArea sx={{height: "100%"}}>
-                <CardContent
-                    sx={{display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%"}}>
-                    <Box>
-                        <Typography variant="body2" color="text.secondary" sx={{mb: 1}}>
-                            {data.frontmatter.date || "no date"}
-                        </Typography>
+const BlogCard = ({ data }) => {
 
-                        <Typography variant="h5" component="div" sx={{fontWeight: 'bold', mb: 1}}>
-                            {data.frontmatter.title || "no title"}
-                        </Typography>
+    if (!data) return null;
 
-                        <Typography variant="body2" color="text.primary"
-                                    sx={{mb: 2, textOverflow: 'ellipsis', flexGrow: 2}}>
-                            {data.frontmatter.description.length > 120 ? data.frontmatter.description.slice(0, 120) + '...' : data.frontmatter.description}
-                        </Typography>
-                    </Box>
-                    <Box>
-                        <Divider sx={{my: 2}}/>
-                        <Box>
-                            <Stack direction="row"
-                                   spacing={0.1}
-                                   gap={0.9}
-                                   sx={{display: 'flex', flexWrap: 'wrap', alignSelf: 'center'}}>
-                                {data.frontmatter.tags.map((tag, index) => (<Chip
-                                    size="small"
-                                    key={index}
-                                    label={tag}
-                                    variant="outlined"
-                                    color="primary"
-                                    sx={{fontSize: '0.75rem', height:"2rem", px:"2px", borderRadius: "12px"}}
-                                />))}
-                            </Stack>
+    const fm = data.frontmatter || {};
+
+    const slug = fm.slug || "no-slug";
+    const title = fm.title || "Untitled";
+    const description = fm.description || "";
+    const date = fm.date || "";
+    const tags = fm.tags || [];
+    const featured = fm.featured || false;
+
+    return (
+        <Card
+            elevation={0}
+            sx={{
+                width: "100%",
+                height: "100%",
+                borderRadius: 2,
+                border: "1px solid",
+                borderColor: "divider",
+                backgroundColor: "background.paper",
+                transition: "border-color 160ms ease",
+
+                "&:hover": {
+                    borderColor: "text.primary"
+                }
+            }}
+        >
+            <Link
+                to={`/${slug}`}
+                style={{
+                    textDecoration: "none",
+                    color: "inherit",
+                    height: "100%"
+                }}
+            >
+
+                <CardActionArea sx={{ height: "100%" }}>
+
+                    <CardContent
+                        sx={{
+                            p: 3,
+                            display: "flex",
+                            flexDirection: "column",
+                            height: "100%"
+                        }}
+                    >
+
+                        {/* CONTENT */}
+                        <Box sx={{ flexGrow: 1 }}>
+
+                            {featured && (
+                                <Typography
+                                    variant="caption"
+                                    sx={{
+                                        fontWeight: 600,
+                                        letterSpacing: 1,
+                                        color: "primary.main",
+                                        mb: 1,
+                                        display: "block"
+                                    }}
+                                >
+                                    FEATURED
+                                </Typography>
+                            )}
+
+                            {/* TITLE */}
+                            <Typography
+                                variant="h5"
+                                sx={{
+                                    fontWeight: 600,
+                                    lineHeight: 1.35,
+                                    mb: 1,
+                                    display: "-webkit-box",
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: "vertical",
+                                    overflow: "hidden"
+                                }}
+                            >
+                                {title}
+                            </Typography>
+
+                            {/* META */}
+                            <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                sx={{ mb: 1.5 }}
+                            >
+                                {date}
+                            </Typography>
+
+                            {/* SUMMARY */}
+                            {description && (
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                    sx={{
+                                        display: "-webkit-box",
+                                        WebkitLineClamp: 3,
+                                        WebkitBoxOrient: "vertical",
+                                        overflow: "hidden"
+                                    }}
+                                >
+                                    {description}
+                                </Typography>
+                            )}
+
                         </Box>
-                    </Box>
-                </CardContent>
-            </CardActionArea>
-        </Link>
-    </Card>);
+
+                        {/* TAGS */}
+                        {tags.length > 0 && (
+                            <Stack
+                                direction="row"
+                                spacing={0.8}
+                                sx={{
+                                    flexWrap: "wrap",
+                                    mt: 2.5
+                                }}
+                            >
+                                {tags.slice(0, 4).map((tag, i) => (
+                                    <Chip
+                                        key={i}
+                                        label={tag}
+                                        size="small"
+                                        variant="outlined"
+                                        sx={{
+                                            fontSize: "0.72rem",
+                                            height: 24,
+                                            borderRadius: 1
+                                        }}
+                                    />
+                                ))}
+                            </Stack>
+                        )}
+
+                    </CardContent>
+
+                </CardActionArea>
+
+            </Link>
+
+        </Card>
+    );
 };
 
 export default BlogCard;

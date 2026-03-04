@@ -1,12 +1,23 @@
-import React, {useState} from 'react';
+import React, {useState, useMemo} from "react"
 import {
-    Typography, Container, Grid2, TextField, Box
-} from '@mui/material';
-import {graphql, useStaticQuery} from 'gatsby'
-import CategoriesComponent from "../../components/blog_page/Categories";
-import BlogCard from "../../components/blog_page/BlogCard";
-import {Button, Alert} from "@mui/material";
-import {styled} from "@mui/system";
+    Typography,
+    Container,
+    Box,
+    TextField,
+    Button,
+    Alert
+} from "@mui/material"
+import Grid2 from "@mui/material/Grid2"
+import {styled} from "@mui/system"
+import {graphql, useStaticQuery} from "gatsby"
+
+import CategoriesComponent from "../../components/blog_page/Categories"
+import BlogCard from "../../components/blog_page/BlogCard"
+
+
+/* ============================================================
+   STYLED COMPONENTS
+   ============================================================ */
 
 const FormContainer = styled(Container)(({theme}) => ({
     display: "flex",
@@ -15,82 +26,95 @@ const FormContainer = styled(Container)(({theme}) => ({
     padding: "2rem",
     borderRadius: "8px",
     backgroundColor: "#1c1c1c",
-    boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
-    [theme.breakpoints.up("sm")]: {
-        width: "100%",
-    },
-}));
+    boxShadow: "0px 4px 12px rgba(0,0,0,0.2)",
+    marginTop: "3rem",
+}))
 
-const StyledButton = styled(Button)(({theme}) => ({
+const StyledButton = styled(Button)(() => ({
     marginTop: "1rem",
     backgroundColor: "#8ab4f8",
-    color: "#000000",
+    color: "#000",
     "&:hover": {
         backgroundColor: "#6a93d7",
     },
-}));
+}))
+
+
+/* ============================================================
+   NEWSLETTER FORM
+   ============================================================ */
 
 const NewsletterForm = ({source = "blog-index"}) => {
-    const [email, setEmail] = useState("");
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
-    const [loading, setLoading] = useState(false);
+
+    const [email, setEmail] = useState("")
+    const [error, setError] = useState("")
+    const [success, setSuccess] = useState("")
+    const [loading, setLoading] = useState(false)
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError("");
-        setSuccess("");
+
+        e.preventDefault()
+
+        setError("")
+        setSuccess("")
 
         if (!email) {
-            setError("Email is required.");
-            return;
+            setError("Email is required.")
+            return
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
         if (!emailRegex.test(email)) {
-            setError("Please enter a valid email address.");
-            return;
+            setError("Please enter a valid email address.")
+            return
         }
 
-        setLoading(true);
+        setLoading(true)
 
-        const formData = new FormData();
-        formData.append("email", email);
-        formData.append("source", source);
+        const formData = new FormData()
+        formData.append("email", email)
+        formData.append("source", source)
 
         try {
+
             const res = await fetch("https://formspree.io/f/xykdyazo", {
                 method: "POST",
                 body: formData,
-                headers: {
-                    Accept: "application/json",
-                },
-            });
+                headers: {Accept: "application/json"},
+            })
 
-            if (!res.ok) {
-                throw new Error("Subscription failed");
-            }
+            if (!res.ok) throw new Error()
 
-            setSuccess("Thank you for subscribing!");
-            setEmail("");
-        } catch (err) {
-            setError("Something went wrong. Please try again later.");
+            setSuccess("Thank you for subscribing.")
+            setEmail("")
+
+        } catch {
+
+            setError("Something went wrong. Please try again later.")
+
         } finally {
-            setLoading(false);
+
+            setLoading(false)
+
         }
-    };
+
+    }
 
     return (
-        <FormContainer>
-            <Typography variant="h5" color="#ffffff" gutterBottom>
+        <FormContainer maxWidth="full">
+
+            <Typography variant="h5" color="#fff" gutterBottom>
                 Subscribe to New Articles
             </Typography>
+
             <Typography variant="body2" color="#bdbdbd" gutterBottom>
-                Get the latest articles directly to your inbox.
+                Get deep technical articles directly to your inbox.
             </Typography>
 
             <Box component="form" onSubmit={handleSubmit} sx={{width: "100%", mt: 2}}>
-                {/* Honeypot */}
+
+                {/* Honeypot anti-bot field */}
                 <input
                     type="text"
                     name="company"
@@ -100,15 +124,14 @@ const NewsletterForm = ({source = "blog-index"}) => {
                 />
 
                 <TextField
-                    name="email"
-                    variant="outlined"
-                    label="Your Email"
                     fullWidth
+                    label="Your Email"
+                    variant="outlined"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     error={!!error}
                     helperText={error}
-                    InputProps={{style: {color: "#ffffff"}}}
+                    InputProps={{style: {color: "#fff"}}}
                     InputLabelProps={{style: {color: "#bdbdbd"}}}
                     sx={{
                         "& .MuiOutlinedInput-root": {
@@ -133,151 +156,200 @@ const NewsletterForm = ({source = "blog-index"}) => {
                         {success}
                     </Alert>
                 )}
+
             </Box>
+
         </FormContainer>
-    );
-};
+    )
+
+}
 
 
-export const PostsComponent = ({heading, featuredOnly, data}) => {
+/* ============================================================
+   POSTS GRID
+   ============================================================ */
 
+export const PostsComponent = ({heading, posts}) => {
 
-    const returnFeaturedOnly = featuredOnly || false
+    if (!posts?.length) {
+        return (
+            <>
+                {heading && (
+                    <Typography variant="h4" gutterBottom sx={{mt: 4}}>
+                        {heading}
+                    </Typography>
+                )}
+                <Typography color="#888">
+                    No articles found.
+                </Typography>
+            </>
+        )
+    }
+
     return (
         <>
-            {(heading !== null) &&
-                <Typography variant="h4" gutterBottom sx={{marginTop: 4}}>
+            {heading && (
+                <Typography variant="h4" gutterBottom sx={{mt: 4}}>
                     {heading}
                 </Typography>
-            }
+            )}
+
             <Grid2 container rowSpacing={1.5} columnSpacing={{xs: 1, sm: 2, md: 1.5}}>
-                {returnFeaturedOnly &&
-                    data.allMdx.edges
-                        .filter(({node}) => node.frontmatter.featured === true)
-                        .map(({node}) => (
-                            <Grid2 item size={{xs: 12, sm: 6, lg: 4}} key={node.id}>
-                                <BlogCard data={node}></BlogCard>
-                            </Grid2>
-                        ))}
-                {!returnFeaturedOnly &&
-                    data.allMdx.edges
-                        .map(({node}) => (
-                            <Grid2 item size={{xs: 12, sm: 6, lg: 4}} key={node.id}>
-                                <BlogCard data={node}></BlogCard>
-                            </Grid2>
-                        ))}
+
+                {posts.map(post => (
+                    <Grid2 item size={{xs: 12, sm: 6, mx: 4, lg: 4}} key={post.id} alignItems="stretch">
+                        <BlogCard data={post}/>
+                    </Grid2>
+                ))}
 
             </Grid2>
         </>
-    );
-};
+    )
 
+}
+
+
+/* ============================================================
+   MAIN PAGE
+   ============================================================ */
 
 const IndexPage = () => {
-    const [search, setSearch] = useState("");
-    const [activeCategory, setActiveCategory] = useState(null);
+
+    const [search, setSearch] = useState("")
+    const [activeCategory, setActiveCategory] = useState(null)
+
     const data = useStaticQuery(graphql`
-  query {
-    allMdx(
-      sort: { frontmatter: { date: DESC } }
-    ) {
-      totalCount
-      edges {
-        node {
-          id
-          body
-          frontmatter {
-            slug
-            date
-            title
-            description
-            categories
-            tags
-            featured
-            series
+      query {
+        allMdx(
+          sort: { frontmatter: { date: DESC } }
+        ) {
+          totalCount
+          edges {
+            node {
+              id
+              frontmatter {
+                slug
+                date
+                title
+                description
+                categories
+                tags
+                featured
+                series
+              }
+            }
           }
         }
       }
-    }
-  }
-`);
-    const count = data?.allMdx?.totalCount || 0
-    const uniqueCategories = new Set();
-    data?.allMdx?.edges.forEach(({node}) => {
-        const categories = node.frontmatter.categories;
+    `)
 
-        if (categories && categories.length > 0) {
-            categories.forEach(category => uniqueCategories.add(category));
-        }
-    });
-    const categoryArray = Array.from(uniqueCategories);
-    const filteredPosts = data.allMdx.edges
-        .filter(({node}) => {
-            const query = search.toLowerCase();
+
+    /* ============================================================
+       NORMALIZE POSTS
+       ============================================================ */
+
+    const posts = useMemo(
+        () => data?.allMdx?.edges.map(e => e.node) || [],
+        [data]
+    )
+
+
+    /* ============================================================
+       EXTRACT CATEGORIES
+       ============================================================ */
+
+    const categories = useMemo(() => {
+
+        const set = new Set()
+
+        posts.forEach(post => {
+            post.frontmatter.categories?.forEach(c => set.add(c))
+        })
+
+        return Array.from(set)
+
+    }, [posts])
+
+
+    /* ============================================================
+       SEARCH + FILTER
+       ============================================================ */
+
+    const filteredPosts = useMemo(() => {
+
+        const query = search.toLowerCase().trim()
+
+        return posts.filter(post => {
+
+            const fm = post.frontmatter
 
             const matchesSearch =
-                node.frontmatter.title?.toLowerCase().includes(query) ||
-                node.frontmatter.description?.toLowerCase().includes(query) ||
-                node.frontmatter.tags?.some(tag =>
-                    tag.toLowerCase().includes(query)
-                );
+                fm.title?.toLowerCase().includes(query) ||
+                fm.description?.toLowerCase().includes(query) ||
+                fm.tags?.some(tag => tag.toLowerCase().includes(query))
 
             const matchesCategory =
-                !activeCategory ||
-                node.frontmatter.categories?.includes(activeCategory);
+                !activeCategory || fm.categories?.includes(activeCategory)
 
-            return matchesSearch && matchesCategory;
+            return matchesSearch && matchesCategory
+
         })
-        .slice(0, 6); // only show most recent 6
+
+    }, [posts, search, activeCategory])
+
+
+    /* ============================================================
+       FEATURED + RECENT
+       ============================================================ */
+
+    const featuredPosts = useMemo(
+        () => filteredPosts.filter(p => p.frontmatter.featured),
+        [filteredPosts]
+    )
+
+    const recentPosts = useMemo(
+        () =>
+            filteredPosts
+                .filter(p => !p.frontmatter.featured)
+                .slice(0, 6),
+        [filteredPosts]
+    )
+
+
+    /* ============================================================
+       RENDER
+       ============================================================ */
 
     return (
-        <>
-            <Container>
-                <CategoriesComponent
-                    categories={categoryArray}
-                    articlesCount={count}
-                    search={search}
-                    onSearchChange={setSearch}
-                    activeCategory={activeCategory}
-                    onCategorySelect={setActiveCategory}
+        <Container maxWidth="lg">
+
+            <CategoriesComponent
+                categories={categories}
+                articlesCount={posts.length}
+                search={search}
+                onSearchChange={setSearch}
+                activeCategory={activeCategory}
+                onCategorySelect={setActiveCategory}
+            />
+
+            <Box my={4}>
+
+                <PostsComponent
+                    posts={featuredPosts}
                 />
-                <Box my={4}>
-                    {/*<Box sx={{mb: 4}}>*/}
-                    {/*    <TextField*/}
-                    {/*        fullWidth*/}
-                    {/*        variant="outlined"*/}
-                    {/*        placeholder="Search articles..."*/}
-                    {/*        value={search}*/}
-                    {/*        onChange={(e) => setSearch(e.target.value)}*/}
-                    {/*        InputProps={{*/}
-                    {/*            style: {color: "#ffffff"},*/}
-                    {/*        }}*/}
-                    {/*        InputLabelProps={{*/}
-                    {/*            style: {color: "#bdbdbd"},*/}
-                    {/*        }}*/}
-                    {/*        sx={{*/}
-                    {/*            "& .MuiOutlinedInput-root": {*/}
-                    {/*                "& fieldset": {borderColor: "#8ab4f8"},*/}
-                    {/*                "&:hover fieldset": {borderColor: "#6a93d7"},*/}
-                    {/*                "&.Mui-focused fieldset": {borderColor: "#8ab4f8"},*/}
-                    {/*            },*/}
-                    {/*        }}*/}
-                    {/*    />*/}
-                    {/*</Box>*/}
-                    <PostsComponent
-                        heading={"Recent Posts"}
-                        featuredOnly={false}
-                        data={{allMdx: {edges: filteredPosts}}}
-                    /> <PostsComponent heading={"Featured Posts"} featuredOnly={true} data={data}></PostsComponent>
-                </Box>
-                <Box>
-                    <NewsletterForm></NewsletterForm>
-                </Box>
-            </Container>
-        </>
+
+                <PostsComponent
+                    heading="Recent Posts"
+                    posts={recentPosts}
+                />
+
+            </Box>
+
+            <NewsletterForm/>
+
+        </Container>
     )
-        ;
-};
+
+}
 
 export default IndexPage
-
