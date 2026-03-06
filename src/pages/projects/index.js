@@ -63,24 +63,18 @@ import {
 import IconList from "./IconList";
 
 const projects = [
-    // {
-    //     title: "Armada",
-    //     description: "Website monitoring tool that alerts when specific content is added or removed.",
-    //     image: "https://picsum.photos/id/231/600/400",
-    //     link: "/projects/hypersnitch",
-    //     tags: ["Monitoring", "Automation", "Web Scraping"],
-    //     packageAvailable: null,
-    //     id: 2
-    // },
-    // {
-    //     title: "LendIT",
-    //     description: "Website monitoring tool that alerts when specific content is added or removed.",
-    //     image: "https://picsum.photos/id/231/600/400",
-    //     link: "/projects/hypersnitch",
-    //     tags: ["...",],
-    //     packageAvailable: null,
-    //     id: 6
-    // },
+    {
+        title: "DotCertify",
+        yearStart: 2026,
+        description: "A Python playground for exploring X.509 PKI workflows — generating keys, building CSRs, operating a local CA, signing certificates, and validating certificate chains using the cryptography library.",
+        image: "/graphics/projects/dotcertify.png",
+        link: "https://github.com/blue-hexagon/DotCertify",
+        tags: ["PKI", "X.509", "Cryptography"],
+        icons: [SiPython, SiGit],
+        packageAvailable: null,
+        complexity: "medium",
+        id: -6
+    },
     {
         title: "MQ-Hero",
         yearStart: 2026,
@@ -90,7 +84,8 @@ const projects = [
         tags: ["IoT", "MQTT", "Distributed Systems"],
         icons: [SiPython, SiMqtt, SiGrafana, SiTelegraph, SiInfluxdb],
         packageAvailable: null,
-        id: -2
+        complexity: "large",
+        id: -5
     },
     {
         title: "manjana.dev",
@@ -101,7 +96,8 @@ const projects = [
         tags: ["Web Application"],
         icons: [SiMarkdown, SiGatsby, SiJavascript, SiTypescript, SiReact, SiGit],
         packageAvailable: null,
-        id: -1
+        complexity: "large",
+        id: -4
     },
     {
         title: "HyperSnitch",
@@ -113,7 +109,33 @@ const projects = [
         tags: ["Monitoring", "Automation", "Web Scraping"],
         icons: [SiPython, SiPytest, SiGit],
         packageAvailable: null,
-        id: 0
+        complexity: "large",
+        id: -3
+    },
+    {
+        title: "LendIT.Pro",
+        yearStart: 2023,
+        yearEnd: 2024,
+        description: "A multi-tenant asset and loan management platform for organizations to track and manage IT equipment lending. Built with Django and PostgreSQL with RBAC staff management, automated PDF receipts, and infrastructure automation via Docker and Terraform.",
+        image: "/graphics/projects/lendit.png",
+        link: null,
+        tags: ["Web Application", "Asset Management", "Django"],
+        icons: [SiPython, SiDjango, SiPostgresql, SiDocker, SiTerraform, SiJavascript],
+        packageAvailable: null,
+        complexity: "complex",
+        id: -2
+    },
+    {
+        title: "Armada (Cthulhu)",
+        yearStart: 2022,
+        description: "A research project exploring decentralized command-and-control architecture for distributed security testing, featuring YAML-driven orchestration, peer-to-peer task propagation, and scalable execution across coordinated nodes.",
+        image: "/graphics/projects/armada.png",
+        link: "",
+        tags: ["Cybersecurity", "Distributed Systems", "Automation", "Closed Source"],
+        icons: [SiPython, SiGit],
+        packageAvailable: null,
+        complexity: "complex",
+        id: -1
     },
     {
         title: "BashLAMP",
@@ -125,6 +147,19 @@ const projects = [
         tags: ["Bash", "LAMP", "vsftpd", "Linux"],
         icons: [SiLinux, SiGnubash, SiGit],
         packageAvailable: null,
+        complexity: "small",
+        id: 0
+    },
+    {
+        title: "PyInit",
+        yearStart: 2024,
+        description: "A lightweight Python project bootstrap template that provides instant setup of development tooling, formatting, linting, and testing workflows using Poetry, pre-commit hooks, and automated task runners.",
+        image: "/graphics/projects/pyinit.png",
+        link: "https://github.com/blue-hexagon/pyinit",
+        tags: ["Python", "Developer Tooling"],
+        icons: [SiPython, SiGit],
+        packageAvailable: null,
+        complexity: "small",
         id: 1
     },
     {
@@ -137,6 +172,7 @@ const projects = [
         tags: ["TypeScript", "Webpack"],
         icons: [SiTypescript, SiWebpack],
         packageAvailable: null,
+        complexity: "medium",
         id: 2
     },
     {
@@ -146,9 +182,10 @@ const projects = [
         description: "A Django-powered website for a homeowners association, featuring document management and member information updates.",
         image: "/graphics/projects/jhhuse_dk.png",
         link: "https://www.jhhuse.dk/",
-        tags: ["Web Application"],
+        tags: ["Django", "CMS", "Full Stack"],
         icons: [SiPython, SiDjango, SiBootstrap, SiNginx, SiHtml5, SiDigitalocean, SiGit],
         packageAvailable: null,
+        complexity: "medium",
         id: 3
     }, {
         title: "WinScraper",
@@ -157,9 +194,10 @@ const projects = [
         description: "Windows system reconnaissance CLI and library in Python.",
         image: "/graphics/projects/winscraper.png",
         link: "/projects/hypersnitch",
-        tags: ["Utility"],
+        tags: ["Windows", "System Recon", "Python"],
         icons: [SiPython, SiGit],
         packageAvailable: null,
+        complexity: "medium",
         id: 4
     },
 
@@ -173,6 +211,7 @@ const projects = [
         tags: ["Bash", "Vim", "Linux", "Git"],
         icons: [SiPython, SiFlask, SiGit, SiHeroku, SiHtml5, SiCss3, SiJavascript],
         packageAvailable: null,
+        complexity: "medium",
         id: 5
     },
     {
@@ -185,6 +224,7 @@ const projects = [
         tags: ["Bash", "Webarchived"],
         icons: [SiHtml5, SiCss3],
         packageAvailable: null,
+        complexity: "small",
         id: 6
     },
 ];
