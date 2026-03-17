@@ -12,7 +12,7 @@ import {
     CardActionArea, Divider
 } from "@mui/material";
 import {styled} from "@mui/system";
-import {FaPython, FaNpm} from "react-icons/fa";
+import {FaPython, FaNpm, FaLock, FaLockOpen} from "react-icons/fa";
 import {IconContext} from "react-icons";
 import {useState} from "react";
 import {IconButton, Tooltip} from "@mui/material";
@@ -20,6 +20,8 @@ import {Visibility, VisibilityOff} from "@mui/icons-material";
 import {Modal} from "@mui/material";
 
 import {Link} from "gatsby";
+import {LuLock, LuLockOpen, LuLockKeyhole, LuLockKeyholeOpen} from "react-icons/lu";
+import {LuLayers} from "react-icons/lu";
 import {
     SiDart,
     SiPython,
@@ -58,9 +60,11 @@ import {
     SiGit,
     SiGithub,
     SiVim,
-    SiJest, SiWebpack, SiMqtt, SiGrafana, SiTelegraph, SiInfluxdb
+    SiJest, SiWebpack, SiMqtt, SiGrafana, SiTelegraph, SiInfluxdb, SiOpenssl, SiBat,
 } from "react-icons/si";
 import IconList from "./IconList";
+import TechnologyFilter from "./TechnologyFilter";
+import useProjectTechnologyFilter from "./useProjectTechnologyFilter";
 
 const projects = [
     {
@@ -70,9 +74,10 @@ const projects = [
         image: "/graphics/projects/dotcertify.png",
         link: "https://github.com/blue-hexagon/DotCertify",
         tags: ["PKI", "X.509", "Cryptography"],
-        icons: [SiPython, SiGit],
+        icons: [SiPython, SiGit, SiOpenssl],
         packageAvailable: null,
-        complexity: "medium",
+        complexity: "moderate",
+        source: "open",
         id: -6
     },
     {
@@ -82,9 +87,10 @@ const projects = [
         image: "/graphics/projects/mq_hero.png",
         link: "/graphics/projects/pdf/dt_svendeprove_presentation2026-02-12-4601h6dakn21.pdf",
         tags: ["IoT", "MQTT", "Distributed Systems"],
-        icons: [SiPython, SiMqtt, SiGrafana, SiTelegraph, SiInfluxdb],
+        icons: [SiPython, SiDocker, SiGnubash, SiMqtt, SiGrafana, SiTelegraph, SiInfluxdb],
         packageAvailable: null,
-        complexity: "large",
+        complexity: "advanced",
+        source: "open",
         id: -5
     },
     {
@@ -96,7 +102,8 @@ const projects = [
         tags: ["Web Application"],
         icons: [SiMarkdown, SiGatsby, SiJavascript, SiTypescript, SiReact, SiGit],
         packageAvailable: null,
-        complexity: "large",
+        complexity: "advanced",
+        source: "open",
         id: -4
     },
     {
@@ -107,9 +114,10 @@ const projects = [
         image: "/graphics/projects/hypersnitch.png",
         link: "https://github.com/blue-hexagon/HyperSnitch",
         tags: ["Monitoring", "Automation", "Web Scraping"],
-        icons: [SiPython, SiPytest, SiGit],
+        icons: [SiPython, SiGnubash, SiDigitalocean, SiPytest, SiGit],
         packageAvailable: null,
-        complexity: "large",
+        complexity: "moderate",
+        source: "open",
         id: -3
     },
     {
@@ -123,6 +131,7 @@ const projects = [
         icons: [SiPython, SiDjango, SiPostgresql, SiDocker, SiTerraform, SiJavascript],
         packageAvailable: null,
         complexity: "complex",
+        source: "closed",
         id: -2
     },
     {
@@ -135,6 +144,7 @@ const projects = [
         icons: [SiPython, SiGit],
         packageAvailable: null,
         complexity: "complex",
+        source: "closed",
         id: -1
     },
     {
@@ -147,7 +157,8 @@ const projects = [
         tags: ["Bash", "LAMP", "vsftpd", "Linux"],
         icons: [SiLinux, SiGnubash, SiGit],
         packageAvailable: null,
-        complexity: "small",
+        complexity: "simple",
+        source: "open",
         id: 0
     },
     {
@@ -159,7 +170,8 @@ const projects = [
         tags: ["Python", "Developer Tooling"],
         icons: [SiPython, SiGit],
         packageAvailable: null,
-        complexity: "small",
+        complexity: "tiny",
+        source: "open",
         id: 1
     },
     {
@@ -170,9 +182,10 @@ const projects = [
         image: "/graphics/projects/ts_calculator.gif",
         link: "https://github.com/blue-hexagon/TS-Calculator",
         tags: ["TypeScript", "Webpack"],
-        icons: [SiTypescript, SiWebpack],
+        icons: [SiTypescript, SiWebpack, SiGit],
         packageAvailable: null,
-        complexity: "medium",
+        complexity: "simple",
+        source: "open",
         id: 2
     },
     {
@@ -185,7 +198,8 @@ const projects = [
         tags: ["Django", "CMS", "Full Stack"],
         icons: [SiPython, SiDjango, SiBootstrap, SiNginx, SiHtml5, SiDigitalocean, SiGit],
         packageAvailable: null,
-        complexity: "medium",
+        complexity: "simple",
+        source: "closed",
         id: 3
     }, {
         title: "WinScraper",
@@ -197,7 +211,8 @@ const projects = [
         tags: ["Windows", "System Recon", "Python"],
         icons: [SiPython, SiGit],
         packageAvailable: null,
-        complexity: "medium",
+        complexity: "simple",
+        source: "open",
         id: 4
     },
 
@@ -211,7 +226,8 @@ const projects = [
         tags: ["Bash", "Vim", "Linux", "Git"],
         icons: [SiPython, SiFlask, SiGit, SiHeroku, SiHtml5, SiCss3, SiJavascript],
         packageAvailable: null,
-        complexity: "medium",
+        complexity: "moderate",
+        source: "closed",
         id: 5
     },
     {
@@ -224,7 +240,8 @@ const projects = [
         tags: ["Bash", "Webarchived"],
         icons: [SiHtml5, SiCss3],
         packageAvailable: null,
-        complexity: "small",
+        complexity: "tiny",
+        source: "open",
         id: 6
     },
 ];
@@ -269,9 +286,72 @@ const PackageIconBadge = ({type}) => {
         </Box>
     );
 };
+const complexityColor = {
+    small: "#6c9cff",
+    medium: "#00d4aa",
+    large: "#ffb020",
+    complex: "#ff5c5c"
+};
 
-export const ProjectShowcase = ({indices}) => {
-    const [showImages, setShowImages] = useState(true);
+function ComplexityBadge({value, sx}) {
+
+    const color = "#fafafa"
+
+    return (
+        <Box
+            sx={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+
+                background: "rgba(0,0,0,0.6)",
+                backdropFilter: "blur(6px)",
+                px: 1.5,
+                py: 0.5,
+                fontSize: "0.65rem",
+                borderRadius: "6px",
+                border: "1px solid rgba(255,255,255,0.35)",
+                color: color,
+                letterSpacing: "0.04em",
+                textTransform: "uppercase"
+            }}
+        >
+            {value}
+            <LuLayers/>
+        </Box>
+    );
+}
+
+function SourceBadge({type, sx}) {
+
+    const SourceIocn = type === "open" ? FaLockOpen : FaLock
+    const txtColor = type === "open" ? "#fafafa" : "rgba(255,255,255,0.35)"
+    return (
+        <Box
+            sx={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+
+                background: "rgba(0,0,0,0.6)",
+                backdropFilter: "blur(6px)",
+                px: 1.5,
+                py: 0.5,
+                fontSize: "0.65rem",
+                borderRadius: "6px",
+                border: "1px solid rgba(255,255,255,0.35)",
+                color: txtColor,
+                letterSpacing: "0.04em",
+                textTransform: "uppercase"
+            }}
+        >
+            <SourceIocn/>
+            {type === "open" ? "Open Source" : "Closed Source"}
+        </Box>
+    )
+}
+
+export const ProjectShowcase = ({filteredProjects, showImages}) => {
     const [zoomOpen, setZoomOpen] = useState(false);
     const [zoomSrc, setZoomSrc] = useState(null);
     useEffect(() => {
@@ -281,39 +361,10 @@ export const ProjectShowcase = ({indices}) => {
             document.body.style.overflow = "";
         }
     }, [zoomOpen]);
+    const selectedProjects = filteredProjects ? filteredProjects : projects
     return (
         <>
             {/* Toggle Button Row */}
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    mb: 2,
-                }}
-            >
-                <Tooltip title={showImages ? "Hide images" : "Show images"}>
-                    <IconButton
-                        onClick={() => setShowImages(prev => !prev)}
-                        sx={{
-                            color: showImages ? "rgba(255,255,255,0.5)" : "#888",
-                            backgroundColor: showImages
-                                ? "rgba(255,255,255,0.15)"
-                                : "rgba(255,255,255,0.05)",
-                            border: showImages
-                                ? "1px solid rgba(255,255,255,0.1)"
-                                : "1px solid rgba(255,255,255,0.1)",
-                            transition: "all 0.2s ease",
-                            "&:hover": {
-                                backgroundColor: showImages
-                                    ? "rgba(255,255,255,0.25)"
-                                    : "rgba(255,255,255,0.1)",
-                            }
-                        }}
-                    >
-                        {showImages ? <Visibility/> : <VisibilityOff/>}
-                    </IconButton>
-                </Tooltip>
-            </Box>
             <Modal disableScrollLock
                    disableRestoreFocus
                    disableAutoFocus
@@ -352,10 +403,19 @@ export const ProjectShowcase = ({indices}) => {
                 height="100%"
                 sx={{height: "100%", display: "flex", alignItems: "center"}}
             >
-                {projects.map((project, index) => (
+                {selectedProjects.map((project, index) => (
                     <Grid2 item key={index} size={{xs: 12, sm: 6, lg: 4}}>
                         <StyledCard>
                             <Box position="relative">
+                                {showImages &&
+                                    <Box position="absolute"
+                                         bottom={8}
+                                         right={8}
+                                         sx={{zIndex: 10, display: "flex", gap: 1}}>
+                                        <ComplexityBadge value={project.complexity}/>
+                                        <SourceBadge type={project.source}/>
+                                    </Box>
+                                }
                                 <Box
                                     position="absolute"
                                     top={8}
@@ -388,7 +448,7 @@ export const ProjectShowcase = ({indices}) => {
 
                                     <CardMedia
                                         component="img"
-                                        height="180"
+                                        height={showImages ? 180 : 0}
                                         image={project.image}
                                         alt={project.title}
                                         onClick={(e) => {
@@ -413,11 +473,7 @@ export const ProjectShowcase = ({indices}) => {
                                     />
                                 )}
 
-                                {project.packageAvailable && (
-                                    <Box position="absolute" top={8} right={8}>
-                                        <PackageIconBadge type={project.packageAvailable}/>
-                                    </Box>
-                                )}
+
                             </Box>
 
                             <Link
@@ -429,7 +485,6 @@ export const ProjectShowcase = ({indices}) => {
                                         <Typography gutterBottom variant="h5" color="#ffffff">
                                             {project.title}
                                         </Typography>
-
                                         <Typography
                                             variant="body2"
                                             color="#bdbdbd"
@@ -443,14 +498,13 @@ export const ProjectShowcase = ({indices}) => {
                                         <Box mt={2}>
                                             {project.tags.map((tag, idx) => (
                                                 <Chip
-                                                    sx={{marginRight: "4px"}}
+                                                    sx={{marginRight: "4px", mb: "4px", overflow: "hidden"}}
                                                     key={idx}
                                                     label={tag}
                                                     variant="outlined"
                                                 />
                                             ))}
                                         </Box>
-
                                         <Box mt={2}>
                                             <IconList icons={project.icons}/>
                                         </Box>
@@ -465,6 +519,18 @@ export const ProjectShowcase = ({indices}) => {
     );
 };
 const Main = () => {
+    const [showImages, setShowImages] = useState(true);
+
+    const {
+        allIcons,
+        includeTech,
+        excludeTech,
+        toggleTech,
+        clearAll,
+        filteredProjects
+    } = useProjectTechnologyFilter(projects);
+
+
     return (
         <>
             <Container sx={{pt: 5, pb: 1}}>
@@ -496,27 +562,46 @@ const Main = () => {
                         variant="subtitle1"
                         sx={{
                             color: "#bdbdbd",
-                            maxWidth: 720,
+                            maxWidth: "100%",
                             lineHeight: 1.6,
                             fontSize: "1.05rem",
                             fontStyle: ""
                         }}
                     >
-                        Cross-platform tooling, system introspection utilities, automation scripts and web applications.
+                        A selection of engineering projects spanning automation tooling,
+                        system introspection utilities, infrastructure experiments, and
+                        web-based platforms. Most projects are built to explore systems
+                        deeply and translate operational knowledge into practical tools.
                     </Typography>
                     <Typography variant="subtitle2" sx={{
                         color: "rgba(189,189,189,0.45)",
-                        maxWidth: 720,
+                        maxWidth: "100%",
                         lineHeight: 1.4,
                         mt: ".25rem",
+                        mb: 2,
                         fontSize: "0.85rem",
                         fontStyle: ""
                     }}>
-                        For all public works checkout my Github
+                        Additional open-source projects and experiments are available on GitHub.
                     </Typography>
                 </Box>
-                <ProjectShowcase></ProjectShowcase>
-            </Container>
+                <TechnologyFilter
+                    icons={allIcons}
+                    include={includeTech}
+                    exclude={excludeTech}
+                    onToggle={toggleTech}
+                    onClear={clearAll}
+                    showImages={showImages}
+                    onToggleImages={() => setShowImages(prev => !prev)}
+
+                    projects={filteredProjects}
+                />
+                <Box sx={{mb: 2}}/>
+                <ProjectShowcase
+                    filteredProjects={filteredProjects}
+                    showImages={showImages}
+                    setShowImages={setShowImages}
+                /> </Container>
         </>)
 }
 export default Main;

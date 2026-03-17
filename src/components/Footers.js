@@ -14,7 +14,7 @@ export const SpecialIconFooter = () => {
 
             <div style={styles.mainText}>
                 <Typography variant="body2" color="textSecondary">
-                    © {new Date().getFullYear()} manjana/blue-hexagon &mdash; all rights reserved.
+                    © 2025–{new Date().getFullYear()} manjana/blue-hexagon &mdash; all rights reserved.
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
                     Connect with me on <Link target="_blank" rel="noreferrer" underline="none"
@@ -40,7 +40,7 @@ export const PlainIconFooter = () => {
          <Box component="footer" style={{padding: '0.7rem 0'}}
                      sx={{p: 2, mt: 4, backgroundColor: 'background.paper', textAlign: 'center'}}>
                     <Typography variant="body2" color="textSecondary">
-                        © {new Date().getFullYear()} manjana/blue-hexagon &mdash; all rights reserved.
+                        © 2025–{new Date().getFullYear()} manjana/blue-hexagon &mdash; all rights reserved.
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
                         Connect with me on <Link target="_blank" rel="noreferrer" underline="none"
