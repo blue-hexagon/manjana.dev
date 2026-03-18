@@ -69,7 +69,6 @@ const TechnologyFilter = ({
                     gap: 1,
                     flexWrap: "wrap",
                     flexGrow: 1,
-                    alignItems: "center",
 
                 }}
             >
