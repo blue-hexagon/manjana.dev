@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkgatsby_starter_hello_world=self.webpackChunkgatsby_starter_hello_world||[]).push([[3490],{3490:function(e,r,t){t.d(r,{createInfoServices:function(){return s.v}});var s=t(91885);t(37425)}}]);

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkgatsby_starter_hello_world=self.webpackChunkgatsby_starter_hello_world||[]).push([[2325],{2325:function(e,t,r){r.d(t,{createPacketServices:function(){return s.$}});var s=r(73858);r(37425)}}]);
