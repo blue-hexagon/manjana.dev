@@ -8,13 +8,13 @@ import {
   TableContainer,
   Paper,
 } from "@mui/material";
+import {MDXTable} from "../../../theme_mdx";
 
 const GlossaryTable = ({ entries, columns }) => {
   if (!entries?.length) return null;
 
   return (
-    <TableContainer component={Paper} sx={{ my: 4 }}>
-      <Table size="small">
+      <MDXTable size="small">
         <TableHead>
           <TableRow>
             {columns.map((col) => (
@@ -36,8 +36,7 @@ const GlossaryTable = ({ entries, columns }) => {
             </TableRow>
           ))}
         </TableBody>
-      </Table>
-    </TableContainer>
+      </MDXTable>
   );
 };
 

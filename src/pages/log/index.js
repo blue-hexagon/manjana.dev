@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import ResearchLogTimeline from "./timeline"
+import ResearchLogTimeline from "../../pages_components/log/timeline"
 
 const Main = () => {
     return (<>

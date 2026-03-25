@@ -22,8 +22,14 @@ import ShadowComment from "../../components/mdxblog/ShadowComment";
 import BlogLink from "../../components/mdxblog/BlogLink";
 import ExamplePanel from "../../components/mdxblog/ExamplePanel";
 
-## ACT I — Control Plane Model
 _This article is being continuously updated - consider it a work in progress! [2026-03-03]_
+
+<ShadowComment> <Term name="OSPF"/> is defined in <BlogLink href="https://datatracker.ietf.org/doc/html/rfc2328">RFC
+    2328</BlogLink> (STD 54). Numerous later RFCs extend or update specific behaviors, including authentication, LLS,
+    and security considerations.</ShadowComment>
+<Divider sx={{opacity: "0.15"}}/>
+
+## ACT I — Control Plane Model
 
 ### OSPF as a Distributed Graph Computation System
 OSPF (Open Shortest Path First) is an Interior Gateway Protocol (<Term name="IGP"/>) that builds a
@@ -49,7 +55,7 @@ OSPF is a link-state protocol - and that classification is fundamental since tha
 
 ### The LSDB — What Actually Gets Replicated
 The **Link-State Database (LSDB)** is the *replicated state* of OSPF. It is not a routing table and it is not “routes.”
-It is a **topology model** encoded as **Link-State Advertisements (LSAs)**.
+It's a **topology model** encoded as **Link-State Advertisements (LSAs)**.
 
 Each router maintains an LSDB **per area** (even in single-area designs, that still means “Area 0”). In steady state, all routers
 inside the same area converge to the same LSDB content.
@@ -67,11 +73,6 @@ That’s the key mental model:
 - **SPF** converts the dataset into best paths.
 - **RIB/FIB** are derived consequences.
 
-<ShadowComment> <Term name="OSPF"/> is defined in <BlogLink href="https://datatracker.ietf.org/doc/html/rfc2328">RFC
-    2328</BlogLink> (STD 54). Numerous later RFCs extend or update specific behaviors, including authentication, LLS,
-    and security considerations.</ShadowComment>
-
-<Divider sx={{opacity: "0.15"}}/>
 
 ### Control Plane Mechanics and Derived State
 OSPF operates entirely in the control plane; it does not forward any data traffic (forwarding plane).
@@ -362,6 +363,29 @@ and LSR/LSU/LSAck complete database replication.
 
 #### The Hello Packet
 The Hello packet is what initially transitions the router from `DOWN` to `INIT` when it recieves a neighbors `Hello`.
+
+<Mermaid
+highlightRows={[2,9]}
+    chart={`packet
+
+        0-7:   "Version" {hl}
+        8-15:  "Type (1 = Hello)"
+        16-31: "Packet Length"
+        32-63: "Router ID"
+        64-95: "Area ID" {hl}
+        96-111: "Checksum"
+        112-127: "Authentication Type"
+        128-191: "Authentication (64 bits)"
+        192-223: "Network Mask"
+        224-239: "Hello Interval"
+        240-247: "Options"
+        248-255: "Router Priority"
+        256-287: "Dead Interval"
+        288-319: "Designated Router"
+        320-351: "Backup Designated Router"
+        352-383: "Neighbor Router IDs (variable)"
+`}
+/>
 But for the `2-WAY` state transition, the following Hello requirements must match between two neighbors communicating:
 - Area ID
 - Hello timer
@@ -380,6 +404,7 @@ Mismatch in any of these prevents adjacency formation and result in a transition
     and the process has to start over from scratch
     A good rule of thumb is that the Dead Timer should be set to four times the Hello Timer.
 </StructuredNote>
+
 #### The DBD Packet
 The (DB) database (D) descriptor is used to exchange summaries (headers) of the neighbor routers LSAs.
 

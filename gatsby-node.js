@@ -41,3 +41,15 @@ exports.createPages = async ({graphql, actions}) => {
         });
     });
 };
+exports.onCreateWebpackConfig = ({ actions }) => {
+  actions.setWebpackConfig({
+    module: {
+      rules: [
+        {
+          test: /\.(ps1|sh|conf|txt|py)$/,
+          use: 'raw-loader',
+        },
+      ],
+    },
+  })
+}

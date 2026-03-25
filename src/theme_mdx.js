@@ -114,7 +114,7 @@ const ZoomableImageComponent = (props) => {
   return <ZoomableImage {...props} sx={{ marginTop: 1.25 }} />;
 };
 
-const MDXTable = ({ children, ...props }) => (
+export const MDXTable = ({ children, ...props }) => (
   <TableContainer
     component={Paper}
     sx={{

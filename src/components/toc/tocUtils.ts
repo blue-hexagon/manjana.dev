@@ -26,7 +26,7 @@ export function filterTocByDepth(
   currentDepth = 1
 ): ToCItem[] | undefined {
   if (!items) return undefined
-  if (currentDepth > maxDepth) return undefined
+  if (currentDepth > maxDepth) return []
 
   return items
     .map(item => {

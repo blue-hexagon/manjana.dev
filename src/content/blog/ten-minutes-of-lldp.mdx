@@ -1,0 +1,329 @@
+---
+title: "LLDP Field Notes"
+subtitle: "Practical Layer 2 neighbor discovery, TLV decoding, and real-world troubleshooting."
+date: "2026-03-21"
+slug: "blog/lldp-field-notes"
+path: "/blog/lldp-field-notes"
+description: "A pragmatic, systems-level reference to LLDP: how it works, how to read it, and how to troubleshoot it in real networks."
+categories: ["Networking", "Infrastructure"]
+tags: ["LLDP", "Layer 2", "Discovery", "Ethernet"]
+featured: true
+series: "Understanding Systems Deeply"
+featuredImage: "lldp-field-notes.png"
+glossaryPrefix: "LLDP"
+tocDepth: 4
+---
+
+import Mermaid from "../../components/mdxblog/Mermaid";
+import StructuredNote from "../../components/mdxblog/StructuredNote";
+import CodeBlock from "../../pages_components/blog/CodeBlock";
+import {Divider} from "@mui/material";
+import Term from "../../components/mdxblog/GlossarySystem/Term";
+import ShadowComment from "../../components/mdxblog/ShadowComment";
+import BlogLink from "../../components/mdxblog/BlogLink";
+import ExamplePanel from "../../components/mdxblog/ExamplePanel";
+import lldp_watcher from "../../../static/code/lldp_watcher.ps1";
+
+## Introduction
+
+<Term name="LLDP"/> (IEEE 802.1AB) is a Layer 2 discovery protocol that advertises periodic structured metadata
+about itself to locally connected peers (neighbors). It's a vendor-neutral alternative to CDP.
+
+<StructuredNote type="info" title="CDP vs LLDP" collapsible="true" defaultExpanded="false">
+CDP → richer (Cisco-specific), more consistent<br/>
+LLDP → standard, but more fragmented (vendor TLVs)
+</StructuredNote>
+
+A <Term name="neighbor"/> is: _“The last device that sent me an LLDP frame on this interface.”_
+
+No sessions, no trust model and no state machine; LLDP neighbors are observational — not relational.
+
+<StructuredNote type="warning">
+    LLDP is unauthenticated and blindly trusted by most devices.
+
+    Any device on the wire can advertise arbitrary identity, capabilities, or management addresses.
+</StructuredNote>
+
+<Mermaid
+    chart={`sequenceDiagram
+    autonumber
+    participant A as Device A
+    participant B as Device B
+
+                loop Every 30s
+                    A->>B: LLDP Frame
+                    B->>A: LLDP Frame
+                end
+`}
+/>
+
+<StructuredNote type="info" title="Takeaway">
+    LLDP = structured byte stream (everything else is parsing/interpretation).
+</StructuredNote>
+
+## Core Behaviour & Properties
+
+In real networks, LLDP is primarily used for troubleshooting, physical mapping, and endpoint discovery.
+
+Devices generate LLDP frames in the <Term name="ControlPlane"/>, transmit them on the <Term name="DataPlane"/>, and process received frames back in the control plane.
+
+This means that depending on how a device is configured, frames can be visible in captures (SPAN/NIC) but not present in a device's LLDP <Term name="NeighborTable"/>.
+
+<ShadowComment variant="note" text="LLDP is not discovery — it is advertisement. Discovery is just the side effect."/>
+
+The local table which holds the neighbor entries can be inspected on modern switches with typical commands like:
+```bash
+show lldp neighbors
+show lldp neighbors detail
+```
+
+LLDP operates strictly at Layer 2. Frames are <Term name="LinkLocal"/>, single-hop, and never forwarded by switches.
+
+They are always sent to the destination <Term name="MulticastMAC"/>: `01:80:C2:00:00:0E`.
+
+<Mermaid
+    center="true"
+    chart={`flowchart LR
+    A["Switch A"] -- LLDP --> B["Switch B"]
+    B -- LLDP --> A
+    A -->|"Local table"| DB1[(LLDP)]
+    B -->|"Local table"| DB2[(LLDP)]
+`}
+/>
+
+<Divider sx={{opacity: "0.25"}}></Divider>
+
+LLDP includes a <Term name="TTL"/> field, but unlike IP, it does not represent hop count.
+
+It defines the lifetime (in seconds) of the advertised information in the receiver’s neighbor table.
+
+When the countdown reaches zero, the entry is considered stale and removed from the receiver’s local table.
+
+- No refresh → entry removed
+- Default TTL: 120 seconds
+- Default transmit: 30 seconds
+
+<ShadowComment variant="note"
+               text="Default TTL is typically 4× the transmit interval. This creates tolerance for packet loss without immediate neighbor flapping."/>
+
+<Mermaid chart={`
+flowchart LR
+  TX["Transmit LLDP"] --> |A -> B| RX["Receive LLDP"]
+  RX --> CACHE["Store Neighbor"]
+  CACHE --> TTL["TTL Countdown"]
+  TTL -->|Refresh| RX
+  TTL -->|Expire| DROP["Remove Entry"]
+`}/>
+
+## Frame Structure & TLV Model
+
+An LLDP packet is carried directly inside an Ethernet frame:
+- **Destination MAC:** `01:80:C2:00:00:0E`
+- **Source MAC:** sending interface MAC
+- **EtherType:** `0x88CC`
+
+The LLDP frame consists entirely of <Term name="TLV" ending="s"/>.
+
+A TLV is a dynamic and flexible datastructure
+- T = Type (type of payload)
+- L = Length (how long the payload is)
+- V = Value (the actual payload)
+
+Some TLV's are mandatory while others are optional and of those optional TLV'
+LLDP doesn't have a fixed packet layout like an OSPF Hello header - it is simply a variable-length TLV stream where even the mandatory TLVs have variable lengths.
+
+Everything is encoded this way, which makes LLDP highly flexible — but also means parsing becomes non-trivial, especially when vendor-specific TLVs are involved.
+
+<ShadowComment variant="note" text="LLDP is effectively a self-describing protocol — there is no schema outside of TLVs."/>
+
+### TLV Encoding
+
+Each TLV can be broken into two distinct elements - Header and Payload
+
+<Mermaid
+    chart={`packet
+        0-6:   "Type (Header - 7 bit)"
+        +9:  "Length (Header - 9 bit)"
+        16-31:  "Value (Payload - LEQ 511 bytes)"
+`}
+/>
+
+Total header size: **2 bytes**
+
+Total payload size: **1 to 511 bytes**
+
+### LLDP Packet Layout
+
+<Mermaid
+    chart={`packet
+        0-15:   "Chassis ID"
+        16-31:  "Port ID (GigabitEthernet 1/0/32)"
+        32-47:  "TTL (120 s)"
+        +32: "Optional TLVs (LEQ (MTU - 2 bytes))"
+        +16: "End of LLDPDU (0x0000)"
+`}
+/>
+
+### LLDP TLV Reference (Field-Oriented)
+
+| Type | Req | TLV                                 | What it Actually Tells You                              | Example                    | Why You Care in Practice                      |
+|------|-----|-------------------------------------|---------------------------------------------------------|----------------------------|-----------------------------------------------|
+| 0    | ✔   | <Term name="EndOfLLDPDU"/>          | Terminates the TLV stream                               | 0x0000                     | Parser stops here — missing = malformed frame |
+| 1    | ✔   | <Term name="ChassisID"/>            | Device identity (MAC, hostname, or local ID)            | 00:11:22:33:44:55          | Identify *which box* you're connected to      |
+| 2    | ✔   | <Term name="PortID"/>               | Remote interface identifier                             | Gi1/0/24                   | Identify *which port* on that device          |
+| 3    | ✔   | <Term name="TTL"/>                  | Lifetime of this <Term name="Advertisement"/> (seconds) | 120                        | Controls neighbor aging / flapping behavior   |
+| 4    | ✖   | Port Description                    | Human-readable port label                               | "Uplink to Core"           | Detect mispatching / labeling errors          |
+| 5    | ✖   | <Term name="SystemName"/>           | Hostname                                                | SW-CORE-01                 | Fast device identification                    |
+| 6    | ✖   | <Term name="SystemDescription"/>    | OS / platform / version                                 | Cisco IOS-XE 17.x          | Fingerprint device type & software            |
+| 7    | ✖   | <Term name="SystemCapabilities"/>   | Device roles (bridge, router, AP, phone, etc.)          | Bridge, Router             | Know what the device *is*                     |
+| 8    | ✖   | <Term name="ManagementAddress"/>    | Reachable management IP                                 | 10.10.10.1                 | Direct SSH / API target                       |
+| 127  | ✖   | Organizationally Specific           | Vendor extensions (OUI-based TLVs)                      | LLDP-MED, Cisco extensions | Phones, PoE, VLAN, voice configs, etc.        |
+
+The mandatory TLVs must appear first (and in correct order!), but their values are variable-length, so LLDP is parsed sequentially, not by fixed field offsets.
+
+<Mermaid
+    chart={`flowchart LR
+    A["Chassis ID TLV"] --> B["Port ID TLV"]
+    B --> C["TTL TLV"]
+    C --> D["Optional TLVs..."]
+    D --> E["End of LLDPDU TLV"]
+`}
+/>
+
+<StructuredNote type="takeaway">
+    0–3 define the protocol skeleton.
+    Everything else is optional — and where vendors differentiate.
+
+    If you don’t understand <Term name="TLV127"/>, you don’t fully understand LLDP in production networks.
+</StructuredNote>
+
+Unknown TLVs are skipped using the Length field, which allows devices to safely ignore extensions they do not understand.
+
+### LLDP TLVs in Wireshark / tshark
+
+| Type | Req | TLV                              | Wireshark / TShark Field   | What It Means in Practice               |
+|------|-----|----------------------------------|----------------------------|-----------------------------------------|
+| 1    | ✔   | <Term name="ChassisID"/>         | `lldp.chassis.id`          | Remote device identity (MAC/hostname)   |
+| 2    | ✔   | <Term name="PortID"/>            | `lldp.port.id`             | Remote interface (Gi1/0/24, Eth1, etc.) |
+| 3    | ✔   | <Term name="TTL"/>               | `lldp.ttl`                 | Entry lifetime (seconds)                |
+| 4    | ✖   | Port Description                 | `lldp.port.descr`          | Human label (often misleading)          |
+| 5    | ✖   | <Term name="SystemName"/>        | `lldp.system.name`         | Hostname                                |
+| 6    | ✖   | <Term name="SystemDescription"/> | `lldp.system.desc`         | OS / platform / version                 |
+| 7    | ✖   | <Term name="SystemCapabilities"/>              | `lldp.system.capabilities` | Device type (bridge/router/AP/phone)    |
+| 8    | ✖   | <Term name="ManagementAddress"/>               | `lldp.mgn.addr`            | Management IP (sometimes multiple)      |
+| 127  | ✖   | Org-Specific (IEEE 802.1)        | `lldp.ieee.*`              | VLAN, priority, DCB                     |
+| 127  | ✖   | Org-Specific (IEEE 802.3)        | `lldp.ieee.802_3.*`        | PoE, link aggregation                   |
+| 127  | ✖   | Org-Specific (LLDP-MED)          | `lldp.med.*`               | Phones, voice VLAN, location            |
+
+<ShadowComment variant="warn" text="Field names can vary slightly between Wireshark versions and vendors.
+Use `tshark -G fields | findstr lldp` to enumerate all available LLDP fields."/>
+
+<StructuredNote type="warning">
+    Seeing a <Term name="TLV"/> in Wireshark does not guarantee the device accepted it.
+
+    Capture = data plane
+
+    Neighbor table = control plane
+
+    If it's in the packet but not in `show lldp neighbors detail`, the device dropped or ignored it.
+</StructuredNote>
+
+## Monitoring LLDPs With tShark!
+
+If you have Wireshark installed you can also set the filter to `lldp` or if you want to use the CLI navigate to the Wireshark folder and type
+`tshark.exe -D` to identify your active network interface and follow:
+
+```powershell
+tshark.exe -i 8 -Y "lldp" -T fields `
+-e frame.time `
+-e lldp.tlv.system.name `
+-e lldp.port.id `
+-e lldp.mgn.addr.ip4
+```
+
+<ExamplePanel
+    title="PowerShell LLDP Watcher (tshark)"
+    subtitle="Live LLDP frame capture → parse → structured neighbor view"
+    tags={["LLDP", "Packet Capture", "tshark", "PowerShell", "Troubleshooting"]}
+    defaultExpanded={false}
+    headerLevel="3"
+>
+
+<CodeBlock script={lldp_watcher} language="powershell" />
+
+</ExamplePanel>
+
+## Failure Patterns
+
+| Symptom          | Meaning          | Root Cause                                  |
+|------------------|------------------|---------------------------------------------|
+| No neighbors     | Nothing received | LLDP disabled, VLAN mismatch                |
+| One-way neighbor | Asymmetric       | Transmit/receive disabled one side          |
+| Flapping entries | TTL expiry       | Unstable link / packet loss / storm control |
+| Missing fields   | Partial TLVs     | Vendor differences                          |
+
+## Deterministic Troubleshooting
+
+Follow this order:
+
+1. Interface up?
+2. LLDP enabled globally?
+3. LLDP enabled on interface?
+4. Frames seen?
+5. Neighbor stable?
+
+## Common Gotchas (Real-World)
+
+### 1. VLAN / Trunk Issues
+
+LLDP is transmitted untagged by default.
+
+<ShadowComment variant="warn"
+               text="LLDP frames are sent untagged. On trunks, this means they follow the native VLAN — mismatches here will silently break neighbor visibility."/>
+
+- Wrong <Term name="NativeVLAN"/> → LLDP disappears
+
+### 2. Security Features
+
+- Port-security
+- Storm-control
+- 802.1X
+
+These can silently drop LLDP frames depending on configuration.
+
+### 3. Virtualization / Hypervisors
+
+- vSwitches may filter LLDP
+- Containers often don’t pass it
+
+### 4. NIC / Driver Behavior
+
+- Sleep/wake → LLDP bursts
+- Bad drivers → missing frames
+- Low-end NIC → dropping LLDP frames
+
+### 5. Control Plane Policing (CoPP)
+
+LLDP is processed by the control plane and may be rate-limited.
+
+- High CPU → LLDP drops
+- <Term name="CoPP"/> policies → LLDP throttled
+
+Result: Frames visible in capture, but missing from neighbor table.
+
+## Mental Compression
+
+If you remember nothing else:
+
+- LLDP is direct-neighbor **broadcast identity**
+- TLVs are the payload **and** the entire protocol
+- Neighbors are **just cached observations**
+- There is no convergence (or sessions) - just a unidirectional byte-stream
+- <Term name="EtherType88CC"/> → always LLDP
+
+All LLDP issues reduce to:
+
+1. Not sent
+2. Not received
+3. Not parsed
+4. Expired

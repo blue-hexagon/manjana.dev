@@ -20,10 +20,10 @@ import {FaPython, FaNpm, FaLock, FaLockOpen} from "react-icons/fa";
 import {Link} from "gatsby";
 import {LuLayers} from "react-icons/lu";
 
-import IconList from "./IconList";
-import TechnologyFilter from "./TechnologyFilter";
-import useProjectTechnologyFilter from "./useProjectTechnologyFilter";
-import {projects} from "./projects_dict";
+import IconList from "../../pages_components/projects/IconList";
+import TechnologyFilter from "../../pages_components/projects/TechnologyFilter";
+import useProjectTechnologyFilter from "../../pages_components/projects/useProjectTechnologyFilter";
+import {projects} from "../../content/project/projects_dict";
 
 
 const StyledCard = styled(Card, {

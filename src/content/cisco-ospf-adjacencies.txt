@@ -1,3 +1,0 @@
-- If you’re stuck before **2-Way**, it’s almost always **Hello/parameter** problems.
-- If you’re stuck in **ExStart/Exchange**, think **DBD negotiation** (very often MTU).
-- If you’re stuck in **Loading**, think **LSA delivery reliability** (loss/filtering/overload).

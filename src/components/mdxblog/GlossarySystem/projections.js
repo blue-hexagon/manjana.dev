@@ -140,7 +140,18 @@ export const GLOSSARY_TABLE_COLUMNS = {
 
     quick: [
         {key: "term", label: "Term", render: (e) => e.term},
-        {key: "definition", label: "Meaning", render: (e) => e.definition ?? "—"}
+        {key: "fullName", label: "Full name", render: (e) => e.fullName ?? "—"},
+        {key: "definition", label: "Meaning", render: (e) => e.definition ?? "—"},
+                {
+            key: "whyItMatters",
+            label: "Why it matters",
+            render: (e) => e.whyItMatters ?? "—"
+        },
+                        {
+            key: "explanation",
+            label: "Explanation",
+            render: (e) => e.explanation ?? "—"
+        },
     ],
 
     full: [

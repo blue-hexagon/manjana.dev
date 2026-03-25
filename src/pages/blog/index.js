@@ -11,8 +11,8 @@ import Grid2 from "@mui/material/Grid2"
 import {styled} from "@mui/system"
 import {graphql, useStaticQuery} from "gatsby"
 
-import CategoriesComponent from "../../components/blog_page/Categories"
-import BlogCard from "../../components/blog_page/BlogCard"
+import CategoriesComponent from "../../pages_components/blog/Categories"
+import BlogCard from "../../pages_components/blog/BlogCard"
 
 
 /* ============================================================
