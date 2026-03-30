@@ -12,6 +12,7 @@ export const neonTextStyle = {
     textShadow: '0 0 4px rgba(0, 255, 204, 0.75)',
     fontFamily: `'Fira Code', monospace`,
 };
+
 export const ArticleHeader: React.FC<PostHeaderProps> = ({
   title,
   subtitle,

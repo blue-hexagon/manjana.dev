@@ -24,7 +24,7 @@ import BlogLink from "../../components/mdxblog/BlogLink";
 import ExamplePanel from "../../components/mdxblog/ExamplePanel";
 import lldp_watcher from "../../../static/code/lldp_watcher.ps1";
 
-## Introduction
+## Introduction |>FLOW_DIAGRAM
 
 <Term name="LLDP"/> (IEEE 802.1AB) is a Layer 2 discovery protocol that advertises periodic structured metadata
 about itself to locally connected peers (neighbors). It's a vendor-neutral alternative to CDP.
@@ -61,7 +61,7 @@ No sessions, no trust model and no state machine; LLDP neighbors are observation
     LLDP = structured byte stream (everything else is parsing/interpretation).
 </StructuredNote>
 
-## Core Behaviour & Properties
+## Core Behaviour & Properties |>FLOW_DIAGRAM
 
 In real networks, LLDP is primarily used for troubleshooting, physical mapping, and endpoint discovery.
 
@@ -72,10 +72,10 @@ This means that depending on how a device is configured, frames can be visible i
 <ShadowComment variant="note" text="LLDP is not discovery — it is advertisement. Discovery is just the side effect."/>
 
 The local table which holds the neighbor entries can be inspected on modern switches with typical commands like:
-```bash
-show lldp neighbors
+<CodeBlock blockId="show-lldp-iosxe" language="IOS-XE" showLineNumbers="false" script={`show lldp neighbors
 show lldp neighbors detail
-```
+`}
+/>
 
 LLDP operates strictly at Layer 2. Frames are <Term name="LinkLocal"/>, single-hop, and never forwarded by switches.
 
@@ -115,7 +115,7 @@ flowchart LR
   TTL -->|Expire| DROP["Remove Entry"]
 `}/>
 
-## Frame Structure & TLV Model
+## Frame Structure & TLV Model |>
 
 An LLDP packet is carried directly inside an Ethernet frame:
 - **Destination MAC:** `01:80:C2:00:00:0E`
@@ -136,7 +136,7 @@ Everything is encoded this way, which makes LLDP highly flexible — but also me
 
 <ShadowComment variant="note" text="LLDP is effectively a self-describing protocol — there is no schema outside of TLVs."/>
 
-### TLV Encoding
+### TLV Encoding |>PACKET_DIAGRAM
 
 Each TLV can be broken into two distinct elements - Header and Payload
 
@@ -152,7 +152,7 @@ Total header size: **2 bytes**
 
 Total payload size: **1 to 511 bytes**
 
-### LLDP Packet Layout
+### LLDP Packet Layout |>PACKET_DIAGRAM
 
 <Mermaid
     chart={`packet
@@ -164,7 +164,7 @@ Total payload size: **1 to 511 bytes**
 `}
 />
 
-### LLDP TLV Reference (Field-Oriented)
+### LLDP TLV Reference (Field-Oriented) |>TABLE FLOW_DIAGRAM
 
 | Type | Req | TLV                                 | What it Actually Tells You                              | Example                    | Why You Care in Practice                      |
 |------|-----|-------------------------------------|---------------------------------------------------------|----------------------------|-----------------------------------------------|
@@ -199,21 +199,21 @@ The mandatory TLVs must appear first (and in correct order!), but their values a
 
 Unknown TLVs are skipped using the Length field, which allows devices to safely ignore extensions they do not understand.
 
-### LLDP TLVs in Wireshark / tshark
+### LLDP TLVs in Wireshark / tshark |>TABLE
 
-| Type | Req | TLV                              | Wireshark / TShark Field   | What It Means in Practice               |
-|------|-----|----------------------------------|----------------------------|-----------------------------------------|
-| 1    | ✔   | <Term name="ChassisID"/>         | `lldp.chassis.id`          | Remote device identity (MAC/hostname)   |
-| 2    | ✔   | <Term name="PortID"/>            | `lldp.port.id`             | Remote interface (Gi1/0/24, Eth1, etc.) |
-| 3    | ✔   | <Term name="TTL"/>               | `lldp.ttl`                 | Entry lifetime (seconds)                |
-| 4    | ✖   | Port Description                 | `lldp.port.descr`          | Human label (often misleading)          |
-| 5    | ✖   | <Term name="SystemName"/>        | `lldp.system.name`         | Hostname                                |
-| 6    | ✖   | <Term name="SystemDescription"/> | `lldp.system.desc`         | OS / platform / version                 |
-| 7    | ✖   | <Term name="SystemCapabilities"/>              | `lldp.system.capabilities` | Device type (bridge/router/AP/phone)    |
-| 8    | ✖   | <Term name="ManagementAddress"/>               | `lldp.mgn.addr`            | Management IP (sometimes multiple)      |
-| 127  | ✖   | Org-Specific (IEEE 802.1)        | `lldp.ieee.*`              | VLAN, priority, DCB                     |
-| 127  | ✖   | Org-Specific (IEEE 802.3)        | `lldp.ieee.802_3.*`        | PoE, link aggregation                   |
-| 127  | ✖   | Org-Specific (LLDP-MED)          | `lldp.med.*`               | Phones, voice VLAN, location            |
+| Type | Req | TLV                               | Wireshark / TShark Field   | What It Means in Practice               |
+|------|-----|-----------------------------------|----------------------------|-----------------------------------------|
+| 1    | ✔   | <Term name="ChassisID"/>          | `lldp.chassis.id`          | Remote device identity (MAC/hostname)   |
+| 2    | ✔   | <Term name="PortID"/>             | `lldp.port.id`             | Remote interface (Gi1/0/24, Eth1, etc.) |
+| 3    | ✔   | <Term name="TTL"/>                | `lldp.ttl`                 | Entry lifetime (seconds)                |
+| 4    | ✖   | Port Description                  | `lldp.port.descr`          | Human label (often misleading)          |
+| 5    | ✖   | <Term name="SystemName"/>         | `lldp.system.name`         | Hostname                                |
+| 6    | ✖   | <Term name="SystemDescription"/>  | `lldp.system.desc`         | OS / platform / version                 |
+| 7    | ✖   | <Term name="SystemCapabilities"/> | `lldp.system.capabilities` | Device type (bridge/router/AP/phone)    |
+| 8    | ✖   | <Term name="ManagementAddress"/>  | `lldp.mgn.addr`            | Management IP (sometimes multiple)      |
+| 127  | ✖   | Org-Specific (IEEE 802.1)         | `lldp.ieee.*`              | VLAN, priority, DCB                     |
+| 127  | ✖   | Org-Specific (IEEE 802.3)         | `lldp.ieee.802_3.*`        | PoE, link aggregation                   |
+| 127  | ✖   | Org-Specific (LLDP-MED)           | `lldp.med.*`               | Phones, voice VLAN, location            |
 
 <ShadowComment variant="warn" text="Field names can vary slightly between Wireshark versions and vendors.
 Use `tshark -G fields | findstr lldp` to enumerate all available LLDP fields."/>
@@ -228,7 +228,7 @@ Use `tshark -G fields | findstr lldp` to enumerate all available LLDP fields."/>
     If it's in the packet but not in `show lldp neighbors detail`, the device dropped or ignored it.
 </StructuredNote>
 
-## Monitoring LLDPs With tShark!
+## Monitoring LLDPs |>SCRIPT EXAMPLE_PANEL
 
 If you have Wireshark installed you can also set the filter to `lldp` or if you want to use the CLI navigate to the Wireshark folder and type
 `tshark.exe -D` to identify your active network interface and follow:
@@ -277,7 +277,7 @@ router ospf 1
   ]}
 />
 
-## Failure Patterns
+## Failure Patterns |>TSHOOT TABLE
 
 | Symptom          | Meaning          | Root Cause                                  |
 |------------------|------------------|---------------------------------------------|
@@ -286,7 +286,7 @@ router ospf 1
 | Flapping entries | TTL expiry       | Unstable link / packet loss / storm control |
 | Missing fields   | Partial TLVs     | Vendor differences                          |
 
-## Deterministic Troubleshooting
+## Deterministic Troubleshooting |>TSHOOT
 
 Follow this order:
 
@@ -296,7 +296,7 @@ Follow this order:
 4. Frames seen?
 5. Neighbor stable?
 
-## Common Gotchas (Real-World)
+## Common Gotchas (Real-World) |>TSHOOT
 
 ### 1. VLAN / Trunk Issues
 
@@ -335,7 +335,7 @@ LLDP is processed by the control plane and may be rate-limited.
 
 Result: Frames visible in capture, but missing from neighbor table.
 
-## Mental Compression
+## Mental Compression |>TLDR
 
 If you remember nothing else:
 
@@ -351,3 +351,5 @@ All LLDP issues reduce to:
 2. Not received
 3. Not parsed
 4. Expired
+
+https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-9/configuration_guide/int_hw/b_179_int_and_hw_9300_cg/configuring_lldp__lldp_med__and_wired_location_service.html#lldp

@@ -6,13 +6,14 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight"
 import {ToCList} from "./ToCList"
 import {useScrollSpy} from "./useScrollSpy"
 import {extractTocIds, filterTocByDepth} from "./tocUtils"
+import {IoClose} from "react-icons/io5";
 
 interface ToCAsideProps {
     title: string
     toc: { items?: any[] }
     tocDepth?: number
     collapsed: boolean
-    onToggle: () => void
+    setTocCollapsed: (p: (v) => boolean) => void
 }
 
 export const ToCAside: React.FC<ToCAsideProps> = ({
@@ -20,7 +21,7 @@ export const ToCAside: React.FC<ToCAsideProps> = ({
                                                       toc,
                                                       tocDepth,
                                                       collapsed,
-                                                      onToggle
+                                                      setTocCollapsed,
                                                   }) => {
     const depth = Math.max(2, tocDepth ?? 2)
     const filteredItems = filterTocByDepth(toc.items, depth)
@@ -29,13 +30,15 @@ export const ToCAside: React.FC<ToCAsideProps> = ({
 
     return (
         <Box
-
             component="aside"
             sx={{
+                position: "sticky",
+                overflow: "none",
+                pl: collapsed ? 0 : 3,
                 borderLeft: collapsed
                     ? "none"
                     : "1px solid rgba(255,255,255,0.08)",
-                pl: collapsed ? 0 : 3,
+
                 pr: 0,
                 height: "100vh",
                 transition: "all 0.25s ease",
@@ -49,6 +52,7 @@ export const ToCAside: React.FC<ToCAsideProps> = ({
                     mx: collapsed ? "0" : "0",
                     px: collapsed ? "0" : "0",
                     display: "flex",
+                    width: "100%",
                     alignItems: "center",
                     justifyContent: collapsed ? "center" : "space-between",
                     mb: 2,
@@ -56,15 +60,31 @@ export const ToCAside: React.FC<ToCAsideProps> = ({
             >
                 {!collapsed && (
                     <Typography
+                        display="inline-flex"
                         variant="subtitle2"
                         sx={{
                             textTransform: "uppercase",
                             letterSpacing: "0.08em",
                             pt: 3,
-                            color: "#888"
+                            color: "#888",
+                            minWidth: "100%",
+                            justifyContent: "space-between"
                         }}
                     >
                         On this page
+                        <IconButton
+                            size="small"
+                            onClick={() => setTocCollapsed(v => !v)}
+                            sx={{
+                                color: "#888",
+                                "&:hover": {color: "#00ffcc"},
+
+                            }}
+                            aria-label="Toggle table of contents"
+                        >
+
+                            <IoClose fontSize="small"/>
+                        </IconButton>
                     </Typography>
                 )}
             </Box>

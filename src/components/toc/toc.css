@@ -151,7 +151,9 @@
 
 .toc-list a,
 .toc-label {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
   font-size: 0.95rem;
   line-height: 1.45;
@@ -291,3 +293,17 @@
   box-shadow: 0 0 0 3px rgba(0, 255, 204, 0.22);
   border-radius: 6px;
 }
+
+
+.toc-icon {
+  display: inline-flex;
+  justify-content: end;
+  align-items: center;
+  width: 100%;
+  margin-left: auto;
+  font-size: 1.2em;
+  color: rgb(255, 204, 0);
+  transform: translateY(3px);
+  /*filter: drop-shadow(0 0 1px rgb(255, 243, 0));*/
+}
+

@@ -4,6 +4,8 @@ import PageGlossaryTable from "../components/mdxblog/GlossarySystem/PageGlossary
 import {ArticleHeader} from "../components/mdxblog/ArticleHeader";
 import {H2, H3} from "../theme_mdx";
 
+
+
 const BlogPostTemplate = ({data, children}) => {
     return <>
         <ArticleHeader

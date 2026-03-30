@@ -120,32 +120,28 @@ export default function Layout({children, data}) {
                                     size="small"
                                     onClick={() => setTocCollapsed(v => !v)}
                                     sx={{
-                                        position: "fixed",
                                         color: "#888",
+                                        position: "fixed",
                                         "&:hover": {color: "#00ffcc"},
-                                        right: "1rem",
-                                        top: "5.25rem",
-                                        zIndex: 10,
+                                        right: "1.75rem",
+                                        top: "1.33rem",
+                                        zIndex: 0,
 
                                     }}
                                     aria-label="Toggle table of contents"
                                 >
-                                    {tocCollapsed ? (
-                                        <ChevronLeftIcon fontSize="small"/>
-                                    ) : (
-                                        <ChevronRightIcon fontSize="small"/>
-                                    )}
+                                    {tocCollapsed && <ChevronLeftIcon fontSize="small"/>}
                                 </IconButton>
                                 <Box
                                     ref={asideRef}
                                     sx={{
+
                                         width: tocCollapsed ? 0 : tocWidth,
                                         flexShrink: 0,
                                         display: {xs: "none", md: "block"},
                                         transition: "width 0.25s ease",
                                         overflowY: "auto",
                                         scrollbarWidth: "none",
-                                        height: "calc(100vh)",
                                         position: "sticky",
                                         top: 0,
                                         minHeight: 0,
@@ -186,6 +182,8 @@ export default function Layout({children, data}) {
                                             toc={toc}
                                             tocDepth={tocDepth}
                                             collapsed={tocCollapsed}
+                                            setTocCollapsed={setTocCollapsed}
+
                                         />
                                     </Box>
                                 </Box>
