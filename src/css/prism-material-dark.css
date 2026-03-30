@@ -1,158 +1,346 @@
+/* =========================================================
+   CODEBLOCK SYSTEM — PREMIUM CUSTOM PRISM RENDERER
+   ========================================================= */
 
+/* =========================================================
+   CONTAINER
+   ========================================================= */
 
-/*NEW THEME*/
-/* === Container === */
 .gatsby-highlight {
-  background: #161b22;
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    position: relative;
+    background: #161b22;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
-/* === Pre === */
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0.35rem 0.9rem;
+    font-size: 10.5px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.015);
+
+    color: rgba(230, 237, 243, 0.35);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.code-lang {
+    opacity: 0.55;
+    font-weight: 500;
+}
+
+.code-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+/* =========================================================
+   COPY BUTTONS
+   ========================================================= */
+
+.copy-btn {
+    all: unset;
+
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 6px;
+
+    color: rgba(230, 237, 243, 0.45);
+    font-size: 10.5px;
+    line-height: 1.2;
+
+    transition: all 0.12s ease;
+}
+
+.copy-btn:hover {
+    background: rgba(122, 162, 255, 0.10);
+    color: #7aa2ff;
+}
+
+.copy-btn:focus-visible {
+    outline: 1px solid rgba(122, 162, 255, 0.45);
+    outline-offset: 1px;
+    background: rgba(122, 162, 255, 0.10);
+    color: #7aa2ff;
+}
+
+.copy-btn:active {
+    transform: translateY(1px);
+}
+
+.copy-btn.copied {
+    color: #b8bb26;
+}
+
+/* =========================================================
+   CODE AREA
+   ========================================================= */
+
 .gatsby-highlight pre {
-  margin: 0;
-  padding: 1.25rem;
-  overflow-x: auto;
-  font-family: "Fira Code", monospace;
-  font-size: 13px;
-  line-height: 1.55;
-  color: #e6edf3;
-  background: transparent;
+    margin: 0;
+    padding: 0.6rem 0;
+
+    overflow-x: auto;
+
+    font-family: "Fira Code", monospace;
+    font-size: 12.5px;
+    line-height: 1.5;
+
+    color: #e6edf3;
+    background: transparent;
+
+    scroll-behavior: smooth;
 }
 
-/* === Base === */
 code[class*="language-"],
 pre[class*="language-"] {
-  color: #e6edf3;
-  background: none;
-  text-shadow: none;
+    color: #e6edf3;
+    background: none;
+    text-shadow: none;
 }
 
-/* === Selection === */
-code[class*="language-"]::selection {
-  background: rgba(122,162,255,0.25);
+code[class*="language-"]::selection,
+code[class*="language-"] *::selection {
+    background: rgba(122, 162, 255, 0.25);
 }
 
-/* === Comments === */
+/* =========================================================
+   SYNTAX TOKENS
+   ========================================================= */
+
 .token.comment,
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  color: #6b7280;
-  font-style: italic;
+    color: #6b7280;
+    font-style: italic;
 }
 
-/* === Keywords === */
 .token.keyword {
-  color: #7aa2ff;
-  font-weight: 500;
+    color: #7aa2ff;
+    font-weight: 500;
 }
 
-/* === Functions === */
 .token.function {
-  color: #fabd2f;
+    color: #fabd2f;
 }
 
-/* === Strings === */
 .token.string {
-  color: #b8bb26;
+    color: #b8bb26;
 }
 
-/* === Numbers === */
 .token.number {
-  color: #d3869b;
+    color: #d3869b;
 }
 
-/* === Operators === */
 .token.operator {
-  color: #7aa2ff;
-  opacity: 0.8;
+    color: #7aa2ff;
+    opacity: 0.8;
 }
 
-/* === Variables === */
 .token.variable {
-  color: #e6edf3;
+    color: #e6edf3;
 }
 
-/* === Builtins === */
 .token.builtin {
-  color: #fe8019;
+    color: #fe8019;
 }
 
-/* === Class / Types === */
 .token.class-name {
-  color: #8ec07c;
+    color: #8ec07c;
 }
 
-/* === Important === */
 .token.important {
-  color: #fb4934;
+    color: #fb4934;
 }
 
-/* === Bold / Italic === */
 .token.bold {
-  font-weight: bold;
-}
-.token.italic {
-  font-style: italic;
+    font-weight: bold;
 }
 
+.token.italic {
+    font-style: italic;
+}
+
+/* =========================================================
+   LINE SYSTEM
+   ========================================================= */
 
 .code-line {
-  display: block;
-  padding: 0 0.25rem;
+    display: flex;
+    align-items: center;
+    height: 1.5em;
+
+    padding: 0 1rem;
+    transition: background 0.1s ease;
 }
 
 .code-line:hover {
-  background: rgba(122,162,255,0.08);
-  font-weight: normal;
+    background: rgba(122, 162, 255, 0.05);
 }
 
-/* Container must be relative */
-.gatsby-highlight {
-  position: relative;
+.code-line.selected {
+    background: rgba(122, 162, 255, 0.10);
 }
 
-.code-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: 0.4rem 1rem;
-  font-size: 11px;
-
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  background: rgba(255,255,255,0.02);
-
-  color: rgba(230,237,243,0.4);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-    content: attr(data-language);
+.code-line:active {
+    background: rgba(122, 162, 255, 0.18);
 }
-.code-lang {
-  opacity: 0.6;
-}
-.copy-btn {
-  all: unset;
 
-  cursor: pointer;
-  padding: 2px 6px;
-  border-radius: 6px;
+/* =========================================================
+   LINE NUMBERS
+   ========================================================= */
 
-  color: rgba(230,237,243,0.45);
-  font-size: 11px;
+.line-number {
+    all: unset;
 
-  transition: all 0.15s ease;
+    width: 2.6em;
+    flex-shrink: 0;
+
+    text-align: right;
+    margin-right: 0.9rem;
+    padding-right: 0.6rem;
+
+    font-size: 11px;
+    line-height: 1.5;
+    color: rgba(230, 237, 243, 0.18);
+
+    border-right: 1px solid rgba(255, 255, 255, 0.035);
+
+    user-select: none;
+    cursor: pointer;
+    transition: color 0.12s ease, background 0.12s ease;
 }
-.copy-btn:hover {
-  background: rgba(122,162,255,0.12);
-  color: #7aa2ff;
+
+.code-line:hover .line-number {
+    color: rgba(230, 237, 243, 0.34);
 }
-.copy-btn:active {
-  transform: translateY(1px);
+
+.code-line.selected .line-number {
+    color: rgba(122, 162, 255, 0.88);
 }
-.copy-btn.copied {
-  color: #b8bb26; /* gruvbox green */
+
+.line-number:hover {
+    color: #7aa2ff;
 }
+
+.line-number:focus-visible {
+    /*outline: 1px solid rgba(122, 162, 255, 0.45);*/
+    /*outline-offset: 2px;*/
+    /*border-radius: 4px;*/
+    /*color: #7aa2ff;*/
+}
+
+/* =========================================================
+   LINE CONTENT
+   ========================================================= */
+
+.line-content {
+    white-space: pre;
+    flex: 1;
+    min-width: max-content;
+}
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+.gatsby-highlight pre::-webkit-scrollbar {
+    height: 6px;
+}
+
+.gatsby-highlight pre::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.gatsby-highlight pre::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+}
+
+.gatsby-highlight pre::-webkit-scrollbar-thumb:hover {
+    background: rgba(122, 162, 255, 0.25);
+}
+
+/* =========================================================
+   EXTENSION HOOKS
+   ========================================================= */
+
+.code-line.highlighted {
+    background: rgba(255, 221, 87, 0.12);
+}
+
+.code-line.added {
+    background: rgba(80, 200, 120, 0.12);
+}
+
+.code-line.removed {
+    background: rgba(255, 80, 80, 0.12);
+}
+
+.code-line.annotated {
+    border-left: 2px solid rgba(122, 162, 255, 0.6);
+}
+
+.code-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.code-range {
+    font-size: 10px;
+    color: rgba(230, 237, 243, 0.35);
+    margin-right: 0.4rem;
+}
+
+.line-actions {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    margin-left: 10px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+
+
+}
+
+.code-line:hover .line-actions {
+    opacity: 0.6;
+}
+
+.line-copy,
+.annotation-marker {
+    all: unset;
+    cursor: pointer;
+
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 1em;
+    width: 1.2em;
+
+    font-size: 16px; /* reduce from 18px */
+    color: rgba(230, 237, 243, 0.4);
+
+}
+.line-copy:hover,
+.annotation-marker:hover {
+    color: #7aa2ff;
+    opacity: 1;
+}
+

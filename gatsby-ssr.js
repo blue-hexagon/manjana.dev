@@ -3,11 +3,12 @@ import {ThemeProvider} from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "./src/theme";
 import "./src/css/prism-material-dark.css";
-import "prismjs/plugins/line-numbers/prism-line-numbers.css";
+// import "prismjs/plugins/line-numbers/prism-line-numbers.min.css";
+// import "prismjs/plugins/line-numbers/prism-line-numbers.min.js";
 import './src/css/main.css';
 import Layout from "./src/components/Layout";
-import {MDXProvider} from "@mdx-js/react";
 import {DesignSystemComponents} from "./src/theme_mdx";
+import {MDXProvider} from "@mdx-js/react";
 import {TermRegistryProvider} from "./src/components/mdxblog/GlossarySystem/TermRegistry";
 
 export const wrapRootElement = ({element}) => (

@@ -233,13 +233,13 @@ Use `tshark -G fields | findstr lldp` to enumerate all available LLDP fields."/>
 If you have Wireshark installed you can also set the filter to `lldp` or if you want to use the CLI navigate to the Wireshark folder and type
 `tshark.exe -D` to identify your active network interface and follow:
 
-```powershell
-tshark.exe -i 8 -Y "lldp" -T fields `
--e frame.time `
--e lldp.tlv.system.name `
--e lldp.port.id `
+
+<CodeBlock script={`tshark.exe -i 8 -Y "lldp" -T fields \`
+-e frame.time \`
+-e lldp.tlv.system.name \`
+-e lldp.port.id \`
 -e lldp.mgn.addr.ip4
-```
+`} language="powershell" showLineNumbers="true" blockId="tshark-snippet-a"/>
 
 <ExamplePanel
     title="PowerShell LLDP Watcher (tshark)"
@@ -249,9 +249,33 @@ tshark.exe -i 8 -Y "lldp" -T fields `
     headerLevel="3"
 >
 
-<CodeBlock script={lldp_watcher} language="powershell" />
+<CodeBlock script={lldp_watcher} language="powershell" showLineNumbers="true" blockId="lldp-watcher-script"/>
 
 </ExamplePanel>
+
+<CodeBlock
+  language="powershell"
+  blockId="ospf-config"
+  showLineNumbers
+  script={`
+router ospf 1
+ network 10.0.0.0 0.0.0.255 area 0
+ ip ospf hello-interval 10
+`}
+  annotations={[
+    {
+      line: 2,
+      type: "info",
+      content: "Defines which networks participate in OSPF"
+    },
+    {
+      line: 3,
+      type: "warning",
+      title: "Important",
+      content: "Hello interval must match neighbors"
+    }
+  ]}
+/>
 
 ## Failure Patterns
 
