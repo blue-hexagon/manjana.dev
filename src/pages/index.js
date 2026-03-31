@@ -4,10 +4,7 @@ import {
     Typography,
     Box,
     Button,
-    Grid2,
-    Card,
-    CardContent,
-    TextField, Divider, Rating, CardActionArea, Stack
+    Divider, Stack
 } from '@mui/material';
 import Typewriter from 'typewriter-effect';
 import {
@@ -52,17 +49,8 @@ import {
 } from "react-icons/si";
 import {DiJava} from "react-icons/di";
 import {Link} from "gatsby";
-import {ProjectShowcase} from "./projects";
-import {PostsComponent} from "./blog";
 
-//PyTest, PlayWright, PyCharm
-const CategoryEnum = {
-    WEB: 0,
-    DEVOPS: 1,
-    NETWORK: 2,
-    INFRASTRUCTURE: 3,
-}
-// Define an array of icon configurations
+
 export const iconsData = [
     // {Icon: SiCsharp, label: 'C#', level: 3, categories: []},
     {Icon: SiDart, label: 'Dart', level: 2, categories: []},
@@ -109,24 +97,61 @@ export const iconsData = [
 
 ];
 
-export function HeroImage({imageUrl}) {
+const Hero = () => {
     return (
-        <Box sx={{width: "100%", display: "flex", justifyContent: "center"}}>
-            <Box sx={{width: '30%', height: '30vh'}}>
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
+            }}
+        >
+            {/* Logo */}
+            <Box
+                sx={{
+                    width: "15%",
+                    height: "15%",
+                    mb: 3,
+                    opacity: 0.9,
+                    transition: "transform 0.4s ease, opacity 0.3s ease",
+                    "&:hover": {
+                        transform: "rotate(12deg)",
+                        opacity: 1,
+                    },
+                }}
+            >
                 <img
-                    src={imageUrl}
-                    alt="Image of a person"
+                    src="/graphics/logo.svg"
+                    alt="Hexagonal system logo"
                     style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'contain',
-                        borderRadius: "17%",
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
                     }}
                 />
             </Box>
+
+            {/* Typewriter */}
+            <TypingEffect/>
+
+            {/* Core statement */}
+            <Typography
+                sx={{
+                    mt: 3,
+                    fontSize: "1.1rem",
+                    color: "rgba(255,255,255,0.9)",
+                    letterSpacing: "0.05em",
+                    fontWeight: 600,
+                    fontFamily: "monospace",
+                    position: "relative",
+                }}
+            >
+                I build <Box component="span" sx={{color: "#00ffcc"}}>systems</Box> that span networks, infrastructure,
+                and code. </Typography>
         </Box>
     );
-}
+};
 
 export function GradientDivider() {
     return (
@@ -136,30 +161,12 @@ export function GradientDivider() {
                     height: '2px',
                     background: 'linear-gradient(to right, #ffcc00  , #ff4081)',
                     border: 'none',
-
                     borderRadius: "5px"
                 }}
             />
         </Box>
     );
 }
-
-// Define a component that renders all icons dynamically
-const SkillsIcons = () => {
-    return (
-        <Box sx={{marginY: 2.75}}>
-            <div style={{display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center'}}>
-                {iconsData.map(({Icon, label, level, categories}, index) => (
-                    <div key={index} style={{textAlign: 'center', width: '80px'}}>
-                        <Icon size={40} color="#4A4A4A"/>
-                        <p style={{fontSize: '0.8em', marginTop: '8px'}}>{label}</p>
-                    </div>
-                ))}
-            </div>
-        </Box>
-    );
-};
-
 
 const Homepage = () => {
     const buildDate = new Date().toLocaleDateString("en-GB", {
@@ -170,33 +177,104 @@ const Homepage = () => {
 
     return (
 
-        <Container id="home" sx={{py: 5, textAlign: 'center'}}>
-            <TypingEffect></TypingEffect>
-            <Typography variant="subtitle1" gutterBottom>
-                I build systems that span networks, infrastructure, and code.
+        <Container id="home" sx={{pb: 5, textAlign: 'center'}}>
+            {/* BODY */}
+            <Box sx={{mt: 0, textAlign: "center"}}>
+                <Typography
+                    sx={{
+                        fontSize: "0.95rem",
+                        lineHeight: 1.8,
+                        color: "rgba(255,255,255,0.6)",
+                        // maxWidth: "720px",
+                        mx: "auto",
+                    }}
+                >
+                    My work focuses on distributed systems, PKI, messaging, and automation — designing control over
+                    complex environments rather than just interacting with them.
 
-                My work focuses on distributed systems, PKI, messaging, and automation — designing control over complex
-                environments rather than just interacting with them.
+                    I’ve built platforms for certificate lifecycle management, distributed MQTT-based systems with
+                    observability pipelines, and automation tooling that provisions and operates infrastructure
+                    end-to-end.
 
-                I’ve built platforms for certificate lifecycle management, distributed MQTT-based systems with
-                observability pipelines, and automation tooling that provisions and operates infrastructure end-to-end.
+                    I’m particularly interested in control planes — how systems coordinate state, propagate changes,
+                    and remain stable under load and failure.
+                </Typography>
 
-                I’m particularly interested in control planes — how systems coordinate state, propagate changes, and
-                remain stable under load and failure.
-            </Typography>
+                {/* Signature */}
+                <Typography
+                    sx={{
+                        mt: 4,
+                        fontSize: "0.75rem",
+                        color: "rgba(255,255,255,0.35)",
+                        letterSpacing: "0.12em",
+                        textTransform: "uppercase",
+                    }}
+                >
+                    Building and documenting real systems
+                </Typography>
+            </Box>
             <GradientDivider></GradientDivider>
-            <Button variant="outlined" color="primary" component={Link} to="/projects" sx={{m: 1}}>See My
-                Projects</Button>
-            <Button variant="outlined" color="primary" component={Link} to="/blog" sx={{m: 1}}>See My Blog
-                Posts</Button>
-            <Typography fontSize={"12px"} color={"rgb(70,70,70)"} style={{textAlign: "center"}}>Last
-                deployed: {buildDate}</Typography>
+            {/* CTA */}
+            <Stack
+                direction="row"
+                justifyContent="center"
+                spacing={2}
+                sx={{flexWrap: "wrap", mt: 3}}
+            >
+                <Button
+                    variant="outlined"
+                    component={Link}
+                    to="/projects"
+                    sx={{
+                        px: 3,
+                        py: 1,
+                        fontSize: "0.75rem",
+                        letterSpacing: "0.08em",
+                        borderColor: "rgba(255,255,255,0.2)",
+                    }}
+                >
+                    SYSTEMS I’VE BUILT
+                </Button>
+
+                <Button
+                    variant="outlined"
+                    component={Link}
+                    to="/blog"
+                    sx={{
+                        px: 3,
+                        py: 1,
+                        fontSize: "0.75rem",
+                        letterSpacing: "0.08em",
+                        borderColor: "rgba(255,255,255,0.2)"
+                    }}
+                >
+                    FIELD NOTES / DEEP-DIVES
+                </Button>
+            </Stack>
+            <Typography
+                sx={{
+                    fontSize: "0.7rem",
+                    mt: 1.5,
+                    color: "rgba(255,255,255,0.25)",
+                    textAlign: "center",
+                    letterSpacing: "0.05em",
+                }}
+            >
+                Last deployed: {buildDate}
+            </Typography>
         </Container>
     );
 }
 const TypingEffect = () => {
     return (
-        <div style={{fontSize: '2rem', color: '#fff', textAlign: 'center'}}>
+        <Typography
+            sx={{
+                fontSize: "1.6rem",
+                fontWeight: 500,
+                color: "#fff",
+                letterSpacing: "0.04em",
+            }}
+        >
             <Typewriter
                 options={{
                     strings: [
@@ -208,73 +286,20 @@ const TypingEffect = () => {
                     autoStart: true,
                     loop: true,
                     deleteSpeed: 45,
+                    delay: 35,
                 }}
             />
-        </div>
+        </Typography>
     );
 };
-const AboutMe = () => (
-    <Container id="about" sx={{pb: 5, pt: 3}}>
-        {/*<Divider sx={{mt: 5, mb: 5, width: "220px", marginLeft: "auto", marginRight: "auto"}}></Divider>*/}
-        {/*<Typography variant="h6" sx={{mt: 2}}>Languages, Techologies & Skills</Typography>*/}
-        {/*<Typography variant="body2" color="textSecondary" gutterBottom>*/}
-        {/*    Some of the tools, languages, frameworks, and technologies that I work with.*/}
-        {/*</Typography>*/}
-        <SkillsIcons></SkillsIcons>
-    </Container>
-);
 
-const Projects = () => (
+const IndexContainer = () => (
     <>
-        <Container id="projects" sx={{pt: 0}}>
-            <Typography variant="h4" sx={{mb: 1}} gutterBottom>Projects</Typography>
-            <ProjectShowcase></ProjectShowcase>
-            <Stack direction="row">
-                <Button
-                    component={Link}
-                    to="/projects"
-                    variant="outlined"
-                    color="primary"
-                    sx={{mt: 2, width: "12.5%", ml: "auto"}}
-                >
-                    SYSTEMS I’VE BUILT
-                </Button>
-            </Stack>
-
-        </Container>
-
-    </>
-);
-
-const Blog = () => (
-    <Container id="blog" sx={{py: 5}}>
-        <Typography variant="h4" gutterBottom>Technical Blog</Typography>
-        <PostsComponent heading={null} featuredOnly={false}></PostsComponent>
-        <Stack direction="row">
-            <Button
-                component={Link}
-                to="/blog"
-                variant="outlined"
-                color="primary"
-                sx={{mt: 2, width: "12.5%", ml: "auto"}}
-            >
-                See More
-            </Button>
-        </Stack>
-
-    </Container>
-);
-
-const MainContainer = () => (
-    <>
-        <Box sx={{marginTop: "4rem"}}></Box>
-        <HeroImage imageUrl="/graphics/logo.svg" sx={{marginTop: "4em"}}></HeroImage>
-        <Box sx={{marginTop: "1.5rem"}}></Box>
+        <Box sx={{marginTop: "0.1rem"}}></Box>
+        <Hero/>
+        <Box sx={{marginTop: "0.1em"}}></Box>
         <Homepage/>
-        {/*<AboutMe/>*/}
-        {/*<Projects/>*/}
-        {/*<Blog/>*/}
     </>
 );
 
-export default MainContainer;
+export default IndexContainer;

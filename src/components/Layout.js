@@ -8,6 +8,7 @@ import {ToCDrawer} from "./toc/ToCDrawer"
 import {GlossaryContext} from "./mdxblog/GlossarySystem/GlossaryContext"
 import {ToCAside} from "./toc/ToCAside"
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import mermaid from "./mermaidConfig"; // noqa; DO NOT REMOVE (this is an initializer that runs)
 
 
 function useScrollHint(timeout = 2500) {
@@ -204,8 +205,7 @@ export default function Layout({children, data}) {
                                         ref={tocRef}
                                         sx={{
                                             alignSelf: "flex-start",
-                                        }}
-                                    >
+                                        }}>
                                         <ToCAside
                                             containerRef={asideRef}
                                             title={title}
@@ -222,8 +222,7 @@ export default function Layout({children, data}) {
                     </Box>
                 </Container>
             </Box>
-
-            {matches ? <SpecialIconFooter/> : <PlainIconFooter/>}
+            <SpecialIconFooter/>
         </Box>
     )
 }

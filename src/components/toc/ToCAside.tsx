@@ -35,7 +35,6 @@ export const ToCAside: React.FC<ToCAsideProps> = ({
                 position: "sticky",
                 overflow: "none",
                 pl: collapsed ? 0 : 3,
-                pl: collapsed ? 0 : 3,
                 borderLeft: collapsed
                     ? "none"
                     : "1px solid rgba(255,255,255,0.08)",
