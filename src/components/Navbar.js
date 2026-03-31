@@ -46,7 +46,8 @@ const Navbar = () => {
             sx={{
                 backgroundColor: "rgba(18,18,18,0.85)",
                 backdropFilter: "blur(12px)",
-                borderBottom: "1px solid rgba(255,255,255,0.06)"
+                borderBottom: "1px solid rgba(255,255,255,0.06)",
+                zIndex: "1000"
             }}
         >
             <Toolbar

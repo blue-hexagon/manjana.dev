@@ -8,8 +8,35 @@ import {ToCDrawer} from "./toc/ToCDrawer"
 import {GlossaryContext} from "./mdxblog/GlossarySystem/GlossaryContext"
 import {ToCAside} from "./toc/ToCAside"
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import mermaid from "./mermaidConfig"; // noqa
+
+
+function useScrollHint(timeout = 2500) {
+    const [visible, setVisible] = useState(true)
+    useEffect(() => {
+        let timer;
+
+        const handleScroll = () => {
+            setTimeout(() => setVisible(true), 100)
+
+
+            clearTimeout(timer)
+            timer = setTimeout(() => {
+                setVisible(false)
+            }, timeout)
+        }
+        window.addEventListener("scroll", handleScroll, {passive: true})
+
+
+        // trigger once on mount (optional)
+        handleScroll()
+        return () => {
+            window.removeEventListener("scroll", handleScroll)
+            clearTimeout(timer)
+        }
+    }, [timeout])
+
+    return visible
+}
 
 export default function Layout({children, data}) {
     const title = data?.mdx?.frontmatter?.title
@@ -77,6 +104,7 @@ export default function Layout({children, data}) {
             window.removeEventListener("mouseup", stopResize)
         }
     }, [tocWidth])
+    const showChevron = useScrollHint(2500)
 
     /* ===========================
        Layout
@@ -130,7 +158,9 @@ export default function Layout({children, data}) {
                                     }}
                                     aria-label="Toggle table of contents"
                                 >
-                                    {tocCollapsed && <ChevronLeftIcon fontSize="small"/>}
+                                    {tocCollapsed &&
+                                        <ChevronLeftIcon className={`toc-chevron ${showChevron ? "visible" : "hidden"}`}
+                                                         fontSize="small"/>}
                                 </IconButton>
                                 <Box
                                     ref={asideRef}

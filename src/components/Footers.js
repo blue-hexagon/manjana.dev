@@ -5,7 +5,12 @@ import React from "react";
 export const SpecialIconFooter = () => {
     return (
         <Box style={styles.footerContainer} component="footer"
-             sx={{p: 2, mt: 4, backgroundColor: 'background.paper', textAlign: 'center'}}>
+             sx={{p: 2, mt: 4,  textAlign: 'center',
+                        backgroundColor: "rgba(18,18,18,0.85)",
+                backdropFilter: "blur(12px)",
+                borderTop: "1px solid rgba(255,255,255,0.07)",
+        }}>
+
             <div style={styles.iconsContainerLeft}>
                 {iconsData.slice(0, Math.ceil(iconsData.length / 2)).map((icon, index) => (
                     <IconComponent key={index} iconData={icon}/>
@@ -13,10 +18,10 @@ export const SpecialIconFooter = () => {
             </div>
 
             <div style={styles.mainText}>
-                <Typography variant="body2" color="textSecondary">
-                    © 2025–{new Date().getFullYear()} manjana/blue-hexagon &mdash; all rights reserved.
+                <Typography variant="body2" color="rgb(85, 85, 85)">
+                    © 2025–{new Date().getFullYear()} manjana/blue-hexagon
                 </Typography>
-                <Typography variant="body2" color="textSecondary">
+                <Typography variant="body2" color="rgb(85, 85, 85)">
                     Connect with me on <Link target="_blank" rel="noreferrer" underline="none"
                                              href="https://github.com/blue-hexagon">GitHub</Link> or&nbsp;
                     <Link target="_blank" rel="noreferrer" underline="none"
@@ -80,9 +85,9 @@ const styles = {
         overflow: "hidden"
     },
     mainText: {
-        width: '29%',
+        width: '22%',
         textAlign: 'center',
-        color: '#fff',
+        color: 'rgba(255,255,255,0.15)',
         fontSize: '1.2rem',
         fontWeight: 'bold',
     },

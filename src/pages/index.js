@@ -161,48 +161,60 @@ const SkillsIcons = () => {
 };
 
 
-const Homepage = () => (
+const Homepage = () => {
+    const buildDate = new Date().toLocaleDateString("en-GB", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    });
 
-    <Container id="home" sx={{py: 5, textAlign: 'center'}}>
-        <TypingEffect></TypingEffect>
-        <Typography variant="subtitle1" gutterBottom>
-            I’m a developer with a
-            strong interest in turning complex systems into streamlined, automated workflows. My current focus is on
-            cybersecurity and automation.
+    return (
 
-            As a self-starter and someone who’s always learning, I’m working on building decentralized tools and
-            automation frameworks to solve challenges in distributed systems and security testing. My latest project,
-            Armada, is an example of this approach, aiming to create practical, scalable solutions for security teams.
-        </Typography>
-        <GradientDivider></GradientDivider>
-        <Button variant="outlined" color="primary" component={Link} to="/projects" sx={{m: 1}}>See My Projects</Button>
-        <Button variant="outlined" color="primary" component={Link} to="/blog" sx={{m: 1}}>See My Blog
-            Posts</Button>
-        <Typography fontSize={"12px"} color={"rgb(70,70,70)"} style={{textAlign: "center"}}>(Work in progress - this site is still being worked
-            on)</Typography>
-    </Container>
-);
+        <Container id="home" sx={{py: 5, textAlign: 'center'}}>
+            <TypingEffect></TypingEffect>
+            <Typography variant="subtitle1" gutterBottom>
+                I build systems that span networks, infrastructure, and code.
+
+                My work focuses on distributed systems, PKI, messaging, and automation — designing control over complex
+                environments rather than just interacting with them.
+
+                I’ve built platforms for certificate lifecycle management, distributed MQTT-based systems with
+                observability pipelines, and automation tooling that provisions and operates infrastructure end-to-end.
+
+                I’m particularly interested in control planes — how systems coordinate state, propagate changes, and
+                remain stable under load and failure.
+            </Typography>
+            <GradientDivider></GradientDivider>
+            <Button variant="outlined" color="primary" component={Link} to="/projects" sx={{m: 1}}>See My
+                Projects</Button>
+            <Button variant="outlined" color="primary" component={Link} to="/blog" sx={{m: 1}}>See My Blog
+                Posts</Button>
+            <Typography fontSize={"12px"} color={"rgb(70,70,70)"} style={{textAlign: "center"}}>Last
+                deployed: {buildDate}</Typography>
+        </Container>
+    );
+}
 const TypingEffect = () => {
     return (
         <div style={{fontSize: '2rem', color: '#fff', textAlign: 'center'}}>
             <Typewriter
                 options={{
                     strings: [
-                        "Hey, I'm Tobias!",
-                        'Self-Taught Developer',
-                        'Network Professional by Trade',
-                        'Based in Zealand, Denmark',
+                        "Distributed Systems",
+                        "Control Planes & Security",
+                        "Automation at Scale",
+                        "Understanding Systems Deeply",
                     ],
                     autoStart: true,
                     loop: true,
-                    deleteSpeed: 85,
+                    deleteSpeed: 45,
                 }}
             />
         </div>
     );
 };
 const AboutMe = () => (
-    <Container id="about" sx={{pb: 5, pt:3}}>
+    <Container id="about" sx={{pb: 5, pt: 3}}>
         {/*<Divider sx={{mt: 5, mb: 5, width: "220px", marginLeft: "auto", marginRight: "auto"}}></Divider>*/}
         {/*<Typography variant="h6" sx={{mt: 2}}>Languages, Techologies & Skills</Typography>*/}
         {/*<Typography variant="body2" color="textSecondary" gutterBottom>*/}
@@ -225,7 +237,7 @@ const Projects = () => (
                     color="primary"
                     sx={{mt: 2, width: "12.5%", ml: "auto"}}
                 >
-                    See More
+                    SYSTEMS I’VE BUILT
                 </Button>
             </Stack>
 

@@ -307,3 +307,19 @@
   /*filter: drop-shadow(0 0 1px rgb(255, 243, 0));*/
 }
 
+.toc-chevron {
+  transition:
+    opacity 0.4s ease,
+    transform 0.3s ease;
+
+  opacity: 0;
+  transform: translateX(6px);
+
+  pointer-events: none;
+}
+
+.toc-chevron.visible {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}

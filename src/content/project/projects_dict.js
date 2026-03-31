@@ -26,8 +26,9 @@ import {
     SiSqlite,
     SiGithub,
     SiVim,
-    SiJest,
+    SiJest, SiShell,
 } from "react-icons/si";
+import {VscTerminalPowershell} from "react-icons/vsc";
 
 export const projects = [
     {
@@ -41,7 +42,7 @@ export const projects = [
         packageAvailable: null,
         complexity: "moderate",
         source: "open",
-        id: -6
+        id: -7
     },
     {
         title: "MQ-Hero",
@@ -54,7 +55,7 @@ export const projects = [
         packageAvailable: null,
         complexity: "advanced",
         source: "open",
-        id: -5
+        id: -6
     },
     {
         title: "manjana.dev",
@@ -67,6 +68,19 @@ export const projects = [
         packageAvailable: null,
         complexity: "advanced",
         source: "open",
+        id: -5
+    },
+    {
+        title: "kuSh",
+        yearStart: 2025,
+        description: "A programmable operator shell built in PowerShell, designed as a modular command interface for automation, system control, and workflow orchestration. Features a custom command dispatcher, dynamic module loading, persistent history, and extensible tooling — turning the terminal into a structured control plane rather than a passive interface.",
+        image: "/graphics/projects/kush.png",
+        link: "",
+        tags: ["Shell", "Automation", "CLI", "Control Plane"],
+        icons: [VscTerminalPowershell, SiGit],
+        packageAvailable: null,
+        complexity: "advanced",
+        source: "closed",
         id: -4
     },
     {
