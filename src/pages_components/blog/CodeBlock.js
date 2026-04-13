@@ -1,6 +1,8 @@
 import React, {useEffect, useMemo, useState, useCallback, useRef} from "react";
 import Prism from "prismjs";
 import "prismjs/components/prism-powershell";
+import "prismjs/components/prism-python";
+import "prismjs/components/prism-csharp";
 import {RiFileCopyFill} from "react-icons/ri";
 
 /* =========================

@@ -2,8 +2,6 @@ import * as React from "react";
 import {graphql} from "gatsby";
 import PageGlossaryTable from "../components/mdxblog/GlossarySystem/PageGlossaryTable";
 import {ArticleHeader} from "../components/mdxblog/ArticleHeader";
-import {H2, H3} from "../theme_mdx";
-
 
 
 const BlogPostTemplate = ({data, children}) => {
@@ -14,8 +12,6 @@ const BlogPostTemplate = ({data, children}) => {
             date={data.mdx?.frontmatter.date}
         />
         {children}
-        <H2>Appendix</H2>
-        <H3>Terminology, Abbreviations & Acronyms</H3>
         <PageGlossaryTable/>
     </>;
 };

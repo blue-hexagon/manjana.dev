@@ -1,68 +1,73 @@
-import { Link, Popper, Fade, Box } from '@mui/material';
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
+import {Popper, Typography, Fade, Box} from '@mui/material';
 
-const BlogLink = ({ children, hoverText, ...props }) => {
+const HelperLinkText = ({children, popoverText, href}) => {
     const [anchorEl, setAnchorEl] = useState(null);
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+        setMounted(true); // runs only on client
+    }, []);
 
     const handleMouseEnter = (event) => {
-        if (hoverText) {
-            setAnchorEl(event.currentTarget);
-        }
+        setAnchorEl(event.currentTarget);
     };
 
     const handleMouseLeave = () => {
-        if (hoverText) {
-            setAnchorEl(null);
-        }
+        setAnchorEl(null);
     };
 
     const open = Boolean(anchorEl);
 
     return (
         <>
-            <Link
-                sx={{
-                    color: '#00ffcc', // Primary color for link consistency
-                    textDecoration: 'none',
-                    fontFamily: `'Fira Code', monospace`,
-                    fontSize: '1.05rem',
-                    cursor: 'pointer',
-                    transition: 'color 0.3s ease',
-                    '&:hover': {
-                        color: '#ff4081', // Hover effect with secondary color
-                    },
-                }}
+            <Typography
+                component="a"
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-                {...props}
+                sx={{
+                    fontFamily: `'Fira Code', monospace`,
+                    fontSize: '0.95rem',
+                    color: '#00ffee',
+                    // textDecoration: 'underline',
+                    // textUnderlineOffset: '3px',
+                    // fontStyle: 'italic',
+                    textDecoration: 'none',
+                    cursor: 'pointer',
+                    position: 'relative',
+                    transition: 'color 0.3s ease',
+                    '&:hover': {
+                        color: '#00ffff',
+                    }
+                }}
             >
                 {children}
-            </Link>
+            </Typography>
 
-            {hoverText && (
+            {mounted && (
                 <Popper
-                    open={open}
+                    open={Boolean(anchorEl)}
                     anchorEl={anchorEl}
                     placement="top-start"
                     transition
                     modifiers={[
                         {
                             name: 'offset',
-                            options: {
-                                offset: [0, 10],
-                            },
+                            options: {offset: [0, 10]},
                         },
                     ]}
                 >
-                    {({ TransitionProps }) => (
+                    {({TransitionProps}) => (
                         <Fade {...TransitionProps} timeout={200}>
                             <Box
                                 sx={{
                                     backgroundColor: '#121212',
-                                    border: '1px solid #00ffcc',
+                                    border: '0px solid #00ffcc',
                                     borderRadius: '8px',
                                     padding: '6px 12px',
-                                    boxShadow: '0 0 10px rgba(0,255,204,0.4)',
+                                    // boxShadow: '0 0 10px rgba(0,255,204,0.4)',
                                     color: '#00ffcc',
                                     fontFamily: `'Fira Code', monospace`,
                                     fontSize: '0.8rem',
@@ -71,14 +76,15 @@ const BlogLink = ({ children, hoverText, ...props }) => {
                                     zIndex: 10,
                                 }}
                             >
-                                {hoverText}
+                                {popoverText}
                             </Box>
                         </Fade>
                     )}
                 </Popper>
             )}
+
         </>
     );
 };
 
-export default BlogLink;
+export default HelperLinkText;

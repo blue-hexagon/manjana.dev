@@ -1,6 +1,9 @@
 import {Box, Link, Typography} from "@mui/material";
 import {iconsData} from "../pages";
 import React from "react";
+import HoverNote from "./mdxblog/NoteHoverMicro";
+import HelperLinkText from "./mdxblog/HelperLinkText";
+import EasterEggLink from "./mdxblog/EasterEggLink";
 
 export const SpecialIconFooter = () => {
     return (
@@ -42,8 +45,15 @@ export const SpecialIconFooter = () => {
                                 color="rgb(85, 85, 85)">
                         Connect with me on <Link target="_blank" rel="noreferrer" underline="none"
                                                  href="https://github.com/blue-hexagon">GitHub</Link> or&nbsp;
-                        <Link target="_blank" rel="noreferrer" underline="none"
-                              href="https://www.linkedin.com/in/your-profile">LinkedIn</Link>.
+
+                        <EasterEggLink href="" popoverText="🥚">
+                            <Link target="_blank"
+                                  rel="noreferrer"
+                                  underline="none"
+                                  href="https://dk.linkedin.com/in/0x742d31383134343030303030">
+                                LinkedIn
+                            </Link>
+                        </EasterEggLink>
                     </Typography>
                 </Typography>
 
@@ -57,7 +67,6 @@ export const SpecialIconFooter = () => {
         </Box>
     );
 };
-
 
 
 const IconComponent = ({iconData}) => {
@@ -85,7 +94,7 @@ const styles = {
         display: 'inline-flex',
         width: '50%',
         justifyContent: 'flex-end',
-        alignItems:"center",
+        alignItems: "center",
         overflow: "hidden"
     },
     mainText: {
@@ -100,7 +109,7 @@ const styles = {
         display: 'inline-flex',
         width: '50%',
         justifyContent: 'flex-start',
-        alignItems:"center",
+        alignItems: "center",
         overflow: "hidden"
     },
     icon: {

@@ -11,7 +11,7 @@ import {
     ListItemText,
     Box
 } from "@mui/material";
-import {Menu as MenuIcon} from "@mui/icons-material";
+import {Book, Menu as MenuIcon, MenuBook, Note} from "@mui/icons-material";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import {Link} from "gatsby";
 import {useLocation} from "@reach/router";
@@ -21,6 +21,8 @@ import ArticleIcon from "@mui/icons-material/Article";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import CiViewTimeline from "@mui/icons-material/ViewTimeline";
+import {PiNotepadFill} from "react-icons/pi";
+import {BsFillBookFill} from "react-icons/bs";
 
 const Navbar = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -34,8 +36,9 @@ const Navbar = () => {
     const menuItems = [
         {text: "Projects", link: "/projects", icon: <DashboardIcon fontSize="small"/>},
         {text: "Writings", link: "/blog", icon: <ArticleIcon fontSize="small"/>},
+        {text: "Notes", link: "/notes", icon: <Note  fontSize="small"/>},
         {text: "Log", link: "/log", icon: <CiViewTimeline fontSize="small"/>},
-        {text: "Knowledge", link: "/knowledge", icon: <MenuBookIcon fontSize="small"/>},
+        {text: "Glossary", link: "/knowledge", icon: <MenuBookIcon fontSize="small"/>},
         {text: "Contact", link: "/contact", icon: <MailOutlineIcon fontSize="small"/>}
     ];
 

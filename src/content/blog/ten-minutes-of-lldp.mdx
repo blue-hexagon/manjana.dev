@@ -30,8 +30,8 @@ import lldp_watcher from "../../../static/code/lldp_watcher.ps1";
 about itself to locally connected peers (neighbors). It's a vendor-neutral alternative to CDP.
 
 <StructuredNote type="info" title="CDP vs LLDP" collapsible="true" defaultExpanded="false">
-CDP → richer (Cisco-specific), more consistent<br/>
-LLDP → standard, but more fragmented (vendor TLVs)
+    CDP → richer (Cisco-specific), more consistent<br/>
+    LLDP → standard, but more fragmented (vendor TLVs)
 </StructuredNote>
 
 A <Term name="neighbor"/> is: _“The last device that sent me an LLDP frame on this interface.”_
@@ -50,10 +50,10 @@ No sessions, no trust model and no state machine; LLDP neighbors are observation
     participant A as Device A
     participant B as Device B
 
-                loop Every 30s
-                    A->>B: LLDP Frame
-                    B->>A: LLDP Frame
-                end
+                    loop Every 30s
+                        A->>B: LLDP Frame
+                        B->>A: LLDP Frame
+                    end
 `}
 />
 
@@ -134,7 +134,8 @@ LLDP doesn't have a fixed packet layout like an OSPF Hello header - it is simply
 
 Everything is encoded this way, which makes LLDP highly flexible — but also means parsing becomes non-trivial, especially when vendor-specific TLVs are involved.
 
-<ShadowComment variant="note" text="LLDP is effectively a self-describing protocol — there is no schema outside of TLVs."/>
+<ShadowComment variant="note"
+               text="LLDP is effectively a self-describing protocol — there is no schema outside of TLVs."/>
 
 ### TLV Encoding |>PACKET_DIAGRAM
 
@@ -249,33 +250,9 @@ If you have Wireshark installed you can also set the filter to `lldp` or if you 
     headerLevel="3"
 >
 
-<CodeBlock script={lldp_watcher} language="powershell" showLineNumbers="true" blockId="lldp-watcher-script"/>
+    <CodeBlock script={lldp_watcher} language="powershell" showLineNumbers="true" blockId="lldp-watcher-script"/>
 
 </ExamplePanel>
-
-<CodeBlock
-  language="powershell"
-  blockId="ospf-config"
-  showLineNumbers
-  script={`
-router ospf 1
- network 10.0.0.0 0.0.0.255 area 0
- ip ospf hello-interval 10
-`}
-  annotations={[
-    {
-      line: 2,
-      type: "info",
-      content: "Defines which networks participate in OSPF"
-    },
-    {
-      line: 3,
-      type: "warning",
-      title: "Important",
-      content: "Hello interval must match neighbors"
-    }
-  ]}
-/>
 
 ## Failure Patterns |>TSHOOT TABLE
 
@@ -296,18 +273,13 @@ Follow this order:
 4. Frames seen?
 5. Neighbor stable?
 
-## Common Gotchas (Real-World) |>TSHOOT
+### Common Gotchas |>TSHOOT
 
-### 1. VLAN / Trunk Issues
+1. VLAN / Trunk Issues
 
-LLDP is transmitted untagged by default.
+LLDP is transmitted untagged by default, meaning: wrong <Term name="NativeVLAN"/> → LLDP disappears along with neighbor visibility.
 
-<ShadowComment variant="warn"
-               text="LLDP frames are sent untagged. On trunks, this means they follow the native VLAN — mismatches here will silently break neighbor visibility."/>
-
-- Wrong <Term name="NativeVLAN"/> → LLDP disappears
-
-### 2. Security Features
+2. Security Features
 
 - Port-security
 - Storm-control
@@ -315,18 +287,18 @@ LLDP is transmitted untagged by default.
 
 These can silently drop LLDP frames depending on configuration.
 
-### 3. Virtualization / Hypervisors
+3. Virtualization / Hypervisors
 
 - vSwitches may filter LLDP
 - Containers often don’t pass it
 
-### 4. NIC / Driver Behavior
+4. NIC / Driver Behavior
 
 - Sleep/wake → LLDP bursts
 - Bad drivers → missing frames
 - Low-end NIC → dropping LLDP frames
 
-### 5. Control Plane Policing (CoPP)
+5. Control Plane Policing (CoPP)
 
 LLDP is processed by the control plane and may be rate-limited.
 
@@ -352,4 +324,8 @@ All LLDP issues reduce to:
 3. Not parsed
 4. Expired
 
-https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-9/configuration_guide/int_hw/b_179_int_and_hw_9300_cg/configuring_lldp__lldp_med__and_wired_location_service.html#lldp
+## Resources
+<BlogLink children="Cisco IOS-XE 17.9 LLDP Configuration Guide"
+          href="https://www.cisc.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-9/configuration_guide/int_hw/b_179_int_and_hw_9300_cg/configuring_lldp__lldp_med__and_wired_location_service.html#lldp"/>
+
+## Terminology
