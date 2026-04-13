@@ -55,22 +55,26 @@ export const Head = ({data}) => {
     );
 };
 
-export const query = graphql`
-  query BlogPostByID($id: String!) {
-    mdx(id: { eq: $id }) {
-      frontmatter {
-        title
-        subtitle
-        date(formatString: "MMMM DD, YYYY")
-        slug
-        description
-        featuredImage
-        glossaryPrefix
-        tocDepth
+export const query = graphql`query BlogPostByID($id: String!) {
+  mdx(id: { eq: $id }) {
+    frontmatter {
+      title
+      subtitle
+      date(formatString: "MMMM DD, YYYY")
+      slug
+      description
+      featuredImage
+      glossaryPrefix
+      tocDepth
+    }
+    tableOfContents(maxDepth: 6)
+    parent {
+      ... on File {
+        sourceInstanceName
+        relativePath
       }
-      tableOfContents(maxDepth: 6)
     }
   }
-`;
+}`;
 
 export default BlogPostTemplate;

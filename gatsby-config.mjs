@@ -1,7 +1,6 @@
 import remarkGfm from "remark-gfm";
 import remarkFrontmatter from "remark-frontmatter";
 
-
 /** @type {import('gatsby').GatsbyConfig} */
 const config = {
     siteMetadata: {
@@ -10,27 +9,28 @@ const config = {
     },
 
     plugins: [
-
-        // ✅ Filesystem FIRST
         {
             resolve: "gatsby-source-filesystem",
             options: {
-                name: "content",
+                name: "blog",
                 path: `${process.cwd()}/src/content/blog/`,
             },
         },
+        {
+            resolve: "gatsby-source-filesystem",
+            options: {
+                name: "notes",
+                path: `${process.cwd()}/src/content/notes/`,
+            },
+        },
 
-        // ✅ MDX with GFM tables enabled
         {
             resolve: "gatsby-plugin-mdx",
             options: {
                 extensions: [".mdx", ".md"],
-
-                // Gatsby v5 — must be nested here
                 mdxOptions: {
                     remarkPlugins: [remarkFrontmatter, remarkGfm],
                 },
-
                 gatsbyRemarkPlugins: [
                     {
                         resolve: "gatsby-remark-autolink-headers",
@@ -53,12 +53,12 @@ const config = {
                             classPrefix: "language-",
                             showLineNumbers: false,
                             noInlineHighlight: false,
-                            prompt: {global: false},
+                            prompt: { global: false },
                             languageExtensions: [
                                 {
                                     language: "shell",
                                     extend: "python",
-                                    definition: {}
+                                    definition: {},
                                 },
                             ],
                         },
@@ -67,7 +67,6 @@ const config = {
             },
         },
 
-        // ✅ Page creator
         {
             resolve: "gatsby-plugin-page-creator",
             options: {
@@ -76,7 +75,6 @@ const config = {
             },
         },
 
-        // ✅ Images
         "gatsby-plugin-sharp",
         "gatsby-transformer-sharp",
     ],
