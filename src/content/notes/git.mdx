@@ -1,0 +1,281 @@
+---
+title: "Git Field Notes"
+subtitle: "Commands, workflows, history, and repository mechanics"
+date: 2026-04-13
+slug: git-field-notes
+description: "A condensed reference of Git commands and concepts including staging, commits, history exploration, stashing, tags, and repository state management."
+
+categories:
+  - Version Control
+  - Tooling
+
+tags:
+  - git
+  - version-control
+  - devops
+  - cli
+  - workflow
+
+series: Understanding Systems Deeply
+
+featured: false
+
+glossaryPrefix: Git
+tocDepth: 3
+---
+
+import CodeBlock from "../../pages_components/blog/CodeBlock";
+
+# Git
+
+Blockquotes in this document cite [Atlassian's Git Tutorials](https://www.atlassian.com/git/tutorials/). This document is a condensed version of their tutorials on Git.
+
+## Configuring Git
+
+<CodeBlock language="bash" blockId="git-config" showLineNumbers="true">
+{`
+git config [ <nil> |--local | --global | --system] [user.name | user.email | alias.alias-name <git-command>]
+`}
+</CodeBlock>
+
+Open the global configuration file in a text editor for manual editing.
+
+<CodeBlock language="bash" blockId="git-config-edit" showLineNumbers="true">
+{`
+git config --global --edit
+`}
+</CodeBlock>
+
+## Configuration Files
+
+Git stores configuration options in three separate files, which lets you scope options to individual repositories, users, or the entire system:
+
+- /.git/config – Repository-specific settings.
+- ~/.gitconfig – User-specific settings. This is where options set with the --global flag are stored.
+- $(prefix)/etc/gitconfig – System-wide settings
+
+When options in these files conflict, local settings override user settings, which override system-wide. If you open any of these files, you’ll see something like the following:
+
+## Git Add
+
+`git add` adds files from the working tree to the staging area which can then be comitted.
+
+`git add <directory|file>`
+
+`git add -p # begin an interactive staging session`
+
+This will present you with a chunk of changes and prompt you for a command.
+
+- Use y to stage the chunk
+- n to ignore the chunk
+- s to split it into smaller chunks
+- e to manually edit the chunk
+- q to exit.`
+
+### Removing Staged Content
+
+Use `git restore --staged <filename|directory>`
+Use `git reset HEAD <file>`
+
+## Git Commit
+
+> Git doesn't require commit messages to follow any specific formatting constraints,
+> but the canonical format is to summarize the entire commit on the first line in less than 50 characters,
+> leave a blank line, then a detailed explanation of what’s been changed.
+>
+> It is a common practice to use the first line of the commit message as a subject line,
+> similar to an email. The rest of the log message is considered the body and used to
+> communicate details of the commit change set. Note that many developers also like
+> to use the present tense in their commit messages. This makes them read more like
+> actions on the repository, which makes many of the history-rewriting operations more intuitive.
+
+- `git commit`
+- `git commit -m "msg"`
+- `git commit --no-verify -m "msg"`
+- `git commit -am "msg"`
+- `git commit --amend`
+
+### Amending a Commit
+
+<CodeBlock language="bash" blockId="git-amend" showLineNumbers="true">
+{`
+git add hello.py
+git commit --amend
+`}
+</CodeBlock>
+
+## Git Status
+
+Used to explore the state of the working directory and the staging area prior to comitting - lists which files are staged, unstaged, and untracked.
+
+Use: `git status`
+
+## Git Log
+
+The git log command is Git's basic tool for exploring a repository’s history. It’s what you use when you need to find a specific version of a project or figure out what changes will be introduced by merging in a feature branch.
+
+The `~` character is useful for making relative references to the parent of a commit. For example, `3157e~1` refers to the commit before `3157e`, and `HEAD~3` is the great-grandparent of the current commit.
+
+`git log --pretty=oneline` or `git log --online`
+
+`git log --pretty=format:'%h %an %ad %s'`
+
+Use: `git log --branches=*` to view commits from all branches.
+
+`git log --stat`
+
+`git log -p`
+
+`git log --author="<authors-handle>"`
+
+`git log --grep="<search-pattern>"`
+
+Use: `git log -S "piece of code to search for"` to search for commits containing a string or piece of code.
+
+Use: `git log <since>..<until>` to only show commits that occur between the two arguments. Arguments can be either commit ID, a branch name or any other kind of [revision reference](http://www.kernel.org/pub/software/scm/git/docs/gitrevisions.html)
+
+Use: `git log <file>` to only show commits that include the specified file.
+
+`git log --graph --decorate --oneline`
+
+Keep in mind, many of theese can be combined, e.g. `git log --author="manjana" --grep="something"`
+
+## Git Diff
+
+`git diff` command is often used along with `git status` and `git log` to analyze the current state of a Git repo.
+
+`git diff --color-words` to show coloration of the diff
+
+Invoking `git diff` without a file path will compare changes across the entire repository.
+
+`git diff HEAD ./path/to/file` is equivalent to `git diff ./path/to/file` and diffs the file against the index and thus shows changes in the working tree that aren't staged yet.
+
+When git diff is invoked with the `--cached`/`--staged` option the diff will compare the staged changes with the local repository.
+
+> git diff can be passed Git refs to commits to diff. Some example refs are, HEAD, tags, and branch names.
+> Every commit in Git has a commit ID which you can get when you execute GIT LOG. You can also pass this commit ID to git diff.
+
+### Comparing a File Across Branches
+
+To compare a specific file across branches, pass in the path of the file as the third argument to git diff
+
+`git diff main_branch feature_branch ./src/diff_test.py`
+
+## Git Stash
+
+The stash is local to your Git repository; stashes are not transferred to the server when you push.
+
+The git stash command takes your uncommitted changes (both staged and unstaged), saves them away for later use, and then temporarily removes them from your working copy.
+
+To save local changes to the stash: `git stash`
+To retrieve the stash: `git stash pop`
+
+By default Git won't stash changes made to untracked or ignored files.
+
+### Viewing Stash's Files
+
+- Use: `git stash show` to view a summary of the stash
+- Use: `git stash show -p` to view the full diff of a stash
+
+### Stashing Untracked/Ignored Files
+
+To add untracked files, simply append `-u` or `--include-untracked` to `git stash`
+You can include changes to ignored files as well by passing the `-a` option (or `--all`) when running git stash.
+
+### Working With Multiple Stashes
+
+- To list all stashes: `git stash list`
+- To save the stash with an ID message: `git stash save "message"` which will show \<message\> when using `git stash list`
+- By default, git stash pop will re-apply the most recently created stash: `stash@{0}`
+- To pop specific stash number 2: `git stash pop stash@{2}`
+- To delete a stash: `git stash drop stash@{N}`
+
+### Partial Stashes
+
+- You can choose to stash:
+  - just a single file
+  - a collection of files
+  - individual changes from within files ("hunks")
+
+Use: `git stash --patch` (or `-p`) to iterate through each changed hunk in your working copy and use the commands below as replies for each hunk.
+
+<CodeBlock language="text" blockId="git-stash-patch" showLineNumbers="true">
+{`
+Command 	Description
+/ 	        search for a hunk by regex
+? 	        help
+n 	        don't stash this hunk
+q 	        quit (any hunks that have already been selected will be stashed)
+s 	        split this hunk into smaller hunks
+y 	        stash this hunk
+`}
+</CodeBlock>
+
+### Branch a Stash
+
+If the changes on your branch diverge from the changes in your stash, you may run into conflicts when popping or applying your stash. Instead, you can use git stash branch to create a new branch to apply your stashed changes to: `git stash branch new-branch stash@{N}`
+
+## .gitignore
+
+Git sees every file in your working copy as either:
+
+- tracked
+- untracked
+- ignored
+
+The `.gitignore` file uses globbing patterns to match file names.
+
+### Local Ignore Rules
+
+> You can also define personal ignore patterns for a particular repository in a special file at .git/info/exclude.
+
+### Debugging
+
+Use: `git check-ignore --verbose ignored-file.log` to track down which `.gitignore` file has the rule for ignoring this file.
+
+## Git Tags
+
+### Creating Tags
+
+Use: `git tag -a "v1.2.3b" <commit-hash>`
+
+### Deleting Tags
+
+Use: `git tag -d <git-tag-name>`
+
+### Types of Tags
+
+Use: `git tag <tagname>` to create a lightweight tag
+
+Use: `git tag -a <tagname>` to create an annotated tag
+
+### Listing Tags
+
+Use: `git tag`
+Use: `git tag -l *-rc*`
+
+### Checkout Tag
+
+Use: `git checkout <name-of-tag>`
+
+## Git Blame
+
+> The git blame command is used to examine the contents of a file line by line and see when each line was last modified and who the author of the modifications was.
+
+## Git Checkout
+
+`git checkout <commit-hash>`
+`git checkout <branch>`
+
+## Git Revert
+
+Use: `git revert HEAD`
+
+## Git Reset
+
+Use: ``git reset --hard <commit-hash>``
+
+## Git Clean
+
+Use: `git clean -n`
+Use: `git clean -idx`

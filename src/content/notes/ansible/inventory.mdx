@@ -1,3 +1,31 @@
+---
+title: "Understanding Ansible Inventory Files"
+subtitle: "Hosts, groups, variables, and dynamic inventory explained"
+date: 2026-04-13
+slug: understanding-ansible-inventory-files
+description: "A comprehensive overview of Ansible inventory files, covering formats, hosts, groups, variables, and dynamic inventory concepts."
+
+categories:
+  - Automation
+  - Configuration
+
+tags:
+  - ansible
+  - inventory
+  - devops
+  - infrastructure
+  - yaml
+
+series: Understanding Systems Deeply
+
+featured: false
+
+glossaryPrefix: Ansible
+tocDepth: 3
+---
+
+import CodeBlock from "../../../pages_components/blog/CodeBlock";
+
 # Understanding Ansible Inventory Files
 
 Ansible inventory files are crucial components of Ansible, serving as the primary means to define the hosts and groups that Ansible will manage. Here's a comprehensive overview covering all aspects of Ansible inventory files:
@@ -12,22 +40,21 @@ Inventory files typically follow an INI-style format, although YAML format is al
 
 ### Example of INI-style Inventory File:
 
-iniCopy code
-
-```
+<CodeBlock language="ini" blockId="ansible-inventory-ini" showLineNumbers="true">
+{`
 [web_servers]
 server1.example.com
 server2.example.com
 
 [db_servers]
 server3.example.com
-```
+`}
+</CodeBlock>
 
 ### Example of YAML Inventory File:
 
-yamlCopy code
-
-```
+<CodeBlock language="yaml" blockId="ansible-inventory-yaml" showLineNumbers="true">
+{`
 all:
   hosts:
     server1.example.com:
@@ -40,7 +67,8 @@ all:
     db_servers:
       hosts:
         server3.example.com:
-```
+`}
+</CodeBlock>
 
 ## 3. **Sections in Inventory File:**
 
@@ -83,10 +111,12 @@ Variables can be assigned to individual hosts or groups within the inventory fil
 
 ### Example of Variable Assignment:
 
-```
+<CodeBlock language="ini" blockId="ansible-inventory-vars" showLineNumbers="true">
+{`
 [web_servers]
 server1.example.com ansible_user=ubuntu ansible_ssh_private_key_file=/path/to/private_key.pem
-```
+`}
+</CodeBlock>
 
 ## 9. **Alias and Meta:**
 
@@ -94,7 +124,9 @@ server1.example.com ansible_user=ubuntu ansible_ssh_private_key_file=/path/to/pr
 - **Meta:** Provides metadata about hosts or groups, such as documentation or inventory plugin options.
 
 ### Example of Alias and Meta:
-```
+
+<CodeBlock language="ini" blockId="ansible-inventory-alias-meta" showLineNumbers="true">
+{`
 [web_servers]
 server1.example.com ansible_host=192.168.1.10
 
@@ -103,7 +135,8 @@ http_port=80
 
 [web_servers:children]
 load_balancers
-```
+`}
+</CodeBlock>
 
 ## 10. **Excluding Hosts and Groups:**
 

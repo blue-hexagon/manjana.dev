@@ -3,6 +3,8 @@ import Prism from "prismjs";
 import "prismjs/components/prism-powershell";
 import "prismjs/components/prism-python";
 import "prismjs/components/prism-csharp";
+import "prismjs/components/prism-dart";
+import "prismjs/components/prism-yaml";
 import {RiFileCopyFill} from "react-icons/ri";
 
 /* =========================
@@ -61,12 +63,13 @@ function buildAnnotationMap(annotations = []) {
 ========================= */
 
 export default function CodeBlock({
-                                      script = "",
-                                      language = "plain",
-                                      showLineNumbers = false,
-                                      blockId,
-                                      annotations = [],
-                                  }) {
+    script = "",
+    children,
+    language = "plain",
+    showLineNumbers = false,
+    blockId,
+    annotations = [],
+}) {
     const [copied, setCopied] = useState(false);
     const [selectedLines, setSelectedLines] = useState([]);
     const [activeRange, setActiveRange] = useState(null);
@@ -74,17 +77,40 @@ export default function CodeBlock({
 
     const rootRef = useRef(null);
 
+    /* =========================
+       🔥 SOURCE NORMALIZATION (NEW)
+    ========================= */
+
+    const code = useMemo(() => {
+        let value = script;
+
+        // Prefer children if present
+        if (children) {
+            if (typeof children === "string") {
+                value = children;
+            } else if (Array.isArray(children)) {
+                // Handle MDX weirdness (["\ncode\n"])
+                value = children.join("");
+            } else {
+                value = String(children);
+            }
+        }
+
+        // Normalize + trim
+        return (value || "").replace(/^\n/, "").replace(/\n$/, "");
+    }, [script, children]);
+
     const prismLanguage = Prism.languages[language] ? language : "plain";
 
     const highlightedHtml = useMemo(() => {
         return Prism.highlight(
-            script,
+            code,
             Prism.languages[prismLanguage],
             prismLanguage
         );
-    }, [script, prismLanguage]);
+    }, [code, prismLanguage]);
 
-    const rawLines = useMemo(() => script.split("\n"), [script]);
+    const rawLines = useMemo(() => code.split("\n"), [code]);
 
     const highlightedLines = useMemo(() => {
         const split = highlightedHtml.split("\n");
@@ -184,7 +210,7 @@ export default function CodeBlock({
         setTimeout(() => setCopied(false), 1200);
     };
 
-    const handleCopyAll = () => copyWithFeedback(script);
+    const handleCopyAll = () => copyWithFeedback(code);
 
     const handleCopySelection = () => {
         if (!selectedLines.length) return;
@@ -197,7 +223,7 @@ export default function CodeBlock({
     };
 
     const handleCopyLine = (lineNumber, e) => {
-        e.stopPropagation(); // 🔥 don't trigger selection
+        e.stopPropagation();
         copyWithFeedback(rawLines[lineNumber - 1] ?? "");
     };
 
@@ -256,80 +282,84 @@ export default function CodeBlock({
             </div>
 
             <pre className={`language-${prismLanguage}`}>
-        <code className={`language-${prismLanguage}`}>
-          {highlightedLines.map((lineHtml, index) => {
-              const lineNumber = index + 1;
-              const selected = selectedLines.includes(lineNumber);
-              const anns = annotationMap[lineNumber] || [];
-              const isAnnotated = anns.length > 0;
-              const isOpen = openAnnotations.has(lineNumber);
+                <code className={`language-${prismLanguage}`}>
+                    {highlightedLines.map((lineHtml, index) => {
+                        const lineNumber = index + 1;
+                        const selected = selectedLines.includes(lineNumber);
+                        const anns = annotationMap[lineNumber] || [];
+                        const isAnnotated = anns.length > 0;
+                        const isOpen = openAnnotations.has(lineNumber);
 
-              return (
-                  <React.Fragment key={lineNumber}>
-                      <div
-                          id={`${blockId}-L${lineNumber}`}
-                          className={`code-line ${
-                              selected ? "selected" : ""
-                          } ${isAnnotated ? "annotated" : ""}`}
-                      >
-                          {showLineNumbers && (
-                              <button
-                                  className="line-number"
-                                  onClick={(e) => handleLineClick(lineNumber, e)}
-                              >
-                                  {lineNumber}
-                              </button>
-                          )}
+                        return (
+                            <React.Fragment key={lineNumber}>
+                                <div
+                                    id={`${blockId}-L${lineNumber}`}
+                                    className={`code-line ${
+                                        selected ? "selected" : ""
+                                    } ${isAnnotated ? "annotated" : ""}`}
+                                >
+                                    {showLineNumbers && (
+                                        <button
+                                            className="line-number"
+                                            onClick={(e) =>
+                                                handleLineClick(lineNumber, e)
+                                            }
+                                        >
+                                            {lineNumber}
+                                        </button>
+                                    )}
 
-                          <span
-                              className="line-content"
-                              dangerouslySetInnerHTML={{
-                                  __html: lineHtml || "&nbsp;",
-                              }}
-                          />
+                                    <span
+                                        className="line-content"
+                                        dangerouslySetInnerHTML={{
+                                            __html: lineHtml || "&nbsp;",
+                                        }}
+                                    />
 
-                          {/* 🔥 RIGHT-SIDE ACTIONS */}
-                          <div className="line-actions">
-                              <button
-                                  className="line-copy"
-                                  onClick={(e) => handleCopyLine(lineNumber, e)}
-                                  title="Copy line"
-                              >
-                                  <RiFileCopyFill/>
+                                    <div className="line-actions">
+                                        <button
+                                            className="line-copy"
+                                            onClick={(e) =>
+                                                handleCopyLine(lineNumber, e)
+                                            }
+                                            title="Copy line"
+                                        >
+                                            <RiFileCopyFill />
+                                        </button>
 
-                              </button>
+                                        {isAnnotated && (
+                                            <button
+                                                className="annotation-marker"
+                                                onClick={(e) =>
+                                                    toggleAnnotation(lineNumber, e)
+                                                }
+                                                title="Show annotation"
+                                            >
+                                                ●
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
 
-                              {isAnnotated && (
-                                  <button
-                                      className="annotation-marker"
-                                      onClick={(e) => toggleAnnotation(lineNumber, e)}
-                                      title="Show annotation"
-                                  >
-                                      ●
-                                  </button>
-                              )}
-                          </div>
-                      </div>
-
-                      {isAnnotated && isOpen && (
-                          <div className="code-annotation">
-                              {anns.map((ann, i) => (
-                                  <div key={i} className="annotation">
-                                      {ann.title && (
-                                          <div className="annotation-title">
-                                              {ann.title}
-                                          </div>
-                                      )}
-                                      <div>{ann.content}</div>
-                                  </div>
-                              ))}
-                          </div>
-                      )}
-                  </React.Fragment>
-              );
-          })}
-        </code>
-      </pre>
+                                {isAnnotated && isOpen && (
+                                    <div className="code-annotation">
+                                        {anns.map((ann, i) => (
+                                            <div key={i} className="annotation">
+                                                {ann.title && (
+                                                    <div className="annotation-title">
+                                                        {ann.title}
+                                                    </div>
+                                                )}
+                                                <div>{ann.content}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </React.Fragment>
+                        );
+                    })}
+                </code>
+            </pre>
         </div>
     );
 }

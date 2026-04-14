@@ -23,24 +23,33 @@ featured: false
 glossaryPrefix: YAML
 tocDepth: 3
 ---
-# Folded Scalar
-```
+
+import CodeBlock from "../../pages_components/blog/CodeBlock";
+
+# Scalars
+## Folded Scalar
+
+<CodeBlock showLineNumbers="true" blockId="yaml-scalar" language="yaml" script={`
 name: Folded Scalar. Replaces \n with a space
 command: >
     put commands here, that may
     go off screen.
-```
-# Multiline/Block Scalar
-```
+`}/>
+
+## Multiline/Block Scalar
+
+<CodeBlock showLineNumbers="true" blockId="yaml-multiline-scalar" language="yaml" script={`
 name: Multiline Scalar. Use where \n is signifact.
 command: |
     command one -a arg_1
     command two -a arg_1
-```
+`}/>
+
 # Anchors & Aliases
 Anchors and aliases in YAML provide a convenient way to reuse data and avoid duplication within a YAML document.
 They are particularly useful for defining default configurations and inheriting values across multiple sections of the document.
-```
+
+<CodeBlock showLineNumbers="true" blockId="yaml-anchor-alias" language="yaml" script={`
 defaults: &defaults
   username: guest
   password: guest
@@ -48,17 +57,24 @@ defaults: &defaults
 admin:
   <<: *defaults
   password: secret
-```
-# Inline List + Inline Map
-```
+`}/>
+
+# Lists and Hashmaps
+## Inline List + Inline Map
+
+<CodeBlock showLineNumbers="true" blockId="yaml-list-inline-map" language="yaml" script={`
 colors: [red, green, blue]
 person: {name: John Doe, age: 30}
-```
-# Matrice
+`}/>
+
+## Matrix/Matrices
 Aka. a list of lists
-```
+
+
+<CodeBlock showLineNumbers="true" blockId="yaml-matrices" language="yaml" script={`
 matrix:
   - [1, 2, 3]
   - [4, 5, 6]
   - [7, 8, 9]
-```
+`}/>
+

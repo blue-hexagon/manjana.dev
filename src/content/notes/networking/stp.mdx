@@ -1,0 +1,283 @@
+---
+title: "STP Field Notes"
+subtitle: "Configuration, verification, and operational behavior of Spanning Tree"
+date: 2026-04-13
+slug: stp-field-notes
+description: "A practical cheatsheet for configuring and understanding Spanning Tree Protocol (STP), including MST, PVST+, and operational parameters."
+
+categories:
+  - Networking
+  - Layer 2
+
+tags:
+  - stp
+  - spanning-tree
+  - cisco
+  - switching
+  - l2
+
+series: Understanding Systems Deeply
+
+featured: false
+
+glossaryPrefix: STP
+tocDepth: 3
+---
+
+import CodeBlock from "../../../pages_components/blog/CodeBlock";
+
+<CodeBlock language="bash" blockId="stp-mst-setup" showLineNumbers="true">
+{`
+conf t
+spanning-tree mode mst
+spanning-tree mst configuration
+name CCNPv8
+revision 2
+instance 1 vlan 2,3
+instance 2 vlan 3,4
+!show pending
+exit
+end
+`}
+</CodeBlock>
+
+# Spanning Tree Protocol (STP) Configuration Cheatsheet
+
+## 1. Verify STP Configuration
+
+### Show STP Information
+
+<CodeBlock language="bash" blockId="stp-show-all" showLineNumbers="true">
+{`
+show spanning-tree
+`}
+</CodeBlock>
+
+### Show STP Status for a Specific VLAN
+
+<CodeBlock language="bash" blockId="stp-show-vlan" showLineNumbers="true">
+{`
+show spanning-tree vlan [vlan-id]
+`}
+</CodeBlock>
+
+### Show STP Details on Interfaces
+
+<CodeBlock language="bash" blockId="stp-show-interface" showLineNumbers="true">
+{`
+show spanning-tree interface [interface-id]
+`}
+</CodeBlock>
+
+## 2. Configure STP Modes
+
+### Enable STP (Default for most Cisco switches)
+
+<CodeBlock language="bash" blockId="stp-enable" showLineNumbers="true">
+{`
+no spanning-tree vlan [vlan-id]
+`}
+</CodeBlock>
+
+### Enable PVST+ (Default on Cisco Switches)
+
+<CodeBlock language="bash" blockId="stp-pvst" showLineNumbers="true">
+{`
+spanning-tree mode pvst
+`}
+</CodeBlock>
+
+### Enable Rapid PVST+
+
+<CodeBlock language="bash" blockId="stp-rapid-pvst" showLineNumbers="true">
+{`
+spanning-tree mode rapid-pvst
+`}
+</CodeBlock>
+
+### Enable MST
+
+<CodeBlock language="bash" blockId="stp-mst" showLineNumbers="true">
+{`
+spanning-tree mode mst
+`}
+</CodeBlock>
+
+## 3. Adjust STP Parameters
+
+### Set Bridge Priority
+
+<CodeBlock language="bash" blockId="stp-priority" showLineNumbers="true">
+{`
+spanning-tree vlan [vlan-id] priority [value]
+`}
+</CodeBlock>
+
+- **Default Range:** 0-61440, increments of 4096  
+- **Default Value:** 32768  
+
+### Set Bridge Cost
+
+<CodeBlock language="bash" blockId="stp-cost" showLineNumbers="true">
+{`
+spanning-tree cost [value]
+`}
+</CodeBlock>
+
+- **Default Values:** Varies by interface speed (e.g., 100 Mbps = 19)
+
+### Set Hello Time
+
+<CodeBlock language="bash" blockId="stp-hello" showLineNumbers="true">
+{`
+spanning-tree hello-time [seconds]
+`}
+</CodeBlock>
+
+- **Default Value:** 2 seconds  
+
+### Set Forward Delay
+
+<CodeBlock language="bash" blockId="stp-forward-delay" showLineNumbers="true">
+{`
+spanning-tree forward-delay [seconds]
+`}
+</CodeBlock>
+
+- **Default Value:** 15 seconds  
+
+### Set Max Age
+
+<CodeBlock language="bash" blockId="stp-max-age" showLineNumbers="true">
+{`
+spanning-tree max-age [seconds]
+`}
+</CodeBlock>
+
+- **Default Value:** 20 seconds  
+
+### Set Root Bridge Priority
+
+<CodeBlock language="bash" blockId="stp-root" showLineNumbers="true">
+{`
+spanning-tree vlan [vlan-id] root primary
+`}
+</CodeBlock>
+
+- **Or use `root secondary` for a secondary root bridge**
+
+### Configure Portfast
+
+<CodeBlock language="bash" blockId="stp-portfast" showLineNumbers="true">
+{`
+spanning-tree portfast
+`}
+</CodeBlock>
+
+- **Use `spanning-tree portfast trunk` for trunk ports**
+
+### Configure BPDU Guard
+
+<CodeBlock language="bash" blockId="stp-bpduguard" showLineNumbers="true">
+{`
+spanning-tree bpduguard enable
+`}
+</CodeBlock>
+
+### Configure BPDU Filter
+
+<CodeBlock language="bash" blockId="stp-bpdufilter" showLineNumbers="true">
+{`
+spanning-tree bpdufilter enable
+`}
+</CodeBlock>
+
+### Configure Edge Port (PortFast)
+
+<CodeBlock language="bash" blockId="stp-edge" showLineNumbers="true">
+{`
+spanning-tree portfast edge
+`}
+</CodeBlock>
+
+## 4. MST Configuration
+
+### Define MST Instances
+
+<CodeBlock language="bash" blockId="stp-mst-config" showLineNumbers="true">
+{`
+spanning-tree mst configuration
+instance [instance-id] vlan [vlan-id]
+name [name]
+revision [number]
+`}
+</CodeBlock>
+
+### Map VLANs to MST Instances
+
+<CodeBlock language="bash" blockId="stp-mst-map" showLineNumbers="true">
+{`
+instance [instance-id] vlan [vlan-list]
+`}
+</CodeBlock>
+
+### Verify MST Configuration
+
+<CodeBlock language="bash" blockId="stp-mst-verify" showLineNumbers="true">
+{`
+show spanning-tree mst configuration
+`}
+</CodeBlock>
+
+## Examples
+
+### Configure PVST+ and Set Bridge Priority
+
+<CodeBlock language="bash" blockId="stp-example-pvst" showLineNumbers="true">
+{`
+Switch# configure terminal
+Switch(config)# spanning-tree mode pvst
+Switch(config)# spanning-tree vlan 1 priority 4096
+`}
+</CodeBlock>
+
+### Configure PortFast on an Interface
+
+<CodeBlock language="bash" blockId="stp-example-portfast" showLineNumbers="true">
+{`
+Switch# configure terminal
+Switch(config)# interface GigabitEthernet0/1
+Switch(config-if)# spanning-tree portfast
+`}
+</CodeBlock>
+
+### Configure MST Instances
+
+<CodeBlock language="bash" blockId="stp-example-mst" showLineNumbers="true">
+{`
+Switch# configure terminal
+Switch(config)# spanning-tree mst configuration
+Switch(config-mst)# instance 1 vlan 10,20
+Switch(config-mst)# instance 2 vlan 30
+Switch(config-mst)# name MST-PROTOCOL
+Switch(config-mst)# revision 1
+`}
+</CodeBlock>
+
+### Set Root Bridge Priority
+
+<CodeBlock language="bash" blockId="stp-example-root" showLineNumbers="true">
+{`
+Switch# configure terminal
+Switch(config)# spanning-tree vlan 1 root primary
+`}
+</CodeBlock>
+
+## Key Concepts
+
+- **Root Bridge:** The central switch with the lowest Bridge ID.  
+- **Port Cost:** Determines the best path to the root bridge; lower costs are preferred.  
+- **BPDU (Bridge Protocol Data Unit):** Messages exchanged between switches to maintain STP.  
+- **PortFast:** Allows ports to transition to the forwarding state immediately, used for end-user devices.  
+- **BPDU Guard:** Prevents unauthorized devices from affecting the STP topology.  
+- **MSTP:** Supports multiple spanning trees, allowing different STP instances per VLAN.  

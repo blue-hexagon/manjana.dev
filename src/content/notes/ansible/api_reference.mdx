@@ -1,10 +1,45 @@
+---
+title: "Ansible Field Notes"
+subtitle: "Adhoc commands, playbook patterns, variables, and execution model"
+date: 2026-04-13
+slug: ansible-field-notes
+description: "A practical collection of Ansible patterns including adhoc commands, loops, handlers, conditionals, roles, and execution strategies."
+
+categories:
+  - Automation
+  - Configuration
+
+tags:
+  - ansible
+  - devops
+  - automation
+  - infrastructure
+  - yaml
+
+series: Understanding Systems Deeply
+
+featured: false
+
+glossaryPrefix: Ansible
+tocDepth: 3
+---
+
+import CodeBlock from "../../../pages_components/blog/CodeBlock";
+
 # Adhoc Commands
-`ansible -i <invetory_file> <group> -m command -a <command> == ansible -i <invetory_file> <group> -a <command>`
+
+<CodeBlock showLineNumbers="true" blockId="ansible-adhoc" language="bash">
+{`
+ansible -i <invetory_file> <group> -m command -a <command> == ansible -i <invetory_file> <group> -a <command>
+`}
+</CodeBlock>
 
 use the `shell` module, if you need to use ad-hoc commands that utilize piping, but try to avoid it as it's not idempotent.
 
 # Loop construct
-```ansible
+
+<CodeBlock showLineNumbers="true" blockId="ansible-loop" language="yaml">
+{`
 - name: Create users
   user:
     name: "{{ item }}"
@@ -13,9 +48,13 @@ use the `shell` module, if you need to use ad-hoc commands that utilize piping, 
     - user1
     - user2
     - user3
-```
+`}
+</CodeBlock>
+
 # With Items
-```ansible
+
+<CodeBlock showLineNumbers="true" blockId="ansible-with-items" language="yaml">
+{`
 vars:
   users:
     - user1
@@ -28,22 +67,31 @@ tasks:
     name: "{{ item }}"
     state: present
   with_items: "{{ users }}"
-```
+`}
+</CodeBlock>
+
 # Loading vars.yml files
-```ansible
+
+<CodeBlock showLineNumbers="true" blockId="ansible-vars-files" language="yaml">
+{`
 - hosts: <group>
   become: yes
 
   vars:
     - vars.yml
     - another_vars.yml
-```
+`}
+</CodeBlock>
+
 # Handler
+
 * Handlers are only called, if the task results in a change.
 * Handlers are run at the end of the playbook.
-	* If you want to run it immediately after the task that notifies the handler, use `flush_handlers`.
+* If you want to run it immediately after the task that notifies the handler, use `flush_handlers`.
 * Now what if you don't flush handlers, and your script fails after the next task? Answer: the handler wont get called! - You can fix that by calling the playbook wiith `--force-handlers`.
-```ansible
+
+<CodeBlock showLineNumbers="true" blockId="ansible-handler" language="yaml">
+{`
 ---
 ...ansible
 
@@ -54,12 +102,16 @@ tasks:
 		- name: <task-name>
 		  <module>: <do-something>
 		  notify: |
-		    <handler-task-name> # Will trigger the handler with `handler-task-name`
+		    <handler-task-name> # Will trigger the handler with \`handler-task-name\`
 		- name: Make sure handler is flushed immediately.
 		  meta: flush_handlers
-```
+`}
+</CodeBlock>
+
 Handlers can also notify other handlers by chaining them.
-```ansible
+
+<CodeBlock showLineNumbers="true" blockId="ansible-handler-chain" language="yaml">
+{`
 handlers:
   - name: restart apache
     service:
@@ -71,133 +123,202 @@ handlers:
     service:
       name: memcached
       state: restarted
-```
+`}
+</CodeBlock>
+
 # Conditionals
+
 `when`, `changed_when`, `failed_when`
-```ansible
+
+<CodeBlock showLineNumbers="true" blockId="ansible-conditionals" language="yaml">
+{`
 - name: Start NodeJS app
   command: ...
   when: <registered_var>.stdout.find(<string>) == -1
-```
+`}
+</CodeBlock>
+
 Use `changed_when: false` to enforce idempotency when using the command module for something that doesn't change anything.
+
 # Tags
+
 Run tasks with specific tags, from a playbook:
-```ansible
-  - name: restart memcached
-    service:
-      name: memcached
-      state: restarted
-    tags: [restartable, services]
-```
+
+<CodeBlock showLineNumbers="true" blockId="ansible-tags" language="yaml">
+{`
+- name: restart memcached
+  service:
+    name: memcached
+    state: restarted
+  tags: [restartable, services]
+`}
+</CodeBlock>
+
 `ansible-playbook ... --tags=services`
+
 # Try-Except Blocks
-```ansible
- tasks:
-   - name: Handle the error
-     block:
-       - name: Print a message
-         ansible.builtin.debug:
-           msg: 'I execute normally'
 
-       - name: Force a failure
-         ansible.builtin.command: /bin/false
+<CodeBlock showLineNumbers="true" blockId="ansible-block-rescue" language="yaml">
+{`
+tasks:
+  - name: Handle the error
+    block:
+      - name: Print a message
+        ansible.builtin.debug:
+          msg: 'I execute normally'
 
-       - name: Never print this
-         ansible.builtin.debug:
-           msg: 'I never execute, due to the above task failing, :-('
-     rescue:
-       - name: Print when errors
-         ansible.builtin.debug:
-           msg: 'I caught an error, can do stuff here to fix it, :-)'
-	 always:
-	   - name: Always do this
-         ansible.builtin.debug:
-           msg: "This always executes, :-)"
-```
+      - name: Force a failure
+        ansible.builtin.command: /bin/false
+
+      - name: Never print this
+        ansible.builtin.debug:
+          msg: 'I never execute, due to the above task failing, :-('
+    rescue:
+      - name: Print when errors
+        ansible.builtin.debug:
+          msg: 'I caught an error, can do stuff here to fix it, :-)'
+    always:
+      - name: Always do this
+        ansible.builtin.debug:
+          msg: "This always executes, :-)"
+`}
+</CodeBlock>
+
 # Importing Tasks
+
 *Can be used for importing tasks, handlers and pre-tasks etc.*
-```ansible
+
+<CodeBlock showLineNumbers="true" blockId="ansible-import-tasks" language="yaml">
+{`
 handlers:
   - import_tasks: handlers/apache.yml
-```
+`}
+</CodeBlock>
+
 **Use `include_tasks` if you need to use dynamic variables**
+
 # Import Playbook
+
 Use at the top-level scope.
-```ansible
+
+<CodeBlock showLineNumbers="true" blockId="ansible-import-playbook" language="yaml">
+{`
 - import_playbook: <playbook-name>.yml
-```
+`}
+</CodeBlock>
+
 # Variables
+
 ## Task Environment Variables
-```ansible
+
+<CodeBlock showLineNumbers="true" blockId="ansible-vars-task" language="yaml">
+{`
 vars:
   proxy_vars:
     http_proxy: ...
     https_proxy: ...
-```
+`}
+</CodeBlock>
+
 ## Global Envrionment Variables
+
 These will apply to each task in a play.
-```ansible
+
+<CodeBlock showLineNumbers="true" blockId="ansible-vars-global" language="yaml">
+{`
 proxy_vars:
   http_proxy: ...
   https_proxy: ...
-```
+`}
+</CodeBlock>
+
 ## Vars Files
+
 Used to load variables from multiple files, instead of from a single file.
-```
+
+<CodeBlock showLineNumbers="true" blockId="ansible-vars-files-list" language="yaml">
+{`
 vars_files:
   - file_path_one/file.yml
   - file_path_two/file.yml
-```
+`}
+</CodeBlock>
+
 ## /vars vs. /defaults
+
 `defaults/` are easy to override and most commonly used to modify behaviour (i.e., port number or default user).
 `vars/` are used by the role and not likely to be changed (i.e. a list of packages, lookup table, machine image).
+
 ### Include Vars
+
 Used for dynamic inventory loading.
-```ansible
+
+<CodeBlock showLineNumbers="true" blockId="ansible-include-vars" language="yaml">
+{`
 pre_tasks:
   - debug: var=ansible_os_family
   - name: Load the first vars file found
     include_vars:
       - "vars/apache_{{ ansible_os_family }}.yml"
       - "vars/apache_default.yml"
-```
+`}
+</CodeBlock>
+
 # Hosts
-```ansible
+
+<CodeBlock showLineNumbers="true" blockId="ansible-hosts" language="ini">
+{`
 [<group>]
 x.x.x.x
 
 [<group>:vars]
 ansible_user=root
 ansible_ssh_private_key_file=<path>
+`}
+</CodeBlock>
 
-```
 # Capture (Env) Variable
-```ansible
+
+<CodeBlock showLineNumbers="true" blockId="ansible-env-capture" language="yaml">
+{`
 # tasks
 - name: Capture env variable value for $HOME
-  shell: 'source ~/.bash_profile/ && echo "${HOME}"'
+  shell: 'source ~/.bash_profile/ && echo "\${HOME}"'
   register: home_env_var
 
 - debug: msg="Users home is {{ home_env_var.stdout }}"
-```
+`}
+</CodeBlock>
+
 # Roles
+
 Directory structure:
-```plaintext
+
+<CodeBlock showLineNumbers="true" blockId="ansible-roles-structure" language="plaintext">
+{`
 roles/
   <role-name>
     meta/
-      main.yml # <-- `dependencies: []`
+      main.yml # <-- \`dependencies: []\`
     tasks/
-      main.yml # <-- `task list`
-```
+      main.yml # <-- \`task list\`
+`}
+</CodeBlock>
 
 Now you can add roles to a playbook, for executing the roles tasks (add them at the same scope level as tasks and vars):
+
 `roles: [<role-name>]`
+
 You can also use roles in the `tasks` scope, by including roles in the tasks list - this way you have more control over the execution order. To do this use: `- include_role: <role-name>`.
+
 ## Options
+
 There are more options, like adding `vars`, `files`, `defaults` folders and more.
+
 # Fail & Assert
-```ansible
+
+<CodeBlock showLineNumbers="true" blockId="ansible-fail-assert" language="yaml">
+{`
 ---
 - hosts: 127.0.0.1
   gather_facts: no
@@ -224,57 +345,86 @@ There are more options, like adding `vars`, `files`, `defaults` folders and more
           - should_fail_via_fail != true
           - should_fail_via_assert != true
           - should_fail_via_complex_assert != true
-```
+`}
+</CodeBlock>
+
 # Misc
+
 ## Level of Testing
+
 1. Is this valid YAML
 2. Is this valid Ansible - is it a valid playbook
 3. Does this Ansible playbook run in a fresh environment
 4. Does this Ansible playbook run idempotently and will it run against production multiple times without breaking things.
 5. Staing/pre-prod environment that runs parallell to the production environment and rebuild that environment from scratch every time you make a change to make sure everything works correctly.
-![[ansible-testing-spectrum.png]]
+
 ## Ansible Galaxy
-```ansible
+
+<CodeBlock showLineNumbers="true" blockId="ansible-galaxy" language="bash">
+{`
 # Install a role globally
 ansible-galaxy role install <role> # <gerlingguy.homebrev>
-```
+`}
+</CodeBlock>
+
 Specifying a role path in `ansible.cfg` tells Ansible where to find and install roles - use: `roles_path = ./roles`. Chain paths together like in Bash, using `:` as a seperator.
+
 ### Passing requirements.yml
+
 `requirements.yml`:
-```ansible
+
+<CodeBlock showLineNumbers="true" blockId="ansible-requirements" language="yaml">
+{`
 ---
 roles:
   - name: elliotweiser.osx-command-line-tools
     version: 2.3.0
   - name: gerlingguy.homebrev
     version: 3.1.0
-```
+`}
+</CodeBlock>
+
 Followed by: `ansible-galaxy -r requirements.yml` where `-r` specifies that we want to use a requirements file.
+
 ### Role Initialization
+
 - Run: `ansible-galaxy role init <role-name>`
 - Using `molecule`, run: `molecule init role <role-name>`
+
 ## Molecule
+
 `molecule test`
 `molecule login`
 Ep. 7: https://www.youtube.com/watch?v=FaXVZ60o8L8
+
 ## Jinja / YAML
+
 YAML and Jinja doesn't distinguish between single and double-quotes - you can use both.
 You can turn off become on a task if you don't need it for that task - `become: false`.
 You can define a task, without specifying a name:
-```ansible
-  - name: another task
-    <command>: ...
-  - debug: msg="A task without a name"
-  - name: another task
-    <command>: ...
-```
+
+<CodeBlock showLineNumbers="true" blockId="ansible-no-name-task" language="yaml">
+{`
+- name: another task
+  <command>: ...
+- debug: msg="A task without a name"
+- name: another task
+  <command>: ...
+`}
+</CodeBlock>
+
 ## Python Dict-Style Properties
+
 * `{{ var.x }}` is equal to `{{ var['x'] }}`
 * Works with both YAML and Jinja
 * Useful when you have properties like `rsa-key` as you cannot do `x.rsa-key`.
+
 ## Commands
+
 `ansible-playbook <playbook> --syntax-check # check playbook for syntax error`
+
 ## Playbook Run Order
+
 * Pre-tasks
 * Roles
 * Tasks

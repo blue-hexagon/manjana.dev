@@ -1,0 +1,356 @@
+---
+title: "Flutter & Dart Notes"
+subtitle: "Commands, routing, state management, and language patterns"
+date: 2026-04-13
+slug: flutter-dart-field-notes
+description: "A collection of Flutter and Dart notes including commands, Firebase setup, routing, state management, and language features."
+
+categories:
+  - Development
+  - Mobile
+
+tags:
+  - flutter
+  - dart
+  - mobile
+  - frontend
+  - async
+  - state
+
+series: Understanding Systems Deeply
+
+featured: false
+
+glossaryPrefix: Flutter
+tocDepth: 3
+---
+
+import CodeBlock from "../../../pages_components/blog/CodeBlock";
+
+# Flutter & Dart
+
+## Flutter
+### Commands
+
+<CodeBlock showLineNumbers="true" blockId="flutter-commands" language="bash" script={`
+flutter doctor
+
+flutter clean ios -> flutter pub get
+
+flutter clean android -> flutter pub get
+
+flutter pub add <package_name>
+
+flutter pub outdated # To see which dependencies have newer versions available
+`}/>
+
+### Configure Firebase
+
+<CodeBlock showLineNumbers="true" blockId="flutter-firebase" language="bash" script={`
+flutter pub add <firebase_packages>
+
+dart pub global activate flutterfire_cli # Remember to add to OS env-path: C:\\Users\\$USERNAME\\AppData\\Local\\Pub\\Cache\\bin
+`}/>
+
+### Flutter Devtool
+
+[scrcpy](https://github.com/Genymobile/scrcpy) # Remember to add to OS env-path
+
+### Flutter pubspec.yaml
+
+<CodeBlock showLineNumbers="true" blockId="flutter-pubspec" language="yaml" script={`
+assets:
+  - assets/graphics/
+
+fonts:
+  - family: Poppins
+    fonts:
+      - asset: assets/fonts/Poppins-Medium.ttf
+        weight: 400
+`}/>
+
+### Flutter Routing
+
+<CodeBlock showLineNumbers="true" blockId="flutter-routing" language="dart" script={`
+import 'package:flutter/material.dart';
+import 'package:flutter_testing/world_time/pages/home.dart';
+import 'package:flutter_testing/world_time/pages/choose_location.dart';
+import 'package:flutter_testing/world_time/pages/loading.dart';
+
+void main() => runApp(MaterialApp(
+      initialRoute: '/', // Remove later on, for testing purposes
+      routes: {
+        '/': (context) => const Loading(),
+        '/home': (context) => const Home(),
+        '/location': (context) => const ChooseLocation()
+      },
+    ));
+`}/>
+
+#### Pushing Routes
+
+<CodeBlock showLineNumbers="true" blockId="flutter-routing-push" language="dart" script={`
+Navigator.pushReplacementNamed(context, '/home');
+Navigator.pushNamed(context, '/home');
+`}/>
+
+##### Sending Arguments to a Route
+
+<CodeBlock showLineNumbers="true" blockId="flutter-routing-args" language="dart" script={`
+class _LoadingState extends State<Loading> {
+  void setupWorldTime() async {
+    WorldTime berlin = WorldTime(
+        locationName: "Berlin",
+        flagIconPath: "germany.png",
+        timezoneEndpoint: "Europe/Berlin");
+    await berlin.getTime();
+    Navigator.pushReplacementNamed(context, '/home', arguments: {
+      'location': berlin.locationName,
+      'flag': berlin.flagIconPath,
+      'time': berlin.time
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setupWorldTime();
+  }
+....
+
+class _HomeState extends State<Home> {
+  Map data = {};
+
+  @override
+  Widget build(BuildContext context) {
+    data = ModalRoute.of(context)\!.settings.arguments as Map;
+    ....
+....
+`}></CodeBlock>
+
+## Dart
+
+### String Interpolation
+
+<CodeBlock showLineNumbers="true" blockId="dart-string-interpolation" language="dart" script={`
+_selectedIndex = 0;
+print('\${_selectedIndex}'); // Automatically calls the toString() method on _selectedIndex
+print(_selectedIndex.toString()); // The same as above
+`}/>
+
+### setState
+
+**Only Stateful Widgets can use`setState((){})`**
+
+Use setState to trigger the `build` function of a statefull widget:
+
+<CodeBlock showLineNumbers="true" blockId="dart-setstate" language="dart" script={`
+setState(() {
+  age += 1;
+});
+`}/>
+
+Stateful widgets have lifecycle methods we can tap into:
+
+- `initState()`
+- The first method to be called once our state object has been created, is only called once, when the widget has first been created.
+
+<CodeBlock showLineNumbers="true" blockId="dart-initstate" language="dart" script={`
+@override
+void initState() {
+  //TODO: Implement initstate
+  super.initState();
+}
+`}/>
+
+- `Build()`
+- Builds the widget tree, is triggered everytime we use`setState`
+- `Dispose()`
+- When the widget or state object is removed.
+
+### Null Coalescing and More
+
+`variableWhichMMayBeNull ?? variableWhichMayAlsoBeNull ?? variableWhichMayAgainBeNull`
+
+`prop = objectPropDrillingWherePropertyMayBeNull?.stringPropertyThatMayBeNull`
+
+<CodeBlock showLineNumbers="true" blockId="dart-null-coalescing" language="dart" script={`
+String name;
+name ??= "Adam"; // name is null and "Adam" is assigned to name
+print(name); //-> Adam
+name ??= "Adrian"; // name is not null and "Adrian" is hence not assigned to name
+print(name); //-> Adam
+`}/>
+
+### Factory Constructors
+
+<CodeBlock showLineNumbers="true" blockId="dart-factory" language="dart" script={`
+class Cat {
+  final String name;
+  Cat(this.name);
+  factory Cat.fluffball() {
+    return Cat('Fluff Ball');
+  }
+}
+
+void test() {
+  final fluffBall = Cat.fluffBall();
+  print(fluffBall.name);
+}
+`}/>
+
+### Custom Operators
+
+<CodeBlock showLineNumbers="true" blockId="dart-operators" language="dart" script={`
+class Cat extends Object {
+  final String name;
+  Cat(this.name);
+
+  @override
+  bool operator ==(covariant Cat other) => other.name == name;
+
+  @override
+  int get hashCode => name.hashCode;
+}
+`}/>
+
+### Extensions
+
+<CodeBlock showLineNumbers="true" blockId="dart-extensions" language="dart" script={`
+extension Run on Cat {
+  void run() {
+    print('Cat $name is running');
+  }
+}
+
+void test() {
+  final meow = Cat('Fluffers');
+  meow.run();
+}
+`}/>
+
+### Getter Extension
+
+<CodeBlock showLineNumbers="true" blockId="dart-getter-extension" language="dart" script={`
+class Person {
+  final String firstName;
+  final String lastName;
+  Person(this.firstName, this.lastName);
+}
+
+extension FullName on Person {
+  String get fullName => '$firstName $lastName';
+}
+
+void test() {
+  final foo = Person('Foo', 'Bar');
+  print(foo.fullName);
+}
+`}/>
+
+### Futures
+
+<CodeBlock showLineNumbers="true" blockId="dart-futures" language="dart" script={`
+Future<int> aFutureFunction(int a) {
+  return Future.delayed(const Duration(seconds: 3), () => a * 2);
+}
+
+void test() async {
+  final result = await aFutureFunction(8);
+  print(result); // prints 16 after 3 seconds.
+}
+`}/>
+
+#### Await Example
+
+<CodeBlock showLineNumbers="true" blockId="dart-await" language="dart" script={`
+void getData() async {
+  late String username;
+  await Future.delayed(Duration(seconds: 3), () {
+    username = "Dirk";
+  });
+  Future.delayed(Duration(seconds: 3), () {
+    print("$username is a developer and musician!");
+  });
+  print("End of function")
+  //> End of function
+  //> Dirk is a developer and musician!
+}
+`}/>
+
+### Streams
+
+<CodeBlock showLineNumbers="true" blockId="dart-streams" language="dart" script={`
+Stream<String> getName() {
+  return Stream.value('Foo');
+}
+
+void test() async {
+  await for (final value in getName()) {
+    print(value);
+  }
+  print('Stream finished working);
+}
+`}/>
+
+<CodeBlock showLineNumbers="true" blockId="dart-streams-periodic" language="dart" script={`
+Stream<String> getName() {
+  return Stream.periodic(const Duration(seconds: 1), (value) {
+    return 'Foo';
+  });
+}
+
+void test() async {
+  await for (final value in getName()) {
+    print(value);
+  }
+}
+`}/>
+
+### Generators
+
+#### Async
+
+<CodeBlock showLineNumbers="true" blockId="dart-generators-async" language="dart" script={`
+Stream<Iterable<int>> getOneTwoThree() async* {
+  ...
+}
+`}/>
+
+#### Sync
+
+<CodeBlock showLineNumbers="true" blockId="dart-generators-sync" language="dart" script={`
+Iterable<int> getOneTwoThree() sync* {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+void test() {
+  for (final value in getOneTwoThree()) {
+    print(value);
+  }
+  // Or: print(getOneTwoThree());
+}
+`}/>
+
+### Generics
+
+<CodeBlock showLineNumbers="true" blockId="dart-generics" language="dart" script={`
+class PairOfIntegers {
+  final int value1;
+  final int value2;
+  PairOfIntegers(this.value1, this.value2);
+}
+
+class Pair<A, B> {
+  final A value1;
+  final B value2;
+  Pair(this.value1, this.value2);
+}
+
+void test() {
+  final names = Pair('Foo', 'Bar');
+  final ages = Pair(22, 34);
+}
+`}/>

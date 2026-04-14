@@ -72,7 +72,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
         let templatePath;
 
         if (source === "blog") {
-            pagePath = `/blog/${slug}/`;
+            pagePath = `/${slug}/`;
             templatePath = path.resolve("./src/templates/blog-post.js");
         } else if (source === "notes") {
             pagePath = `/notes/${slug}/`;
